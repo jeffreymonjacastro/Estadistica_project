@@ -1,2 +1,2 @@
-# Estadistica_project
-R de Renom
+# Proyecto estadísitica
+COME ONNNNN!!!
