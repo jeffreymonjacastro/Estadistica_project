@@ -1,0 +1,268 @@
+# Filtrado de la base de datos (Survey Results)
+
+-   Encuestas de Stack Overflow (33880 registros obtenidos de 73268)
+
+```{r warning=FALSE, echo=FALSE}
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(stringr)
+
+#Leer la base de datos
+encuesta = read_csv("../db/survey_results_public.csv")
+
+```
+
+## Revisar que la base de datos esté limpia:
+
+Revisaremos cuantos casos completos hay
+
+```{r}
+
+#complete cases
+table(complete.cases(encuesta))
+```
+
+Observamos que parece que ninguna observación esta completa. HORROR! Sin embargo mejor enfoquémonos en las variables que queremos analizar y revisemos de nuevo.
+
+```{r}
+
+#borrar las filas que no queremos
+encuesta = select(encuesta, MainBranch, Employment, RemoteWork, CodingActivities, DevType, Country, EdLevel, Currency, ConvertedCompYearly, MentalHealth, Ethnicity, Gender, Age, `OpSysPersonal use`, `OpSysProfessional use`, LanguageHaveWorkedWith)
+
+```
+
+Ahora si, revisemos de nuevo cuantos casos completos tenemos.
+
+```{r}
+#casos completos
+table(complete.cases(encuesta))
+```
+
+Tal parece que solo 34672 casos están completos, por lo que seleccionaremos justo estos.
+
+```{r}
+#eliminar nulos
+encuesta = na.omit(encuesta)
+```
+
+## Revisar valores de las columnas
+
+Para esta primera instancia analizaremos primero las variables numéricas, de esta forma podemos eliminar lo que creemos que se aleja de la realidad, como salarios extremadamente bajos que solo entorpecen el análisis.
+
+```{r}
+#minimo unos 3600 dolares anuales
+encuesta = encuesta[encuesta$ConvertedCompYearly > 3600,]
+```
+
+Filtrar por los géneros. En la encuesta se permite elegir géneros de varios tipos. Sin embargo, para fines de estudio nos limitaremos a hombre o mujeres, más obviaremos a los no binarios, entre otros.
+
+```{r}
+encuesta = encuesta[encuesta$Gender == "Man" | encuesta$Gender == "Woman",]
+
+table(encuesta$Gender)
+```
+
+Listo, eso es todo lo que querremos filtrar en la base de datos.
+
+### ;
+
+```{r}
+df <- data.frame(A = 1:5, B = 6:10, C = 11:15)
+
+names <- c('F','G','H','I','J')
+
+s <- 
+
+
+for (name in names) {
+  df[name] = NA
+}
+# Vector con los nombres de columna
+
+```
+
+```{r}
+Lenguajes <- c('APL', 'Assembly', 'Bash/Shell', 'C', 'C#', 'C++', 'Clojure', 'COBOL', 'Crystal', 'Dart', 'Delphi', 'Elixir', 'Erlang', 'F#', 'Fortran', 'Go', 'Groovy', 'Haskell', 'HTML/CSS', 'Java', 'JavaScript', 'Julia', 'Kotlin', 'LISP', 'Lua', 'MATLAB', 'OCaml', 'Objective-C', 'Perl', 'PHP', 'PowerShell', 'Python', 'R', 'Ruby', 'Rust', 'SAS', 'Scala', 'Solidity', 'SQL', 'Swift', 'TypeScript', 'VBA')
+
+language <- encuesta %>%
+  separate_rows(LanguageHaveWorkedWith, sep = ";") %>%
+  group_by(LanguageHaveWorkedWith) %>%
+  summarize() %>%
+  pull()
+
+language
+```
+
+```{r}
+for (name in language) {
+  encuesta[name] = FALSE
+}
+```
+
+```{r}
+for (i in 1:nrow(encuesta)) {
+  for (elem in unlist(strsplit(encuesta$LanguageHaveWorkedWith[i],";"))){
+    encuesta[i, elem] <- TRUE
+  }
+}
+
+```
+
+```{r}
+encuesta$LanguageHaveWorkedWith[1:10]
+
+a <- strsplit(encuesta$LanguageHaveWorkedWith[1], ";")
+
+for (elem in a) {
+  print(elem)
+}
+```
+
+## AGE
+
+```{r}
+table(encuesta$Age)
+```
+
+```{r}
+barplot(table(encuesta$Age),
+        cex.names = 0.5
+        )
+
+```
+
+```{r}
+encuesta %>% subset(encuesta$Age != "Prefer not to say") -> encuesta
+```
+
+```{r, warning=FALSE}
+#for (i in 1:nrow(encuesta)) {
+#  encuesta$Age[i] <- sub(" years old", "", encuesta$Age)
+#}
+```
+
+## MENTAL HEALTH
+
+```{r}
+
+vec_names <- c("Memoria", "Emotional", "Anxiety", "Autism", "Learning")
+
+for (name in vec_names) {
+  encuesta[name] <- FALSE
+}
+
+
+valores_a_verificar <- c("I have a concentration and/or memory disorder (e.g., ADHD, etc.)", 
+                         "I have a mood or emotional disorder (e.g., depression, bipolar   disorder, etc.)", 
+                         "I have an anxiety disorder", "I have autism / an autism spectrum disorder (e.g. Asperger's, etc.)",
+                         "I have learning differences (e.g., Dyslexic, Dyslexia, etc.)")
+
+
+# op1
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "concentration", "\\b"))
+encuesta$Memoria <- columna_booleana
+
+# op2
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "mood", "\\b"))
+encuesta$Emotional <- columna_booleana
+
+# op3
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "anxiety", "\\b"))
+encuesta$Anxiety <- columna_booleana
+
+# op4
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "autism", "\\b"))
+encuesta$Autism <- columna_booleana
+
+# op5
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "learning", "\\b"))
+encuesta$Learning <- columna_booleana
+```
+
+```{r}
+tabla2 <- data.frame(Mental_Health = c("Memory","Emotional", "Anxiety", "Autism", "Learning"),
+                    CantUsers = c(sum(encuesta$Memoria== TRUE),
+                                  sum(encuesta$Emotional == TRUE),
+                                  sum(encuesta$Anxiety == TRUE),
+                                  sum(encuesta$Autism == TRUE),
+                                  sum(encuesta$Learning == TRUE))
+)
+
+print(tabla2)
+```
+
+\
+
+```{r}
+healthy <- c()
+
+agregar_elemento <- function(elemento) {
+  healthy <<- c(healthy, elemento)
+}
+
+for (elem in encuesta$Memoria) {
+  if (elem == TRUE)
+    agregar_elemento("Memory")
+}
+
+for (elem in encuesta$Emotional) {
+  if (elem == TRUE)
+    agregar_elemento("Emotional")
+}
+
+for (elem in encuesta$Anxiety) {
+  if (elem == TRUE)
+    agregar_elemento("Anxiety")
+}
+
+for (elem in encuesta$Autism) {
+  if (elem == TRUE)
+    agregar_elemento("Autism")
+}
+
+for (elem in encuesta$Learning) {
+  if (elem == TRUE)
+    agregar_elemento("Learning")
+}
+
+table(healthy)
+
+```
+
+```{r}
+tablita <- table(encuesta$Age, encuesta$Memoria)
+
+mosaicplot(tablita, 
+           main = "Problemas de Memoria vs Edad", 
+           xlab = "Edad", 
+           ylab = "Memory",
+           las = 2)
+```
+
+```{r}
+# Crear un dataframe de ejemplo
+datos <- data.frame(
+  Edad = c("18-24", "25-34", "35-44", "45-54", "55+"),
+  Problema1 = c(TRUE, FALSE, TRUE, FALSE, TRUE),
+  Problema2 = c(FALSE, TRUE, FALSE, TRUE, FALSE),
+  Problema3 = c(TRUE, FALSE, TRUE, FALSE, TRUE),
+  Problema4 = c(FALSE, TRUE, FALSE, TRUE, FALSE),
+  Problema5 = c(TRUE, FALSE, TRUE, FALSE, TRUE)
+)
+
+# Calcular las posiciones para las barras apiladas
+posiciones <- apply(datos[, 2:6], 2, cumsum) - 0.5
+
+# Generar el gráfico de barras apiladas
+barplot(t(as.matrix(datos[, 2:6])), 
+        col = rainbow(ncol(datos[, 2:6])),
+        ylim = c(0, nrow(datos)), 
+        ylab = "Cantidad de personas",
+        xlab = "Rango de edad", 
+        names.arg = datos$Edad, 
+        cex.names = 0.8,
+        legend.text = colnames(datos[, 2:6]), 
+        args.legend = list(x = "topright"))
+```

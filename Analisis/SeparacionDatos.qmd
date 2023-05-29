@@ -1,0 +1,733 @@
+# Avance 3 PG0
+
+------------------------------------------------------------------------
+
+```{r}
+library(dplyr)
+library(readr)
+library(ggplot2)
+library(tidyverse)
+
+```
+
+## Análisis Univariado
+
+------------------------------------------------------------------------
+
+### Frecuencias:
+
+#### Lenguajes de desarrollo de software más usados:
+
+```{r}
+#sleccionar lo importante
+language = select(encuesta, LanguageHaveWorkedWith)
+language = na.omit(language)
+
+#dividir por ;
+language = language %>%
+  separate_rows(LanguageHaveWorkedWith, sep=";") %>%
+  group_by(LanguageHaveWorkedWith) %>%
+  summarise(CantUsers = n())
+
+#ordenar de mayor a menor
+language = arrange(language, desc(CantUsers))
+
+language
+
+rm(language)
+```
+
+El lenguaje más usado por los desarrolladores encuestados es el de **Javascript,** le sigue **SQL** y claramente **HTML/CSS**. Es natural puesto que son lenguajes muy sencillos de aprender.
+
+#### Estados de salud mental más sufridos por los encuestados:
+
+```{r}
+#seleccionar
+health = select(encuesta, MentalHealth);
+
+#group
+health = health %>% 
+  separate_rows(MentalHealth, sep=";") %>%
+  group_by(MentalHealth) %>%
+  summarise(Personas = n())
+
+health
+
+rm(health)
+```
+
+Notamos que la mayoría de personas no sufren de desordenes mentales. Sin embargo, podemos decir que la enfermedad más común padecida por los encuestados es la **ansiedad**.
+
+#### Frecuencia de edades de los encuestados.
+
+```{r}
+#seleccionar
+age = select(encuesta, Age);
+
+age = age %>% 
+  group_by(Age) %>%
+  summarise(Personas = n())
+
+age
+
+rm(age)
+```
+
+Es curioso observar como en su mayoría los desarrolladores que usan Stack Overflow son personas de entre **25 a 34 años** edad, mientras que son poquísimos los menores de edad.
+
+## Análisis Bivariado
+
+------------------------------------------------------------------------
+
+### Salario vs. Edades
+
+#### Creamos una tabla con los datos que necesitamos
+
+```{r}
+tabla <- data.frame(Salario = encuesta$ConvertedCompYearly, Memoria = encuesta$Memoria, Emotional = encuesta$Emotional, Anxiety = encuesta$Anxiety, Autism = encuesta$Autism, Learning = encuesta$Learning)
+
+tabla <- filter(tabla)
+
+tabla
+```
+
+#### Convertimos los booleanos a numérico
+
+```{r}
+tabla$Memoria <- as.numeric(tabla$Memoria)
+tabla$Emotional <- as.numeric(tabla$Emotional)
+tabla$Anxiety <- as.numeric(tabla$Anxiety)
+tabla$Autism <- as.numeric(tabla$Autism)
+tabla$Learning <- as.numeric(tabla$Learning)
+```
+
+#### Hallamos el promedio del Salario por cada Salud Mental
+
+```{r}
+#Memoria
+Tabla_Memoria <- data.frame(Salario = tabla$Salario, Memoria = tabla$Memoria)
+Tabla_Memoria <- filter(Tabla_Memoria, Tabla_Memoria$Memoria == 1)
+Prom_Memoria <- mean(Tabla_Memoria$Salario)
+
+#Emotional
+Tabla_Emotional <- data.frame(Salario = tabla$Salario, Emotional = tabla$Emotional)
+Tabla_Emotional <- filter(Tabla_Emotional, Tabla_Emotional$Emotional == 1)
+Prom_Emotional <- mean(Tabla_Emotional$Salario)
+
+#Anxiety
+Tabla_Anxiety <- data.frame(Salario = tabla$Salario, Anxiety = tabla$Anxiety)
+Tabla_Anxiety <- filter(Tabla_Anxiety, Tabla_Anxiety$Anxiety == 1)
+Prom_Anxiety <- mean(Tabla_Anxiety$Salario)
+
+#Autism
+Tabla_Autism <- data.frame(Salario = tabla$Salario, Autism = tabla$Autism)
+Tabla_Autism <- filter(Tabla_Autism, Tabla_Autism$Autism == 1)
+Prom_Autism <- mean(Tabla_Autism$Salario)
+
+#Learning
+Tabla_Learning <- data.frame(Salario = tabla$Salario, Learning = tabla$Learning)
+Tabla_Learning <- filter(Tabla_Learning, Tabla_Learning$Learning == 1)
+Prom_Learning <- mean(Tabla_Learning$Salario)
+```
+
+#### Creamos una tabla con el promedio del salario por cada estado de salud mental
+
+```{r}
+Tabla_promedio <- data.frame(Memoria = Prom_Memoria, Emotional = Prom_Emotional, Anxiety = Prom_Anxiety, Autism = Prom_Autism, Learning= Prom_Learning)
+
+Tabla_promedio
+```
+
+#### Graficamos "Salario vs salud mental"
+
+```{r}
+barplot((data.matrix(Tabla_promedio)), 
+        col = colorRampPalette(c("orange", "darkorange"))(5),
+        main = "Salario vs salud mental", 
+        xlab = "Salud Mental", 
+        ylab = "Promedio del salario")
+```
+
+### Salud mental vs. Tecnologías de desarrollo
+
+Vamos a crear un gráfico de barras por cada problema mental identificado. En el cuál pondremos una barra por cada lenguaje de programación
+
+Recordemos que nuestros datos principales se llaman "encuesta"
+
+> #### Variables necesarias:
+
+```{r}
+library(ggplot2)
+
+
+#tabla para Memoria
+
+
+#seleccionar todos los registros con Memoria = True
+
+memoria <- filter(encuesta, Memoria == TRUE)
+ansiedad <- filter(encuesta, Anxiety == TRUE)
+emocional <- filter(encuesta, Emotional == TRUE)
+autismo <- filter(encuesta, Autism == TRUE)
+aprendizaje <- filter(encuesta, Learning == TRUE)
+
+
+language <- encuesta %>%
+  separate_rows(LanguageHaveWorkedWith, sep = ";") %>%
+  group_by(LanguageHaveWorkedWith) %>%
+  summarize() %>%
+  pull()
+		
+
+```
+
+### Memoria:
+
+> #### Tabla de frecuencias:
+
+```{r}
+
+porcentajes <- c()
+
+
+#iterar por cada lenguaje de programación
+for (current in language){
+	cantidad = nrow(memoria[memoria[[current]] == TRUE, ])
+	cantidadTotal = nrow(encuesta[encuesta[[current]] == TRUE, ])
+	porcentajes[current] <- cantidad/cantidadTotal
+}
+
+
+#ordenar porcentajes de mayor a menor
+porcentajes <- sort(porcentajes, decreasing = TRUE)
+
+#mostrar tabla en formato de tabla
+data.frame(porcentajes)
+
+
+```
+
+> #### Gráfico de barras, porcentaje de personas que sufre usando una tecnología:
+
+```{r}
+
+porcentajes <- porcentajes[1:10]
+
+
+#plotear porcentajes en grafico de barras
+barplot(porcentajes, 
+	main="% Personas que sufren de problemas de Memoria", 
+	xlab="Lenguajes para desarrollo de software", 
+	ylab="Porcentaje de personas", 
+  #degradado lineal de azul oscuro a azul
+  col=colorRampPalette(c("darkblue", "blue"))(10),
+  
+	cex.names=0.5,
+	ylim = c(0, 0.3)
+	)
+
+
+
+```
+
+### Ansiedad
+
+> #### Tabla de frecuencias:
+
+```{r}
+
+porcentajes <- c()
+
+
+#iterar por cada lenguaje de programación
+for (current in language){
+	cantidad = nrow(ansiedad[ansiedad[[current]] == TRUE, ])
+	cantidadTotal = nrow(encuesta[encuesta[[current]] == TRUE, ])
+	porcentajes[current] <- cantidad/cantidadTotal
+}
+
+
+#ordenar porcentajes de mayor a menor
+porcentajes <- sort(porcentajes, decreasing = TRUE)
+
+#mostrar tabla en formato de tabla
+data.frame(porcentajes)
+
+
+```
+
+> #### Gráfico de barras, porcentaje de personas que sufre usando una tecnología:
+
+```{r}
+
+porcentajes <- porcentajes[1:10]
+
+
+#plotear porcentajes en grafico de barras
+barplot(porcentajes, 
+	main="% Personas que sufren de problemas de Ansiedad", 
+	xlab="Lenguajes para desarrollo de software", 
+	ylab="Porcentaje de personas", 
+	col=colorRampPalette(c("darkblue", "blue"))(10),
+	cex.names=0.5,
+	ylim = c(0, 0.2)
+	)
+
+
+```
+
+### Emocional:
+
+> #### Tabla de frecuencias:
+
+```{r}
+
+porcentajes <- c()
+
+
+#iterar por cada lenguaje de programación
+for (current in language){
+	cantidad = nrow(emocional[emocional[[current]] == TRUE, ])
+	cantidadTotal = nrow(encuesta[encuesta[[current]] == TRUE, ])
+	porcentajes[current] <- cantidad/cantidadTotal
+}
+
+
+#ordenar porcentajes de mayor a menor
+porcentajes <- sort(porcentajes, decreasing = TRUE)
+
+#mostrar tabla en formato de tabla
+data.frame(porcentajes)
+
+
+```
+
+> #### Gráfico de barras, porcentaje de personas que sufre usando una tecnología:
+
+```{r}
+
+porcentajes <- porcentajes[1:10]
+
+
+#plotear porcentajes en grafico de barras
+barplot(porcentajes, 
+	main="% Personas que sufren de problemas de Emocional", 
+	xlab="Lenguajes para desarrollo de software", 
+	ylab="Porcentaje de personas", 
+	col=colorRampPalette(c("darkblue", "blue"))(10),
+	cex.names=0.5,
+	ylim = c(0, 0.2)
+	)
+
+
+```
+
+### Autismo
+
+> #### Tabla de frecuencias:
+
+```{r}
+
+porcentajes <- c()
+
+
+#iterar por cada lenguaje de programación
+for (current in language){
+	cantidad = nrow(autismo[autismo[[current]] == TRUE, ])
+	cantidadTotal = nrow(encuesta[encuesta[[current]] == TRUE, ])
+	porcentajes[current] <- cantidad/cantidadTotal
+}
+
+
+#ordenar porcentajes de mayor a menor
+porcentajes <- sort(porcentajes, decreasing = TRUE)
+
+#mostrar tabla en formato de tabla
+data.frame(porcentajes)
+
+
+```
+
+> #### Gráfico de barras, porcentaje de personas que sufre usando una tecnología:
+
+```{r}
+
+porcentajes <- porcentajes[1:10]
+
+
+#plotear porcentajes en grafico de barras
+barplot(porcentajes, 
+	main="% Personas que sufren de problemas de Autismo", 
+	xlab="Lenguajes para desarrollo de software", 
+	ylab="Porcentaje de personas", 
+	col=colorRampPalette(c("darkblue", "blue"))(10),
+	cex.names=0.5,
+	ylim = c(0, 0.13)
+	)
+
+
+```
+
+### Aprendizaje
+
+> #### Tabla de frecuencias:
+
+```{r}
+
+porcentajes <- c()
+
+
+#iterar por cada lenguaje de programación
+for (current in language){
+	cantidad = nrow(aprendizaje[aprendizaje[[current]] == TRUE, ])
+	cantidadTotal = nrow(encuesta[encuesta[[current]] == TRUE, ])
+	porcentajes[current] <- cantidad/cantidadTotal
+}
+
+
+#ordenar porcentajes de mayor a menor
+porcentajes <- sort(porcentajes, decreasing = TRUE)
+
+#mostrar tabla en formato de tabla
+data.frame(porcentajes)
+
+
+```
+
+#### Gráfico de barras, porcentaje de personas que sufre usando una tecnología:
+
+```{r}
+
+porcentajes <- porcentajes[1:10]
+
+
+#plotear porcentajes en grafico de barras
+barplot(porcentajes,
+	main="% Personas que sufren de problemas de aprendizaje",
+	xlab="Lenguajes para desarrollo de software",
+	ylab="Porcentaje de personas",
+	col=colorRampPalette(c("darkblue", "blue"))(10),
+	cex.names=0.5,
+	ylim = c(0, 0.1)
+	)
+
+
+```
+
+### N° Usuarios vs Lenguaje de programación
+
+#### Lenguajes con más usuarios
+
+```{r}
+df %>% arrange(desc(N_Usuarios)) -> OrdenUsuarios
+```
+
+```{r}
+barplot(OrdenUsuarios$N_Usuarios[0:20], 
+        names.arg = OrdenUsuarios$Nombre[0:20],
+        col = "pink",
+        main = "Cantidad de usuarios por Lenguaje",
+        xlab = "Lenguajes de programación",
+        ylab = "N° usuarios",
+        cex.names = 0.6,
+        cex.axis = 0.7,
+        ylim = c(0,8000000),
+        las = 2
+        )
+```
+
+### N° Trabajadores vs Lenguaje de programación
+
+```{r}
+df %>% arrange(desc(N_Trabajos)) -> OrdenTrabajos
+```
+
+```{r}
+barplot(OrdenTrabajos$N_Trabajos[0:20], 
+        names.arg = OrdenTrabajos$Nombre[0:20],
+        col = "blue",
+        main = "Cantidad de trabajadores por Lenguaje",
+        xlab = "Lenguajes de programación",
+        ylab = "N° trabajadores",
+        cex.names = 0.6,
+        ylim = c(0,250000),
+        las = 2
+        )
+```
+
+### Cantidad de Repositorios en Github vs Lenguajes de Programación
+
+```{r}
+df %>% arrange(Github_repos) -> OrdenGithubrep
+```
+
+```{r}
+barplot(OrdenGithubrep$Github_repos[0:20], 
+        names.arg = OrdenGithubrep$Nombre[0:20],
+        col = "red",
+        main = "Cantidad de repositorios en Github por Lenguaje",
+        xlab = "Lenguajes de programación",
+        ylab = "N° Repositorios en Github",
+        cex.names = 0.6,
+        cex.axis = 0.7,
+        ylim = c(0,400000),
+        las = 2
+        )
+```
+
+### Cantidad de Repositorios en BigQuery vs Lenguajes de Programación
+
+```{r}
+df %>% arrange(desc(BigQuery_repos)) -> OrdenBigQueryrep
+```
+
+```{r}
+barplot(OrdenBigQueryrep$BigQuery_repos[0:20], 
+        names.arg = OrdenBigQueryrep$Nombre[0:20],
+        col = "green",
+        main = "Cantidad de repositorios en BigQuery por Lenguaje",
+        xlab = "Lenguajes de programación",
+        ylab = "N° Repositorios en BigQuery",
+        cex.names = 0.6,
+        cex.axis = 0.7,
+        ylim = c(0,1200000),
+        las = 2
+        )
+```
+
+## Análisis Multivariado
+
+------------------------------------------------------------------------
+
+### Salud mental vs. Sistema Operativo
+
+> Creamos la tabla con todos los tipos de mental health
+
+```{r}
+# Creación de la tabla con los mental health
+tabla2 <- data.frame(Mental_Health = c("Memory","Emotional", "Anxiety", "Autism", "Learning"),
+                    CantUsers = c(sum(encuesta$Memoria== TRUE),
+                                  sum(encuesta$Emotional == TRUE),
+                                  sum(encuesta$Anxiety == TRUE),
+                                  sum(encuesta$Autism == TRUE),
+                                  sum(encuesta$Learning == TRUE))
+                    )
+
+print(tabla2)
+```
+
+> Hicimos una columna booleana por cada opción (ya que las opciones de la encuesta podías contestar con más de una respuesta)
+
+```{r}
+library(stringr)
+
+encuesta$Memoria <- logical(nrow(encuesta))
+encuesta$Emotional <- logical(nrow(encuesta))
+encuesta$Anxiety <- logical(nrow(encuesta))
+encuesta$Autism <- logical(nrow(encuesta))
+encuesta$Learning <- logical(nrow(encuesta))
+
+
+valores_a_verificar <- c("I have a concentration and/or memory disorder (e.g., ADHD, etc.)", 
+                         "I have a mood or emotional disorder (e.g., depression, bipolar   disorder, etc.)", 
+                         "I have an anxiety disorder", "I have autism / an autism spectrum disorder (e.g. Asperger's, etc.)",
+                         "I have learning differences (e.g., Dyslexic, Dyslexia, etc.)")
+
+
+# op1
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "concentration", "\\b"))
+encuesta$Memoria <- columna_booleana
+
+# op2
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "mood", "\\b"))
+encuesta$Emotional <- columna_booleana
+
+# op3
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "anxiety", "\\b"))
+encuesta$Anxiety <- columna_booleana
+
+# op4
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "autism", "\\b"))
+encuesta$Autism <- columna_booleana
+
+# op5
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "learning", "\\b"))
+encuesta$Learning <- columna_booleana
+```
+
+> Hicimos lo mismo para los sistemas operativos
+
+```{r}
+library(stringr)
+encuesta$BSD <- logical(nrow(encuesta))
+encuesta$Linux_Based <- logical(nrow(encuesta))
+encuesta$Windows <- logical(nrow(encuesta))
+encuesta$Windows_for_Linux <- logical(nrow(encuesta))
+encuesta$Mac <- logical(nrow(encuesta))
+
+opciones_a_verificar <- c("BSD", "Linux-based", "Windows", "Windows Subsystem for Linux (WSL)",
+                         "macOS")
+
+# op1
+columna_booleana <- str_detect(encuesta$`OpSysPersonal use`, paste0("\\b", "BSD", "\\b"))
+encuesta$BSD <- columna_booleana
+
+# op2
+columna_booleana <- str_detect(encuesta$`OpSysPersonal use`, paste0("\\b", "based", "\\b"))
+encuesta$Linux_Based <- columna_booleana
+
+# op3
+columna_booleana <- str_detect(encuesta$`OpSysPersonal use`, paste0("\\b", "Windows", "\\b"))
+encuesta$Windows <- columna_booleana
+
+# op4
+columna_booleana <- str_detect(encuesta$`OpSysPersonal use`, paste0("\\b", "Subsystem", "\\b"))
+encuesta$Windows_for_Linux <- columna_booleana
+
+# op5
+columna_booleana <- str_detect(encuesta$`OpSysPersonal use`, paste0("\\b", "macOS", "\\b"))
+encuesta$Mac <- columna_booleana
+```
+
+> Creamos una tabla de conteo general con los sistemas operativos
+
+```{r}
+# Creación de la tabla con los sistemas operativos
+tabla <- data.frame(`OpSysPersonal use` = c("BSD", "Linux-based", "Windows", "Windows Subsystem for Linux (WSL)", "macOS"),
+                    CantUsers = c(sum(encuesta$BSD == TRUE),
+                                  sum(encuesta$Linux_Based == TRUE),
+                                  sum(encuesta$Windows == TRUE),
+                                  sum(encuesta$Windows_for_Linux == TRUE),
+                                  sum(encuesta$Mac == TRUE))
+                    )
+
+print(tabla)
+
+```
+
+> Creamos una tabla por cada sistema operativo para almacenar la Porcentaje de personas que sufren de cada tipo de condición mental
+
+#### BSD
+
+```{r}
+tablaBSD <- data.frame(`OpSysPersonal use` = "BSD",
+CantUsersMemory = sum(encuesta$BSD == TRUE & encuesta$Memoria == TRUE),
+CantUsersEmotional = sum(encuesta$BSD == TRUE & encuesta$Emotional == TRUE),
+CantUsersAnxiety = sum(encuesta$BSD == TRUE & encuesta$Anxiety == TRUE),
+CantUsersAutism = sum(encuesta$BSD == TRUE & encuesta$Autism == TRUE),
+CantUsersLearning = sum(encuesta$BSD == TRUE & encuesta$Learning == TRUE),
+Total = sum(encuesta$BSD == TRUE))
+
+print(tablaBSD)
+```
+
+#### LINUX BASED
+
+```{r}
+tablaLinuxB <- data.frame(`OpSysPersonal use` = "Linux-based",
+CantUsersMemory = sum(encuesta$Linux_Based == TRUE & encuesta$Memoria == TRUE),
+CantUsersEmotional = sum(encuesta$Linux_Based == TRUE & encuesta$Emotional == TRUE),
+CantUsersAnxiety = sum(encuesta$Linux_Based == TRUE & encuesta$Anxiety == TRUE),
+CantUsersAutism = sum(encuesta$Linux_Based == TRUE & encuesta$Autism == TRUE),
+CantUsersLearning = sum(encuesta$Linux_Based == TRUE & encuesta$Learning == TRUE),
+Total = sum(encuesta$Linux_Based == TRUE))
+
+print(tablaLinuxB)
+```
+
+#### WINDOWS
+
+```{r}
+tablaWindows <- data.frame(`OpSysPersonal use` = "Windows",
+CantUsersMemory = sum(encuesta$Windows == TRUE & encuesta$Memoria == TRUE),
+CantUsersEmotional = sum(encuesta$Windows == TRUE & encuesta$Emotional == TRUE),
+CantUsersAnxiety = sum(encuesta$Windows == TRUE & encuesta$Anxiety == TRUE),
+CantUsersAutism = sum(encuesta$Windows == TRUE & encuesta$Autism == TRUE),
+CantUsersLearning = sum(encuesta$Windows == TRUE & encuesta$Learning == TRUE),
+Total = sum(encuesta$Windows == TRUE))
+
+print(tablaWindows)
+```
+
+**WSL**
+
+```{r}
+tablaWindowsLinux <- data.frame(`OpSysPersonal use` = "Windows_Linux",
+CantUsersMemory = sum(encuesta$Windows_for_Linux == TRUE & encuesta$Memoria == TRUE),
+CantUsersEmotional = sum(encuesta$Windows_for_Linux == TRUE & encuesta$Emotional == TRUE),
+CantUsersAnxiety = sum(encuesta$Windows_for_Linux == TRUE & encuesta$Anxiety == TRUE),
+CantUsersAutism = sum(encuesta$Windows_for_Linux == TRUE & encuesta$Autism == TRUE),
+CantUsersLearning = sum(encuesta$Windows_for_Linux == TRUE & encuesta$Learning == TRUE),
+Total = sum(encuesta$Windows_for_Linux == TRUE))
+
+print(tablaWindowsLinux)
+```
+
+**macOS**
+
+```{r}
+tablaMac <- data.frame(`OpSysPersonal use` = "MacOS",
+CantUsersMemory = sum(encuesta$Mac == TRUE & encuesta$Memory == TRUE),
+CantUsersEmotional = sum(encuesta$Mac == TRUE & encuesta$Emotional == TRUE),
+CantUsersAnxiety = sum(encuesta$Mac == TRUE & encuesta$Anxiety == TRUE),
+CantUsersAutism = sum(encuesta$Mac == TRUE & encuesta$Autism == TRUE),
+CantUsersLearning = sum(encuesta$Mac == TRUE & encuesta$Learning == TRUE),
+Total = sum(encuesta$Mac == TRUE))
+
+print(tablaMac)
+```
+
+> Unimos todo en una tabla
+
+```{r}
+# Unir las tablas
+tabla_final <- rbind(tablaBSD, tablaLinuxB, tablaWindows, tablaWindowsLinux, tablaMac)
+print(tabla_final)
+```
+
+> Hicimos el gráfico de barras apiladas
+
+```{r}
+library(ggplot2)
+tabla_larga <- tidyr::gather(tabla_final, key = "MentalHealth", value = "Cantidad Total", -OpSysPersonal.use)
+
+tabla_larga <- tabla_larga[tabla_larga$MentalHealth != "Total", ]
+
+grafico <- ggplot(tabla_larga, aes(x = OpSysPersonal.use, y = `Cantidad Total`, fill = ifelse(MentalHealth != "Total", MentalHealth, ""))) +
+  geom_bar(stat = "identity") +
+  labs(x = "Sistema Operativo para uso profesional", y = "Cantidad Total de Personas", fill = "MentalHealth") +
+  ggtitle("Salud Mental vs. Sistemas Operativos") +
+  theme_minimal()
+
+print(grafico)
+
+```
+
+> Intentamos poner una barra al costado de cada sistema operativo para indicar el "verdadero" total de personas, ya que una persona puede sufrir de varias condiciones mentales. No sabemos si es necesario, lo dejamos para la entrega final.
+
+```{r}
+library(ggplot2)
+
+tabla_larga <- tidyr::gather(tabla_final, key = "MentalHealth", value = "Cantidad Total", -OpSysPersonal.use)
+tabla_larga <- tabla_larga[tabla_larga$MentalHealth != "Total", ]
+
+# Calcular el total de CantUsers por cada sistema operativo
+total_cant_users <- aggregate(Total ~ OpSysPersonal.use, data = tabla_final, FUN = sum)
+
+# Combinar los datos de tabla_larga y total_cant_users
+tabla_final_completa <- merge(tabla_larga, total_cant_users, by = "OpSysPersonal.use", all.x = TRUE)
+
+# Ordenar los datos por OpSysPersonal.use para mantener el orden en el gráfico
+tabla_final_completa <- tabla_final_completa[order(tabla_final_completa$OpSysPersonal.use), ]
+
+grafico <- ggplot(tabla_final_completa, aes(x = OpSysPersonal.use, fill = MentalHealth)) +
+  geom_bar(aes(y = Total), stat = "identity", position = "stack") +
+  geom_bar(aes(x = OpSysPersonal.use, y = Total), stat = "identity", fill = "gray", width = 0.3) +
+  geom_text(aes(x = OpSysPersonal.use, y = Total, label = Total), vjust = -0.5, color = "black", size = 3, hjust = 1) +
+  labs(x = "Sistema Operativo para uso profesional", y = "Cantidad Total de Personas", fill = "MentalHealth") +
+  ggtitle("Salud Mental vs. Sistemas Operativos") +
+  theme_minimal()
+
+print(grafico)
+
+```

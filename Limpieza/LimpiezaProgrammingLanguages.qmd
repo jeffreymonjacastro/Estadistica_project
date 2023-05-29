@@ -1,0 +1,309 @@
+---
+title: "DB2_limpieza"
+format: html
+editor: visual
+---
+
+## Programming Languages Data Base
+
+Se procederá a limpiar la base de datos `Programming_languages.csv`.
+
+Primero, se verifica que las librerías estén instaladas:
+
+```{r}
+library(readr)
+library(dplyr)
+```
+
+Luego, se importa la base de datos con la librería `readr`, asignando a una variable llamada `DF`.
+
+```{r, warning=FALSE}
+dataframe <- read_csv("../db/Programming_languages.csv")
+```
+
+Veamos cuántas filas y columnas tiene nuestro `dataframe`:
+
+```{r}
+nrow(dataframe)
+ncol(dataframe)
+```
+
+Como se puede ver, hay muchas columnas (en total 353) que no utilizaremos.
+
+Por ello, procedemos a limpiar nuestro `dataframe`, centrándonos en las variables que nos interesan, las cuales son: `Title`, `Appeared`, `Type`, `Rank`, `numberOfJobs`, `numberOfUsers`, `Country`, `githubLanguage.repos` y `githubBigQuery.repos`.
+
+Vamos a eliminar las columnas que no necesitemos:
+
+```{r}
+# Columnas a conservar
+dataframe <- select(dataframe, title, appeared, type, rank, numberOfJobs, numberOfUsers, country, githubLanguage.repos, githubBigQuery.repos)
+
+```
+
+El resultado de este proceso sería:
+
+```{r}
+names(dataframe)
+```
+
+Renombraremos las variables para una mejor manipulación
+
+```{r}
+dataframe %>% rename(Nombre = title,
+                     Año = appeared,
+                     Tipo = type,
+                     Rank = rank,
+                     N_Trabajos = numberOfJobs,
+                     N_Usuarios = numberOfUsers,
+                     País = country,
+                     Github_repos = githubLanguage.repos,
+                     BigQuery_repos = githubBigQuery.repos) -> dataframe
+```
+
+## Limpieza de datos
+
+### Nombre
+
+La variable `Nombre` ya se encuentra limpia, verifiquemos que esté completa para todas las filas:
+
+```{r}
+any(is.na(dataframe$Nombre))
+```
+
+Efectivamente está completa.
+
+### Año
+
+Consideraremos los lenguajes de programación que hayan sido creados posteriores e iguales al año 1945:
+
+```{r}
+dataframe$Año[dataframe$Año < 1945] <- NA
+
+#dataframe <- dataframe[!is.na(dataframe$Año), ]
+```
+
+### Tipo
+
+Queremos que la variable `Tipo` corresponda a lenguajes de programación `pl` o `queryLanguage`, Por lo que se eliminan todos los registros que no sean `pl` (programming languages) o `queryLanguage` (Lenguaje de consulta)
+
+```{r}
+dataframe <- dataframe[dataframe$Tipo == "pl" | dataframe$Tipo == "queryLanguage" | dataframe$Tipo == "textMarkup" | dataframe$Tipo == "stylesheetLanguage" ,]
+```
+
+### Rank
+
+Como el ranking de esta variable empieza en 0, vamos a sumar 1 a cada fila de esta variable:
+
+```{r}
+dataframe$Rank <- dataframe$Rank + 1
+```
+
+### N_Trabajos
+
+Queremos que el lenguaje de programación tenga al menos 1 trabajador:
+
+```{r}
+dataframe$N_Trabajos[dataframe$N_Trabajos == 0] <- NA
+```
+
+### N_Usuarios
+
+Queremos que el lenguaje de programación tenga más de 10 usuarios:
+
+```{r}
+dataframe <- dataframe[dataframe$N_Usuarios > 10,] 
+```
+
+### País
+
+Esta variable ya está limpia.
+
+### Github_repos
+
+Queremos que exista al menos un repositorio al buscar en Github
+
+```{r}
+dataframe$Github_repos[dataframe$Github_repos == 0] <- NA
+```
+
+### BigQuery_repos
+
+Queremos que exista al menos un repositorio al buscar en BiigQuery
+
+```{r}
+dataframe$BigQuery_repos[dataframe$BigQuery_repos == 0] <- NA
+```
+
+Usaremos algunos lenguajes de programación, para que coincida con los usados por los usuarios de Stackoverflow
+
+```{r}
+language <- c('APL', 'Assembly', 'Bash', 'C', 'C#', 'C++', 'Clojure', 'COBOL', 'Crystal', 'Dart', 'Delphi', 'Elixir', 'Erlang', 'F#', 'Fortran', 'Go', 'Groovy', 'Haskell', 'HTML','CSS', 'Java', 'JavaScript', 'Julia', 'Kotlin', 'LISP', 'Lua', 'MATLAB', 'OCaml', 'Objective-C', 'Perl', 'PHP', 'PowerShell', 'Python', 'R', 'Ruby', 'Rust', 'SAS', 'Scala', 'Solidity', 'SQL', 'Swift', 'TypeScript', 'VBA')
+```
+
+```{r}
+df <- data.frame()
+
+for (i in 1:nrow(dataframe)){
+  if (dataframe$Nombre[i] %in% language){
+    fila <- subset(dataframe, Nombre == dataframe$Nombre[i])
+    df <- rbind(df, fila)
+  }
+}
+
+```
+
+## Análisis de data
+
+### N° Usuarios vs Lenguaje de programación
+
+```{r}
+df %>% arrange(desc(N_Usuarios)) -> OrdenUsuarios
+```
+
+```{r}
+barplot(OrdenUsuarios$N_Usuarios[0:10], 
+        names.arg = OrdenUsuarios$Nombre[0:10],
+        col = "pink",
+        main = "Cantidad de usuarios por Lenguaje",
+        xlab = "Lenguajes de programación",
+        ylab = "N° usuarios",
+        cex.names = 0.6,
+        cex.axis = 0.7,
+        ylim = c(0,8000000)
+        )
+```
+
+### N° Trabajadores vs Lenguaje de programación
+
+```{r}
+df %>% arrange(desc(N_Trabajos)) -> OrdenTrabajos
+```
+
+```{r}
+barplot(OrdenTrabajos$N_Trabajos[0:10], 
+        names.arg = OrdenTrabajos$Nombre[0:10],
+        col = "blue",
+        main = "Cantidad de trabajadores por Lenguaje",
+        xlab = "Lenguajes de programación",
+        ylab = "N° trabajadores",
+        cex.names = 0.6,
+        ylim = c(0,250000)
+        )
+```
+
+### N° repositorios en Github vs. Lenguaje de Programación
+
+```{r}
+df %>% arrange(desc(Github_repos)) -> OrdenGithubrep
+```
+
+```{r}
+barplot(OrdenGithubrep$Github_repos[0:10], 
+        names.arg = OrdenGithubrep$Nombre[0:10],
+        col = "red",
+        main = "Cantidad de repositorios en Github por Lenguaje",
+        xlab = "Lenguajes de programación",
+        ylab = "N° Repositorios en Github",
+        cex.names = 0.6,
+        cex.axis = 0.7,
+        ylim = c(0,20000000)
+        )
+```
+
+### N° repositorios en BigQuery vs. Lenguaje de Programación
+
+```{r}
+df %>% arrange(desc(BigQuery_repos)) -> OrdenBigQueryrep
+```
+
+```{r}
+barplot(OrdenBigQueryrep$BigQuery_repos[0:10], 
+        names.arg = OrdenBigQueryrep$Nombre[0:10],
+        col = "green",
+        main = "Cantidad de repositorios en BigQuery por Lenguaje",
+        xlab = "Lenguajes de programación",
+        ylab = "N° Repositorios en BigQuery",
+        cex.names = 0.6,
+        cex.axis = 0.7,
+        ylim = c(0,1200000)
+        )
+```
+
+## XD
+
+```{r}
+# Crear un dataframe de ejemplo
+datos <- data.frame(
+  Edad = c("18-24", "25-34", "35-44", "45-54", "55+"),
+  Problema1 = c(TRUE, FALSE, TRUE, FALSE, TRUE),
+  Problema2 = c(TRUE, TRUE, FALSE, TRUE, FALSE),
+  Problema3 = c(FALSE, TRUE, TRUE, FALSE, TRUE),
+  Problema4 = c(TRUE, FALSE, FALSE, TRUE, FALSE),
+  Problema5 = c(FALSE, TRUE, FALSE, FALSE, TRUE)
+)
+
+# Calcular el total de personas con problemas de salud mental por rango de edad
+datos$total <- rowSums(datos[, 2:6])
+
+# Generar el barplot apilado
+barplot(t(as.matrix(datos[, 2:6])), beside = TRUE, col = c("white", "gray"),
+        ylim = c(0, max(datos$total)), ylab = "Cantidad de personas",
+        xlab = "Rango de edad", names.arg = datos$Edad, cex.names = 0.8,
+        legend.text = c("Sin problema", "Con problema"), args.legend = list(x = "topright"))
+
+```
+
+```{r}
+# Crear un dataframe de ejemplo
+datos <- data.frame(
+  Edad = c("18-24", "25-34", "35-44", "45-54", "55+"),
+  Problema1 = c(TRUE, FALSE, TRUE, FALSE, TRUE),
+  Problema2 = c(FALSE, TRUE, FALSE, TRUE, FALSE),
+  Problema3 = c(TRUE, FALSE, TRUE, FALSE, TRUE),
+  Problema4 = c(FALSE, TRUE, FALSE, TRUE, FALSE),
+  Problema5 = c(TRUE, FALSE, TRUE, FALSE, TRUE)
+)
+
+# Calcular las posiciones para las barras apiladas
+posiciones <- apply(datos[, 2:6], 2, cumsum) - 0.5
+
+# Generar el gráfico de barras apiladas
+barplot(t(as.matrix(datos[, 2:6])), 
+        col = rainbow(ncol(datos[, 2:6])),
+        ylim = c(0, nrow(datos)), 
+        ylab = "Cantidad de personas",
+        xlab = "Rango de edad", 
+        names.arg = datos$Edad, 
+        cex.names = 0.8,
+        legend.text = colnames(datos[, 2:6]), 
+        args.legend = list(x = "topright"))
+
+```
+
+```{r}
+summary(df$Año)
+```
+
+```{r}
+
+```
+
+```{r}
+summary(df$N_Trabajos)
+```
+
+```{r}
+summary(df$N_Usuarios)
+```
+
+```{r}
+summary(df$Github_repos)
+```
+
+```{r}
+summary(df$BigQuery_repos)
+```
+
+```{r}
+boxplot(df$Github_repos, horizontal = TRUE)
+```

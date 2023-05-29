@@ -1,0 +1,254 @@
+```{r}
+library(dplyr)
+library(readr)
+library(ggplot2)
+library(tidyverse)
+
+encuesta <- read.csv("../db/survey_results_public.csv");
+#encuesta = select(encuesta, MainBranch, Employment, RemoteWork, CodingActivities, DevType, Country, EdLevel, Currency, ConvertedCompYearly, MentalHealth, Ethnicity, Sexuality, Gender, Age, `OpSysPersonal.use`, ``OpSysPersonal use``, LanguageHaveWorkedWith)
+
+#encuesta = na.omit(encuesta)
+```
+
+SISTEMAS LIMPIO = SISTEMAS OPERATIVOS LIMPIOS
+
+```{r}
+#dividir por ;
+sistemas_limpio <- encuesta %>%
+  separate_rows(`OpSysPersonal use`, sep = ";") %>%
+  group_by(`OpSysPersonal use`) %>%
+  summarise(CantUsers = n())
+print(sistemas_limpio)
+```
+
+SEPARAR MENTAL HEALTH EN GENERAL Y DETALLES
+
+```{r}
+# Separar la columna MentalHealth en dos columnas y contar el número de usuarios para cada combinación
+#sin_details <- encuesta %>%
+  #separate(MentalHealth, into = c("Mental_health_general"), sep = ";") %>%
+  #group_by(Mental_health_general) %>%
+  #summarise(CantUsers = n())
+
+#print(sin_details)
+```
+
+```{r}
+# Creación de la tabla con los mental health
+tabla2 <- data.frame(Mental_Health = c("Memory","Emotional", "Anxiety", "Autism", "Learning"),
+                    CantUsers = c(sum(encuesta$Memoria== TRUE),
+                                  sum(encuesta$Emotional == TRUE),
+                                  sum(encuesta$Anxiety == TRUE),
+                                  sum(encuesta$Autism == TRUE),
+                                  sum(encuesta$Learning == TRUE))
+                    )
+
+print(tabla2)
+```
+
+HACER MAS FILAS POR CADA OPCION MARCADA DE MENTAL HEALTH
+
+```{r}
+library(stringr)
+
+encuesta$Memoria <- logical(nrow(encuesta))
+encuesta$Emotional <- logical(nrow(encuesta))
+encuesta$Anxiety <- logical(nrow(encuesta))
+encuesta$Autism <- logical(nrow(encuesta))
+encuesta$Learning <- logical(nrow(encuesta))
+
+
+valores_a_verificar <- c("I have a concentration and/or memory disorder (e.g., ADHD, etc.)", 
+                         "I have a mood or emotional disorder (e.g., depression, bipolar   disorder, etc.)", 
+                         "I have an anxiety disorder", "I have autism / an autism spectrum disorder (e.g. Asperger's, etc.)",
+                         "I have learning differences (e.g., Dyslexic, Dyslexia, etc.)")
+
+
+# op1
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "concentration", "\\b"))
+encuesta$Memoria <- columna_booleana
+
+# op2
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "mood", "\\b"))
+encuesta$Emotional <- columna_booleana
+
+# op3
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "anxiety", "\\b"))
+encuesta$Anxiety <- columna_booleana
+
+# op4
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "autism", "\\b"))
+encuesta$Autism <- columna_booleana
+
+# op5
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "learning", "\\b"))
+encuesta$Learning <- columna_booleana
+```
+
+SISTEMAS OPERATIVOS BOOLEANO
+
+```{r}
+library(stringr)
+encuesta$BSD <- logical(nrow(encuesta))
+encuesta$Linux_Based <- logical(nrow(encuesta))
+encuesta$Windows <- logical(nrow(encuesta))
+encuesta$Windows_for_Linux <- logical(nrow(encuesta))
+encuesta$Mac <- logical(nrow(encuesta))
+
+opciones_a_verificar <- c("BSD", "Linux-based", "Windows", "Windows Subsystem for Linux (WSL)",
+                         "macOS")
+
+# op1
+columna_booleana <- str_detect(encuesta$`OpSysPersonal use`, paste0("\\b", "BSD", "\\b"))
+encuesta$BSD <- columna_booleana
+
+# op2
+columna_booleana <- str_detect(encuesta$`OpSysPersonal use`, paste0("\\b", "based", "\\b"))
+encuesta$Linux_Based <- columna_booleana
+
+# op3
+columna_booleana <- str_detect(encuesta$`OpSysPersonal use`, paste0("\\b", "Windows", "\\b"))
+encuesta$Windows <- columna_booleana
+
+# op4
+columna_booleana <- str_detect(encuesta$`OpSysPersonal use`, paste0("\\b", "Subsystem", "\\b"))
+encuesta$Windows_for_Linux <- columna_booleana
+
+# op5
+columna_booleana <- str_detect(encuesta$`OpSysPersonal use`, paste0("\\b", "macOS", "\\b"))
+encuesta$Mac <- columna_booleana
+```
+
+SISTEMAS OPERATIVOS CON CONTEO DE USUARIOS
+
+```{r}
+# Creación de la tabla con los sistemas operativos
+tabla <- data.frame(`OpSysPersonal use` = c("BSD", "Linux-based", "Windows", "Windows Subsystem for Linux (WSL)", "macOS"),
+                    CantUsers = c(sum(encuesta$BSD == TRUE),
+                                  sum(encuesta$Linux_Based == TRUE),
+                                  sum(encuesta$Windows == TRUE),
+                                  sum(encuesta$Windows_for_Linux == TRUE),
+                                  sum(encuesta$Mac == TRUE))
+                    )
+
+print(tabla)
+
+```
+
+SISTEMAS OPERATIVOS BSD
+
+```{r}
+tablaBSD <- data.frame(`OpSysPersonal use` = "BSD",
+CantUsersMemory = sum(encuesta$BSD == TRUE & encuesta$Memoria == TRUE),
+CantUsersEmotional = sum(encuesta$BSD == TRUE & encuesta$Emotional == TRUE),
+CantUsersAnxiety = sum(encuesta$BSD == TRUE & encuesta$Anxiety == TRUE),
+CantUsersAutism = sum(encuesta$BSD == TRUE & encuesta$Autism == TRUE),
+CantUsersLearning = sum(encuesta$BSD == TRUE & encuesta$Learning == TRUE),
+Total = sum(encuesta$BSD == TRUE))
+
+print(tablaBSD)
+```
+
+SISTEMAS OPERATIVOS LINUX BASED
+
+```{r}
+tablaLinuxB <- data.frame(`OpSysPersonal use` = "Linux-based",
+CantUsersMemory = sum(encuesta$Linux_Based == TRUE & encuesta$Memoria == TRUE),
+CantUsersEmotional = sum(encuesta$Linux_Based == TRUE & encuesta$Emotional == TRUE),
+CantUsersAnxiety = sum(encuesta$Linux_Based == TRUE & encuesta$Anxiety == TRUE),
+CantUsersAutism = sum(encuesta$Linux_Based == TRUE & encuesta$Autism == TRUE),
+CantUsersLearning = sum(encuesta$Linux_Based == TRUE & encuesta$Learning == TRUE),
+Total = sum(encuesta$Linux_Based == TRUE))
+
+print(tablaLinuxB)
+```
+
+SISTEMAS OPERATIVOS WINDOWS
+
+```{r}
+tablaWindows <- data.frame(`OpSysPersonal use` = "Windows",
+CantUsersMemory = sum(encuesta$Windows == TRUE & encuesta$Memoria == TRUE),
+CantUsersEmotional = sum(encuesta$Windows == TRUE & encuesta$Emotional == TRUE),
+CantUsersAnxiety = sum(encuesta$Windows == TRUE & encuesta$Anxiety == TRUE),
+CantUsersAutism = sum(encuesta$Windows == TRUE & encuesta$Autism == TRUE),
+CantUsersLearning = sum(encuesta$Windows == TRUE & encuesta$Learning == TRUE),
+Total = sum(encuesta$Windows == TRUE))
+
+print(tablaWindows)
+```
+
+SISTEMAS OPERATIVOS Windows Subsystem for Linux (WSL)
+
+```{r}
+tablaWindowsLinux <- data.frame(`OpSysPersonal use` = "Windows_Linux",
+CantUsersMemory = sum(encuesta$Windows_for_Linux == TRUE & encuesta$Memoria == TRUE),
+CantUsersEmotional = sum(encuesta$Windows_for_Linux == TRUE & encuesta$Emotional == TRUE),
+CantUsersAnxiety = sum(encuesta$Windows_for_Linux == TRUE & encuesta$Anxiety == TRUE),
+CantUsersAutism = sum(encuesta$Windows_for_Linux == TRUE & encuesta$Autism == TRUE),
+CantUsersLearning = sum(encuesta$Windows_for_Linux == TRUE & encuesta$Learning == TRUE),
+Total = sum(encuesta$Windows_for_Linux == TRUE))
+
+print(tablaWindowsLinux)
+```
+
+SISTEMAS OPERATIVOS MAC
+
+```{r}
+tablaMac <- data.frame(`OpSysPersonal use` = "MacOS",
+CantUsersMemory = sum(encuesta$Mac == TRUE & encuesta$Memoria == TRUE),
+CantUsersEmotional = sum(encuesta$Mac == TRUE & encuesta$Emotional == TRUE),
+CantUsersAnxiety = sum(encuesta$Mac == TRUE & encuesta$Anxiety == TRUE),
+CantUsersAutism = sum(encuesta$Mac == TRUE & encuesta$Autism == TRUE),
+CantUsersLearning = sum(encuesta$Mac == TRUE & encuesta$Learning == TRUE),
+Total = sum(encuesta$Mac == TRUE))
+
+print(tablaMac)
+```
+
+UNIR TODOS EN UNA TABLA
+
+```{r}
+# Unir las tablas verticalmente
+tabla_final <- rbind(tablaBSD, tablaLinuxB, tablaWindows,tablaWindowsLinux,tablaMac)
+print(tabla_final)
+```
+
+GRAFICAR
+
+```{r}
+library(ggplot2)
+tabla_larga <- tidyr::gather(tabla_final, key = "MentalHealth", value = "Cantidad Total", -OpSysPersonal.use)
+
+tabla_larga <- tabla_larga[tabla_larga$MentalHealth != "Total", ]
+
+grafico <- ggplot(tabla_larga, aes(x = OpSysPersonal.use, y = `Cantidad Total`, fill = ifelse(MentalHealth != "Total", MentalHealth, ""))) +
+  geom_bar(stat = "identity") +
+  labs(x = "Sistema Operativo para uso profesional", y = "Cantidad Total de Personas", fill = "MentalHealth") +
+  ggtitle("Salud Mental vs. Sistemas Operativos") +
+  theme_minimal()
+
+print(grafico)
+
+```
+
+```{r}
+# Calcular el total de personas por sistema operativo
+tabla_final2 <- encuesta %>%
+  group_by(OpSysPersonal.use) %>%
+  summarise(TotalPersonas = n())
+
+# Crear una fila adicional en la tabla_final para representar el total
+fila_total <- tabla_final2 %>%
+  summarise(OpSysPersonal.use = "Total", TotalPersonas = sum(TotalPersonas))
+tabla_final <- bind_rows(tabla_final, fila_total)
+
+# Crear el gráfico
+grafico <- ggplot(tabla_final, aes(x = OpSysPersonal.use, y = TotalPersonas, fill = MentalHealth)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Sistema Operativo para uso profesional", y = "Cantidad Total de Personas", fill = "MentalHealth") +
+  ggtitle("Salud Mental vs. Sistemas Operativos") +
+  theme_minimal()
+
+print(grafico)
+
+```
