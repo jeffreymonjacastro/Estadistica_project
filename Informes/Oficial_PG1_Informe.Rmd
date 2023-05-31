@@ -1,16 +1,13 @@
 ---
 title: "Estudio sobre la relación del lenguaje de programación que usan los desarrolladores en su trabajo y su salud mental"
+author: "Grupo 7"
 output: 
   html_document:
-    css: styles.css
     toc: true
-    toc_float: true
-    toc_depth: 4
+    toc_float:
+      collapsed: false
+      smooth_scroll: true
 ---
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 
 ## Introducción
 
@@ -120,7 +117,7 @@ Nuestros datos se basarán en dos bases de datos:
 -   Survey_results (StackOverflow):
     -   Contiene información de una encuesta realizada a desarrolladores de todo el mundo relacionados a la experiencia de programación. Incluyen demografía, educación, puesto de trabajo, lenguaje de programación, satisfacción laboral, entre otros.
 
-```{r warning=FALSE }
+```{r warning=FALSE}
 library(readr)
 
 languages = read_csv("https://pldb.com/pldb.csv")

@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.335">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Estudio sobre la relación del lenguaje de programación que usan los desarrolladores en su trabajo y su salud mental</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="PG1_Informe_files/libs/clipboard/clipboard.min.js"></script>
+<script src="PG1_Informe_files/libs/quarto-html/quarto.js"></script>
+<script src="PG1_Informe_files/libs/quarto-html/popper.min.js"></script>
+<script src="PG1_Informe_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="PG1_Informe_files/libs/quarto-html/anchor.min.js"></script>
+<link href="PG1_Informe_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="PG1_Informe_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="PG1_Informe_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="PG1_Informe_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="PG1_Informe_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="PG1_Informe_files/libs/htmlwidgets-1.6.2/htmlwidgets.js"></script>
+<script src="PG1_Informe_files/libs/d3-3.3.8/d3.min.js"></script>
+<script src="PG1_Informe_files/libs/dagre-0.4.0/dagre-d3.min.js"></script>
+<link href="PG1_Informe_files/libs/mermaid-0.3.0/dist/mermaid.css" rel="stylesheet">
+<script src="PG1_Informe_files/libs/mermaid-0.3.0/dist/mermaid.slim.min.js"></script>
+<link href="PG1_Informe_files/libs/DiagrammeR-styles-0.2/styles.css" rel="stylesheet">
+<script src="PG1_Informe_files/libs/chromatography-0.1/chromatography.js"></script>
+<script src="PG1_Informe_files/libs/DiagrammeR-binding-1.0.9/DiagrammeR.js"></script>
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Estudio sobre la relación del lenguaje de programación que usan los desarrolladores en su trabajo y su salud mental</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="introducción" class="level2">
+<h2 class="anchored" data-anchor-id="introducción">Introducción</h2>
+<p>Hablar del mundo de la programación es adentrarse en un universo inmenso, lleno de posibilidades y retos. Sin embargo, si nuestro objetivo es adentrarnos en este mundo, debemos tomar en cuenta nuestra salud por encima de todo.</p>
+<section id="tema-delimitado" class="level3">
+<h3 class="anchored" data-anchor-id="tema-delimitado">Tema Delimitado:</h3>
+<ul>
+<li>Estudio sobre la relación del lenguaje de programación que usan los desarrolladores en su trabajo y su salud mental</li>
+</ul>
+</section>
+<section id="pregunta-de-investigación" class="level3">
+<h3 class="anchored" data-anchor-id="pregunta-de-investigación">Pregunta de investigación:</h3>
+<p>¿Cómo influye el lenguaje programación que se usa al trabajar en la salud mental de un programador?</p>
+<ul>
+<li>Variable dependiente: Salud Mental</li>
+<li>Variable independiente: Lenguajes de programación que se usan al trabajar</li>
+</ul>
+</section>
+<section id="hipótesis" class="level3">
+<h3 class="anchored" data-anchor-id="hipótesis">Hipótesis:</h3>
+<p>“A mayor popularidad del lenguaje de programación que utilice el desarrollador, tendrá una mejor salud mental en su vida diaria”</p>
+</section>
+<section id="relevancia-y-factibilidad-del-tema" class="level3">
+<h3 class="anchored" data-anchor-id="relevancia-y-factibilidad-del-tema">Relevancia y factibilidad del tema:</h3>
+<p><strong>Relevancia:</strong> - Actualmente se ve una preferencia enorme por las empresas en usar las nuevas tecnologías, por lo que si queremos enfocarnos en este rubro será de mucha utilidad saber cómo es que influye el lenguaje de programación que usan con la calidad de vida que tienen los desarrolladores.</p>
+<p><strong>Factibilidad:</strong> - Consideramos que el proyecto es viable ya que usamos bases de datos de fuentes confiables como Stackoverflow (la cual es una plataforma abierta y la base de datos resume información pública) y la otra de PLDB (un proyecto opensource creado por desarrolladores para la recolección de datos sobre lenguajes de programación)</p>
+<hr>
+</section>
+</section>
+<section id="planificación" class="level2">
+<h2 class="anchored" data-anchor-id="planificación">Planificación</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div class="DiagrammeR html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-75ce7303d16a985889e7" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-75ce7303d16a985889e7">{"x":{"diagram":"\ngantt\ndateFormat  YYYY-MM-DD\ntitle Diagrama de Gantt\n\nsection Main things\nPreparar PG01:first_1,2023-04-15, 3d\nEntrega PG01:first_2,2023-04-18, 2d\nPreparar PG02:first_3,2023-04-20, 11d\nEntrega PG02:first_4,2023-05-01, 2d\nPreparar PG03:first_5,2023-05-03, 21d\nEntrega PG03:first_6,2023-05-24, 2d\nInforme PG1:first_7,2023-05-26, 9d\nEntrega Informe:first_8, 2023-06-04,1d\n\nsection PG01\nDiagrama de Gantt:first_1, 2023-04-15, 12h\nDelimitar tema:first_2, after first_1, 12h\nVariables de analisis: first_3, after first_2, 6h\nLimpieza de la base de datos: first_4, after first_2, 12h\nAnalizar la factibilidad: first_5, after first_3, 1d\n\nsection PG02\nReplantear objetivos:first_6, 2023-04-20, 1d\nLimpieza de tablas:first_7, after first_6, 5d\nCorrección de variables:first_8, after first_7, 5d\n\nsection PG03\nAnálisis univariado:first_9, 2023-05-03, 12d\nAnálisis bivariado:first_10, 2023-05-10, 10d\nAnálisis multivariado:first_11, 2023-05-15, 7d\nEscribir análisis:first_12, after first_11, 2d\n\nsection Informe PG1\nCorrecciones:first_13, 2023-05-26, 3d\nUnion de PG0x:first_14, after first_13, 2d\nVerificar ortografía:first_15, after first_14, 2d\nInforme prolijo:first_16, after first_15, 2d\n\n\n\n"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<hr>
+</section>
+<section id="objetivos" class="level2">
+<h2 class="anchored" data-anchor-id="objetivos">Objetivos</h2>
+<section id="objetivo-principal" class="level3">
+<h3 class="anchored" data-anchor-id="objetivo-principal">Objetivo principal:</h3>
+<ol type="1">
+<li>Demostrar que la salud mental del programador depende, en parte, del lenguaje de programación que escojas para trabajar.</li>
+</ol>
+</section>
+<section id="objetivos-secundarios" class="level3">
+<h3 class="anchored" data-anchor-id="objetivos-secundarios">Objetivos secundarios:</h3>
+<ol start="2" type="1">
+<li><p>Demostrar que la popularidad de un lenguaje de programación no significa que trabajar con este brinde mayor satisfacción laboral.</p></li>
+<li><p>Encontrar una relación entre el acceso a información del lenguaje de programación escogido por el programador y su salud mental.</p></li>
+<li><p>Encontrar una relación entre el salario que brinda el lenguaje de programación que usan los desarrolladores con su salud mental.</p></li>
+</ol>
+<hr>
+</section>
+</section>
+<section id="datos" class="level2">
+<h2 class="anchored" data-anchor-id="datos">Datos</h2>
+<section id="procesos-de-recolección-de-datos" class="level3">
+<h3 class="anchored" data-anchor-id="procesos-de-recolección-de-datos">Procesos de recolección de datos:</h3>
+<p>Nuestros datos se basarán en dos bases de datos:</p>
+<ul>
+<li>Programming language database (PLDB):
+<ul>
+<li>Contiene información acerca de 4000 lenguajes de programación incluyendo su año de creación, el tipo (query, programación, etiquetado, etc), cantidad de usuarios, cantidad de trabajadores, entre otros.</li>
+</ul></li>
+<li>Survey_results (StackOverflow):
+<ul>
+<li>Contiene información de una encuesta realizada a desarrolladores de todo el mundo relacionados a la experiencia de programación. Incluyen demografía, educación, puesto de trabajo, lenguaje de programación, satisfacción laboral, entre otros.</li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>languages <span class="ot">=</span> <span class="fu">read_csv</span>(<span class="st">"https://pldb.com/pldb.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 4840 Columns: 356
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (119): title, type, id, creators, githubRepo, website, wikipedia, getSou...
+dbl  (49): appeared, rank, languageRank, factCount, lastActivity, exampleCou...
+lgl (188): isLanguage, hasComments, isOpenSource, hasSemanticIndentation, ha...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>encuesta <span class="ot">=</span> <span class="fu">read_csv</span>(<span class="st">"../db/upload_survey_results.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 32977 Columns: 16
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (15): MainBranch, Employment, RemoteWork, CodingActivities, DevType, Cou...
+dbl  (1): ConvertedCompYearly
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+</div>
+</section>
+<section id="variables-de-estudio-iniciales" class="level3">
+<h3 class="anchored" data-anchor-id="variables-de-estudio-iniciales">Variables de estudio iniciales</h3>
+<p>En resumen, en esta sección se registran todas las variables utilizadas a partir de las dos bases de datos debidamente prolijas, con el objetivo de comprender adecuadamente el procesamiento de la información. En un principio, hay un total de <code>variables</code> variables.</p>
+<section id="encuestas-de-stakoverflow" class="level4">
+<h4 class="anchored" data-anchor-id="encuestas-de-stakoverflow">Encuestas de Stakoverflow</h4>
+<table class="table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 26%">
+<col style="width: 24%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Nombre de la variable</th>
+<th>Tipo de variable</th>
+<th>Descripción</th>
+<th>Restricciones</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>MainBranch</td>
+<td>Categórica nominal</td>
+<td>Contiene información sobre el estado profesional del desarrollador</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td>Employment</td>
+<td>Categórica nominal</td>
+<td>El tipo de empleo que tiene le desarrollador</td>
+<td>separado por punto y coma</td>
+</tr>
+<tr class="odd">
+<td>RemoteWork</td>
+<td>Categórica nominal</td>
+<td>De que forma ejercen el trabajo remoto</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td>CodingActivities</td>
+<td>Categórica Nominal</td>
+<td>El modo en que ven a programación</td>
+<td>separada por punto y coma</td>
+</tr>
+<tr class="odd">
+<td>DevType</td>
+<td>Categórica Nominal</td>
+<td>Tipo de desarrollador, lista separada por comas</td>
+<td>separada por punto y coma</td>
+</tr>
+<tr class="even">
+<td>Country</td>
+<td>Categórica Nominal</td>
+<td>País del desarollador</td>
+<td>-</td>
+</tr>
+<tr class="odd">
+<td>EdLevel</td>
+<td>Categórica Nominal</td>
+<td>Info sobre el nivel de educación</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td>Currency</td>
+<td>Categórica Nominal</td>
+<td>El tipo de moneda que usan</td>
+<td>-</td>
+</tr>
+<tr class="odd">
+<td>ConvertedCompYearly</td>
+<td>Numérica Continua</td>
+<td>Cuanto ganan anualmente en dólares</td>
+<td>&gt;0</td>
+</tr>
+<tr class="even">
+<td>Mental Health</td>
+<td>Categórica Nominal</td>
+<td>Como considera que está su salud mental</td>
+<td>-</td>
+</tr>
+<tr class="odd">
+<td>Ethnicity</td>
+<td>Categórica Nominal</td>
+<td>Raza del desarrollador</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td>Gender</td>
+<td>Categórica Nominal</td>
+<td>Género</td>
+<td>man, woman y prefer not to say.</td>
+</tr>
+<tr class="odd">
+<td>Age</td>
+<td>Categórica Ordinal</td>
+<td>Edad</td>
+<td>+18 (Es un rango de edad)</td>
+</tr>
+<tr class="even">
+<td>OpSysProfessional use</td>
+<td>Categórica Nominal</td>
+<td>Sistema operativo que usan para trabajar profesionalmente</td>
+<td>separada por punto y coma</td>
+</tr>
+<tr class="odd">
+<td>OpSysPersonal use</td>
+<td>Categórica Nominal</td>
+<td>Sistema operativo que usan para ellos mismos</td>
+<td>separada por punto y coma</td>
+</tr>
+<tr class="even">
+<td>LanguagesHaveWorkWith</td>
+<td>Categótica Nominal</td>
+<td>Lista de los lenguajes que han usado</td>
+<td>separada por punto y coma</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="pldb-lenguajes-de-programación" class="level4">
+<h4 class="anchored" data-anchor-id="pldb-lenguajes-de-programación">PLDB Lenguajes de Programación</h4>
+<table class="table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 26%">
+<col style="width: 24%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Nombre de la variable</th>
+<th>Tipo de variable</th>
+<th>Descripción</th>
+<th>Restricciones</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Title</td>
+<td>Categórica Nominal</td>
+<td>Nombre original del lenguaje de programación</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td>Appeared</td>
+<td>Numérica discreta</td>
+<td>Año en donde apareció por primera vez el lenguaje de programación</td>
+<td>&gt;= 1945</td>
+</tr>
+<tr class="odd">
+<td>Rank</td>
+<td>Numérica discreta</td>
+<td>Un ranking hecho por PLDB</td>
+<td>&gt;=0</td>
+</tr>
+<tr class="even">
+<td>Type</td>
+<td>Categórica Nominal</td>
+<td>El tipo de lenguaje del que se trata</td>
+<td>Debe ser “pl” o “queryLanguage”</td>
+</tr>
+<tr class="odd">
+<td>numberOfJobs</td>
+<td>Numérica discreta</td>
+<td>Número de trabajos relacionados al lenguaje de programación</td>
+<td>&gt;0 (que sea entero)</td>
+</tr>
+<tr class="even">
+<td>numberOfUsers</td>
+<td>Numérica discreta</td>
+<td>Número de usuarios que usan el lenguaje</td>
+<td>&gt;10 (que sea entero)</td>
+</tr>
+<tr class="odd">
+<td>Country</td>
+<td>Categórica Nominal</td>
+<td>País de creación del lenguaje</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td>githubLanguage_repos</td>
+<td>Numérica discreta</td>
+<td>Cantidad de repositorios que existen en github con ese lenguaje</td>
+<td>&gt;1 (que sea entero)</td>
+</tr>
+<tr class="odd">
+<td>githubBigQuery_repos</td>
+<td>Numérica discreta</td>
+<td>Cantidad de repositorios que existen en BigQuery de Github</td>
+<td>&gt;1 (que sea entero)</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
