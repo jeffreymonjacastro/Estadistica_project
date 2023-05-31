@@ -672,3 +672,14 @@ grafico <- ggplot(tabla_final_completa, aes(x = OpSysPersonal.use, fill = Mental
 print(grafico)
 
 ```
+
+## Edad vs Salud Mental
+
+```{r}
+table(encuesta$Memoria)
+table(encuesta$Age)
+
+mosaicplot(table(encuesta$Age), table(encuesta$Memoria),
+           cex.axis = 0.6,
+           las= 2)
+```

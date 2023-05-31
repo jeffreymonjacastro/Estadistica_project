@@ -7,7 +7,7 @@ library(readr)
 library(dplyr)
 
 #Leer la base de datos
-encuesta = read_csv("../db/survey_results_public.csv")
+encuesta = read_csv("../db/upload_survey_results.csv")
 
 ```
 
