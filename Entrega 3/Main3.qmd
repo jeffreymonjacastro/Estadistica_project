@@ -1,29 +1,44 @@
 ---
-title: "Estudio sobre la relación del lenguaje de programación que usan los desarrolladores en su trabajo y su salud mental"
-author: "Grupo 7"
-output: 
+title: "Estudio sobre la relación entre el lenguaje de programación usado y la salud mental de los programadores de Stack Overflow"
+format: html
+editor: visual
+metadata:
+  css: "styles.css"
+output:
   html_document:
-    toc: true
-    toc_float:
-      collapsed: false
-      smooth_scroll: true
+    code_folding: hide
 ---
+
+------------------------------------------------------------------------
 
 ## Introducción
 
 Hablar del mundo de la programación es adentrarse en un universo inmenso, lleno de posibilidades y retos. Sin embargo, si nuestro objetivo es adentrarnos en este mundo, debemos tomar en cuenta nuestra salud por encima de todo.
 
-\### Relevancia e importancia
+### Tema Delimitado:
 
-Actualmente se ve una preferencia enorme por las empresas en usar las nuevas tecnologías, por lo que si queremos enfocarnos en este rubro será de mucha utilidad saber cómo es que influye el lenguaje de programación que usan con la calidad de vida que tienen los desarrolladores.
+-   La relación entre el lenguaje que usa una persona para trabajar y su salud mental.
 
-### Planificación y Factibilidad
+### Pregunta de investigación:
 
-Consideramos que el proyecto es viable ya que usamos bases de datos de fuentes confiables como Stackoverflow (la cual es una plataforma abierta y la base de datos resume información pública) y la otra de PLDB (un proyecto opensource creado por desarrolladores para la recolección de datos sobre lenguajes de programación)
+¿Cómo influye el lenguaje programación que se usa al trabajar en la salud mental de un programador?
 
-#### Planificación (Diagrama de Gantt)
+-   Variable dependiente: Salud Mental
+-   Variable independiente: Lenguajes de programación que se usan al trabajar
 
-Para entender el desarrollo del estudio hasta el momento, se muestra el siguiente **Diagrama de Gantt** con la planificación de las diferentes actividades y entregas del proyecto.
+### Hipótesis:
+
+"A mayor popularidad del lenguaje de programación que uses será mucho más probable tener un buen sueldo en un trabajo relacionado a las ciencias de la computación"
+
+### Relevancia y factibilidad del tema:
+
+**Relevancia:** - Actualmente se ve una preferencia enorme por las empresas en usar las nuevas tecnologías, por lo que si queremos enfocarnos en este rubro será de mucha utilidad saber cómo es que influyen nuestras preferencias al programar en nuestro sueldo.
+
+**Factibilidad:** - Consideramos que el proyecto es viable ya que usamos bases de datos de fuentes confiables como stackoverflow (la cual es una plataforma abierta y la base de datos resume información pública) y la otra de kaggle (la cual es supervisada por google).
+
+------------------------------------------------------------------------
+
+## Planificación
 
 ```{r warning=FALSE, echo=FALSE}
 
@@ -32,84 +47,67 @@ library(DiagrammeR)
 mermaid("
 gantt
 dateFormat  YYYY-MM-DD
-title Diagrama de Gantt
+title A Very Nice Gantt Diagram
 
 section Main things
-Preparar PG01:first_1,2023-04-15, 3d
-Entrega PG01:first_2,2023-04-18, 2d
-Preparar PG02:first_3,2023-04-20, 11d
-Entrega PG02:first_4,2023-05-01, 2d
-Preparar PG03:first_5,2023-05-03, 21d
-Entrega PG03:first_6,2023-05-24, 2d
-Informe PG1:first_7,2023-05-26, 9d
-Entrega Informe:first_8, 2023-06-04,1d
+Preparar PG01:first_1,2023-04-15,3d
+Entrega PG01:first_2,2023-04-18,1d
 
 section PG01
 Diagrama de Gantt:first_1, 2023-04-15, 12h
 Delimitar tema:first_2, after first_1, 12h
 Variables de analisis: first_3, after first_2, 6h
 Limpieza de la base de datos: first_4, after first_2, 12h
-Analizar la factibilidad: first_5, after first_3, 1d
+Analizar la factibilidad: first:5, after first_3, 6h
 
-section PG02
-Replantear objetivos:first_6, 2023-04-20, 1d
-Limpieza de tablas:first_7, after first_6, 5d
-Corrección de variables:first_8, after first_7, 5d
 
-section PG03
-Análisis univariado:first_9, 2023-05-03, 12d
-Análisis bivariado:first_10, 2023-05-10, 10d
-Análisis multivariado:first_11, 2023-05-15, 7d
-Escribir análisis:first_12, after first_11, 2d
-
-section Informe PG1
-Correcciones:first_13, 2023-05-26, 3d
-Union de PG0x:first_14, after first_13, 2d
-Verificar ortografía:first_15, after first_14, 2d
-Informe prolijo:first_16, after first_15, 2d
+section nothing
 ")
+
+
 ```
+
+------------------------------------------------------------------------
 
 ## Objetivos
 
-### Objetivo principal
+### Objetivo principal:
 
-Demostrar que la salud mental del programador depende, en parte, del lenguaje de programación que escojas para trabajar.
+1.  Demostrar que la salud mental depende, en parte, del lenguaje de programación que escojas para trabajar.
 
-### Objetivos secundarios
+#### Objetivos secundarios:
 
--   Demostrar que la popularidad de un lenguaje de programación no significa que trabajar con este brinde mayor satisfacción laboral.
+2.  Demostrar que la popularidad de un lenguaje de programación no significa que trabajar con este brinde mayor satisfacción laboral.
 
--   Encontrar una relación entre el acceso a información del lenguaje de programación escogido por el programador y su salud mental.
+3.  Encontrar una relación entre el acceso a información del lenguaje de programación escogido por el programador y su salud mental.
 
--   Encontrar una relación entre el salario que brinda el lenguaje de programación que usan los desarrolladores con su salud mental.
+4.  Encontrar una relación entre el lenguaje de programación que usan los desarrolladores con el salario que ganan.
 
--   Demostrar la relación entre el sistema operativo utilizado en el ámbito profesional y la salud mental de los individuos, y encontrar una posible asociación entre los problemas mentales y el tipo de sistema operativo.
+------------------------------------------------------------------------
 
 ## Datos
 
-### Recolección de datos
+### Procesos de recolección de datos:
 
 Nuestros datos se basarán en dos bases de datos:
 
--   Programming language database (PLDB):
-    -   Contiene información acerca de 4000 lenguajes de programación incluyendo su año de creación, el tipo (query, programación, etiquetado, etc), cantidad de usuarios, cantidad de trabajadores, entre otros.
+-   Programming language database (kaggle):
+    -   Contiene información acerca de 4000 lenguajes de programación incluyendo su año de creación, el tipo (query, programación, etiquetado, etc), cantidad de usuarios,
 -   Survey_results (StackOverflow):
     -   Contiene información de una encuesta realizada a desarrolladores de todo el mundo relacionados a la experiencia de programación. Incluyen demografía, educación, puesto de trabajo, lenguaje de programación, satisfacción laboral, entre otros.
 
-## Población, muestra y muestreo
+```{r warning=FALSE}
+library(readr)
 
-### Población
+#languages = read_csv("https://pldb.com/pldb.csv")
+encuesta = read_csv("db/survey_results_public.csv")
+```
 
-### Muestra
-
-### Muestreo
-
-## Variables de estudio iniciales
+### Variables de estudio iniciales
 
 En resumen, en esta sección se registran todas las variables utilizadas a partir de las dos bases de datos debidamente prolijas, con el objetivo de comprender adecuadamente el procesamiento de la información. En un principio, hay un total de `variables` variables.
 
-### Encuestas de Stakoverflow
+#### Encuestas de Stakoverflow
 
 | Nombre de la variable | Tipo de variable   | Descripción                                                        | Restricciones                   |
 |-----------------------|--------------------|--------------------------------------------------------------------|---------------------------------|
@@ -130,7 +128,7 @@ En resumen, en esta sección se registran todas las variables utilizadas a parti
 | OpSysPersonal use     | Categórica Nominal | Sistema operativo que usan para ellos mismos                       | separada por punto y coma       |
 | LanguagesHaveWorkWith | Categótica Nominal | Lista de los lenguajes que han usado                               | separada por punto y coma       |
 
-### PLDB Lenguajes de Programación
+#### PLDB Lenguajes de Programación
 
 | Nombre de la variable | Tipo de variable   | Descripción                                                       | Restricciones                   |
 |-----------------------|--------------------|-------------------------------------------------------------------|---------------------------------|
@@ -141,38 +139,42 @@ En resumen, en esta sección se registran todas las variables utilizadas a parti
 | numberOfJobs          | Numérica discreta  | Número de trabajos relacionados al lenguaje de programación       | \>0 (que sea entero)            |
 | numberOfUsers         | Numérica discreta  | Número de usuarios que usan el lenguaje                           | \>10 (que sea entero)           |
 | Country               | Categórica Nominal | País de creación del lenguaje                                     | \-                              |
-| githubLanguage_repos  | Numérica discreta  | Cantidad de repositorios que existen en github con ese lenguaje   | \>1 (que sea entero)            |
-| githubBigQuery_repos  | Numérica discreta  | Cantidad de repositorios que existen en BigQuery de Github        | \>1 (que sea entero)            |
 
-## Librerías
+### Filtered Databases
 
-### Carga de librerías
+-   Encuestas de Stack Overflow (33880 registros obtenidos de 73268)
 
-### Carga de datos
+    ```{r warning=FALSE, echo=FALSE}
+    library(readr)
+    library(dplyr)
 
-```{r warning=FALSE}
-library(readr)
+    #Filtrar datos
 
-languages = read_csv("https://pldb.com/pldb.csv")
-encuesta = read_csv("../db/upload_survey_results.csv")
-```
 
-## Limpieza de Datos
+    #borrar las filas que no queremos
+    datos = select(encuesta, MainBranch, Employment, RemoteWork, CodingActivities, DevType, Country, EdLevel, Currency, ConvertedCompYearly, MentalHealth, Ethnicity, Gender, Age, `OpSysPersonal use`, `OpSysProfessional use`, LanguageHaveWorkedWith)
 
-### Encuestas de Stakoverflow
+    datos = na.omit(datos)
 
-### PLDB Lenguajes de Programación
+    table(datos$Gender)
+    ```
 
-## Variables de estudio Finales
+    ```{r}
+    library(ggplot2)
+    countries = datos %>% select(Country) %>% group_by(Country) %>% summarize(Quantity = n()) %>% arrange(Quantity) %>% filter(Quantity >= 500)
 
-## Preguntas e Hipótesis
+    ggplot(countries, aes(x = reorder(Country, Quantity), y = Quantity)) +
+      geom_col() + xlab("Country with 500 or more participants") + ylab("Count") + theme(axis.text.x = element_text(size = 10))
+    ```
 
-## Análisis Descriptivo
+    ```{r}
+    library(ggplot2)
+    ages_salary = datos %>% select(Age, ConvertedCompYearly)
 
-### Análisis univariado
+    ggplot(ages_salary, aes(x = Age, y = ConvertedCompYearly))
 
-### Análisis bivariado
 
-### Análisis multivariado
 
-### Conclusiones Parciales
+    ```
+
+-   PLDB Lenguajes de programación
