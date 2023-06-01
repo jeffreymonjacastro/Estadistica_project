@@ -112,7 +112,7 @@ En resumen, en esta sección se registran todas las variables utilizadas a parti
 ### Encuestas de Stakoverflow
 
 | Nombre de la variable | Tipo de variable   | Descripción                                                        | Restricciones                   |
-|------------------|------------------|-------------------|------------------|
+|-----------------------|--------------------|--------------------------------------------------------------------|---------------------------------|
 | MainBranch            | Categórica nominal | Contiene información sobre el estado profesional del desarrollador | \-                              |
 | Employment            | Categórica nominal | El tipo de empleo que tiene le desarrollador                       | separado por punto y coma       |
 | RemoteWork            | Categórica nominal | De que forma ejercen el trabajo remoto                             | \-                              |
@@ -133,7 +133,7 @@ En resumen, en esta sección se registran todas las variables utilizadas a parti
 ### PLDB Lenguajes de Programación
 
 | Nombre de la variable | Tipo de variable   | Descripción                                                       | Restricciones                   |
-|------------------|------------------|-------------------|------------------|
+|-----------------------|--------------------|-------------------------------------------------------------------|---------------------------------|
 | Title                 | Categórica Nominal | Nombre original del lenguaje de programación                      | \-                              |
 | Appeared              | Numérica discreta  | Año en donde apareció por primera vez el lenguaje de programación | \>= 1945                        |
 | Rank                  | Numérica discreta  | Un ranking hecho por PLDB                                         | \>=0                            |

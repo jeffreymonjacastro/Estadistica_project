@@ -1,0 +1,84 @@
+---
+title: "Tests"
+format: html
+editor: visual
+---
+
+## Testing
+
+Limpiando la variable Salario
+
+```{r}
+summary(encuesta$ConvertedCompYearly)
+```
+
+```{r}
+encuesta %>%
+ filter(!(Employment %in% "Employed, full-time")) %>%
+ filter(ConvertedCompYearly >= 3611L & 
+ ConvertedCompYearly <= 790506L) %>%
+ ggplot() +
+  aes(x = ConvertedCompYearly) +
+  geom_density(adjust = 1L, fill = "#B8FFB8") +
+  labs(
+    x = "Salario anual en dolares",
+    y = "Densidad",
+    title = "Densidad Salarial"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+encuesta %>%
+ filter(ConvertedCompYearly >= 3611L & ConvertedCompYearly <= 758445L) %>%
+ ggplot() +
+  aes(x = ConvertedCompYearly, y = Memoria) +
+  geom_boxplot(fill = "#FFD6D6") +
+  theme_minimal()
+```
+
+```{r}
+encuesta %>%
+ filter(ConvertedCompYearly >= 3611L & ConvertedCompYearly <= 758445L) %>%
+ ggplot() +
+  aes(x = ConvertedCompYearly, y = Emotional) +
+  geom_boxplot(fill = "#E3FFD6") +
+  theme_minimal()
+```
+
+```{r}
+encuesta %>%
+ filter(ConvertedCompYearly >= 3611L & ConvertedCompYearly <= 758445L) %>%
+ ggplot() +
+  aes(x = ConvertedCompYearly, y = Anxiety) +
+  geom_boxplot(fill = "#D6D9FF") +
+  theme_minimal()
+```
+
+```{r}
+encuesta %>%
+ filter(ConvertedCompYearly >= 3611L & ConvertedCompYearly <= 758445L) %>%
+ ggplot() +
+  aes(x = ConvertedCompYearly, y = Autism) +
+  geom_boxplot(fill = "#FFD6F8") +
+  theme_minimal()
+```
+
+```{r}
+encuesta %>%
+ filter(ConvertedCompYearly >= 3611L & ConvertedCompYearly <= 255222L) %>%
+ ggplot() +
+  aes(x = ConvertedCompYearly, y = Learning) +
+  geom_boxplot(fill = "#FFD6F8") +
+  theme_minimal()
+```
+
+```{r}
+table(encuesta$Learning)
+```
+
+```{r}
+boxplot(encuesta$ConvertedCompYearly[encuesta$ConvertedCompYearly < 500000] ~ encuesta$Learning, 
+        horizontal = TRUE
+        )
+```
