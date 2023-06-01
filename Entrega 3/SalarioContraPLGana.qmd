@@ -1,0 +1,79 @@
+# Salario vs PL
+
+------------------------------------------------------------------------
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(readr)
+
+promedios <- c()
+
+
+#iterar por cada lenguaje de programación
+for (current in language){
+  this <- encuesta[encuesta[current] == TRUE,]
+	promedio <- mean(this$ConvertedCompYearly[language == current])
+	promedios[current] <- promedio
+}
+
+
+#ordenar promedios de mayor a menor
+
+promedios <- data.frame(promedios)
+
+promedios
+
+porcentajeshelper <- promedios$promedios[1:15]
+nombres <- rownames(promedios)[1:15]
+
+barplot(porcentajeshelper, 
+	main="Promedio", 
+	xlab="Porcentaje de personas", 
+  #degradado lineal de azul oscuro a azul
+  col=colorRampPalette(c("darkblue", "blue"))(15),
+	horiz=TRUE,
+	las=1,
+	#nombres
+	names.arg=nombres,
+	cex.names=0.5,
+	cex.axis=0.5,
+
+	)
+
+
+promedios <- c()
+
+
+#iterar por cada lenguaje de programación
+for (current in language){
+  this <- encuesta[encuesta[current] == TRUE,]
+	promedio <- median(this$ConvertedCompYearly[language == current])
+	promedios[current] <- promedio
+}
+
+
+
+promedios <- data.frame(promedios)
+
+promedios
+
+porcentajeshelper <- promedios$promedios[1:15]
+nombres <- rownames(promedios)[1:15]
+
+barplot(porcentajeshelper, 
+	main="Promedio", 
+	xlab="Porcentaje de personas", 
+  #degradado lineal de azul oscuro a azul
+  col=colorRampPalette(c("darkblue", "blue"))(15),
+	horiz=TRUE,
+	las=1,
+	#nombres
+	names.arg=nombres,
+	cex.names=0.5,
+	cex.axis=0.5,
+
+	)
+
+
+```
