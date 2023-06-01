@@ -84,6 +84,8 @@ Demostrar que la salud mental del programador depende, en parte, del lenguaje de
 
 -   Encontrar una relación entre el salario que brinda el lenguaje de programación que usan los desarrolladores con su salud mental.
 
+-   Demostrar la relación entre el sistema operativo utilizado en el ámbito profesional y la salud mental de los individuos, y encontrar una posible asociación entre los problemas mentales y el tipo de sistema operativo.
+
 ## Datos
 
 ### Recolección de datos
