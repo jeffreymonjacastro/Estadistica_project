@@ -13,7 +13,6 @@ output:
 
 Hablar del mundo de la programación es adentrarse en un universo inmenso, lleno de posibilidades y retos. Sin embargo, si nuestro objetivo es adentrarnos en este mundo, debemos tomar en cuenta nuestra salud por encima de todo.
 
-hola
 ### Relevancia e importancia
 
 Actualmente se ve una preferencia enorme por las empresas en usar las nuevas tecnologías, por lo que si queremos enfocarnos en este rubro será de mucha utilidad saber cómo es que influye el lenguaje de programación que usan con la calidad de vida que tienen los desarrolladores.
@@ -84,6 +83,8 @@ Demostrar que la salud mental del programador depende, en parte, del lenguaje de
 -   Encontrar una relación entre el acceso a información del lenguaje de programación escogido por el programador y su salud mental.
 
 -   Encontrar una relación entre el salario que brinda el lenguaje de programación que usan los desarrolladores con su salud mental.
+
+-   
 
 ## Datos
 
