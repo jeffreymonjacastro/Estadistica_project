@@ -13,7 +13,11 @@ output:
 
 Hablar del mundo de la programación es adentrarse en un universo inmenso, lleno de posibilidades y retos. Sin embargo, si nuestro objetivo es adentrarnos en este mundo, debemos tomar en cuenta nuestra salud por encima de todo.
 
+<<<<<<< HEAD
 ### Relevancia e importancia
+=======
+\### Relevancia e importancia
+>>>>>>> 5836aad8f30d029b3d8a2faf95bd200a37c38d41
 
 Actualmente se ve una preferencia enorme por las empresas en usar las nuevas tecnologías, por lo que si queremos enfocarnos en este rubro será de mucha utilidad saber cómo es que influye el lenguaje de programación que usan con la calidad de vida que tienen los desarrolladores.
 
