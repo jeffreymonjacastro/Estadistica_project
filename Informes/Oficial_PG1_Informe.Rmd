@@ -146,8 +146,6 @@ En resumen, en esta sección se registran todas las variables utilizadas a parti
 
 ## Librerías
 
-Hola
-
 ### Carga de librerías
 
 ### Carga de datos

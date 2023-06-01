@@ -53,6 +53,14 @@ Para esta primera instancia analizaremos primero las variables numéricas, de es
 encuesta = encuesta[encuesta$ConvertedCompYearly > 3600,]
 ```
 
+BOXPLOT
+
+```{r}
+boxplot(encuesta$ConvertedCompYearly,
+        horizontal = TRUE
+        )
+```
+
 Filtrar por los géneros. En la encuesta se permite elegir géneros de varios tipos. Sin embargo, para fines de estudio nos limitaremos a hombre o mujeres, más obviaremos a los no binarios, entre otros.
 
 ```{r}
