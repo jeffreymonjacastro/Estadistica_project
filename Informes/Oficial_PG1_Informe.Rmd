@@ -150,7 +150,7 @@ En resumen, en esta sección se registran todas las variables utilizadas a parti
 
 ### Carga de datos
 
-```{r warning=FALSE}
+```{r warning=FALSE, include=FALSE}
 library(readr)
 
 languages = read_csv("https://pldb.com/pldb.csv")
@@ -159,7 +159,7 @@ encuesta = read_csv("../db/upload_survey_results.csv")
 
 ## Limpieza de Datos
 
-### Encuestas de Stakoverflow
+### Encuestas de Stackoverflow
 
 ### PLDB Lenguajes de Programación
 
