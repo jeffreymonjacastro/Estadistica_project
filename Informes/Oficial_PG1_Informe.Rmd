@@ -215,6 +215,7 @@ Para esta primera instancia analizaremos primero las variables numéricas, de es
 ```{r}
 #minimo unos 3600 dolares anuales
 encuesta = encuesta[encuesta$ConvertedCompYearly > 3600,]
+encuesta = encuesta[encuesta$ConvertedCompYearly < 150000,]
 ```
 
 Filtrar por los géneros. En la encuesta se permite elegir géneros de varios tipos. Sin embargo, para fines de estudio nos limitaremos a hombre o mujeres, más obviaremos a los no binarios, entre otros.
@@ -979,7 +980,27 @@ Rápidamente notaremos que son los lenguajes "poco problemáticos" (Java, C++, M
 
 Pero parémonos a analizar un momento y pensemos, ¿es la popularidad lo que está definiendo que un lenguaje sea "problemático", es decir, afecte negativamente en la salud mental de un desarrollador? O por otro lado, ¿es un lenguaje popular porque puede ser calificado como **"poco problemático"**?
 
-Aún no podemos sacar conclusiones sobre si existe una relación clara entre la popularidad del lenguaje y su efecto en la salud mental, faltarían analizar otros factores que veremos ahora mismo.
+```{r}
+languages %>% arrange(desc(N_Trabajos)) -> OrdenTrabajos
+select(OrdenTrabajos, Nombre, N_Trabajos) %>% arrange(Nombre)
+```
+
+```{r}
+barplot(OrdenTrabajos$N_Trabajos, 
+        names.arg = OrdenTrabajos$Nombre,
+        col = "blue",
+        main = "Cantidad de trabajados por Lenguaje",
+        xlab = "Lenguajes de programación",
+        ylab = "N° trabajados",
+        cex.names = 0.6,
+        ylim = c(0,250000),
+        las = 2
+        )
+```
+
+Si analizamos el número de trabajos por lenguaje notaremos la misma **tendencia** que se presentó en el de popularidad. Es natural puesto que si un lenguaje es más popular ha de tener mayor cantidad de trabajos y viceversa.
+
+Aún es demasiado temprano para sacar conclusiones sobre si existe una relación clara entre la popularidad del lenguaje y su efecto en la salud mental, faltarían analizar otros factores que veremos ahora mismo.
 
 ### ¿Existe una relación entre el acceso a información relevante sobre un lenguaje de programación y la salud mental de los programadores que lo utilizan?
 
@@ -988,7 +1009,187 @@ El acceso a la información, o la cantidad de documentación que existe sobre ci
 Analizaremos el siguiente gráfico:
 
 ```{r}
+languages %>% arrange(desc(Github_repos)) -> OrdenGithubrep
+select(OrdenGithubrep, Nombre, Github_repos) %>% arrange((Nombre))
+```
 
+```{r}
+barplot(OrdenGithubrep$Github_repos, 
+        names.arg = OrdenGithubrep$Nombre,
+        col = "red",
+        main = "Cantidad de repositorios en Github por Lenguaje",
+        xlab = "Lenguajes de programación",
+        ylab = "N° Repositorios en Github",
+        cex.names = 0.6,
+        cex.axis = 0.7,
+        ylim = c(0,20000000),
+        las = 2
+        )
+```
+
+```{r}
+languages %>% arrange(desc(BigQuery_repos)) -> OrdenBigQueryrep
+select(OrdenBigQueryrep, Nombre, BigQuery_repos) %>% arrange((Nombre))
+```
+
+```{r}
+barplot(OrdenBigQueryrep$BigQuery_repos, 
+        names.arg = OrdenBigQueryrep$Nombre,
+        col = "green",
+        main = "Cantidad de repositorios en BigQuery por Lenguaje",
+        xlab = "Lenguajes de programación",
+        ylab = "N° Repositorios en BigQuery",
+        cex.names = 0.6,
+        cex.axis = 0.7,
+        ylim = c(0,1200000),
+        las = 2
+        )
+
+```
+
+Analizando los gráficos notaremos que son los lenguajes a los que clasificamos como **"poco problemáticos"** son los que presentan mayor número de repositorios disponibles (C++ y Java).
+
+Por otro lado, notaremos que son justo los lenguajes **"problematicos"** los que presentan muchisimo menos número (por no decir cero) de repositorios (Erlang, Lua, SAS, Crystal).
+
+Con este análisis la visión es distinta. Si lo vemos en conjunto con el de popularidad podríamos decir que es natural que los lenguajes más populares tengan mayor cantidad de contenido disponible en la web. Entonces notaremos una transitividad:
+
+> Mayor popularidad del lenguaje -\> Mayor cantidad de repositorios -\> Menos "problemáticos"
+>
+> Menor popularidad del lenguaje -\> Menor cantidad de repositorios -\> Más "problemáticos"
+
+### ¿Hay una relación entre el salario asociado a un lenguaje de programación y la salud mental de los programadores que lo utilizan?
+
+Pero no solo es la popularidad o la cantidad de información acerca del lenguaje los que pueden ser factores que afecten a la salud mental del desarrollador. También podemos analizar el salario medio de cada lenguaje y ver como este afecta a la salud mental del desarrollador.
+
+```{r}
+promedios <- c()
+
+language <- encuesta %>%
+  separate_rows(LanguageHaveWorkedWith, sep = ";") %>%
+  group_by(LanguageHaveWorkedWith) %>%
+  summarize() %>%
+  pull()
+
+#iterar por cada lenguaje de programación
+for (current in language){
+  this <- encuesta[encuesta[current] == TRUE,]
+	promedio <- mean(this$ConvertedCompYearly[language == current])
+	promedios[current] <- promedio
+}
+
+
+#ordenar promedios de mayor a menor
+
+promedios <- sort(promedios, decreasing = TRUE)
+
+promedios <- data.frame(promedios)
+
+promedios
+
+porcentajeshelper <- promedios$promedios[1:15]
+nombres <- rownames(promedios)[1:15]
+
+barplot(porcentajeshelper, 
+	main="Promedio", 
+	xlab="Salario Promedio", 
+  #degradado lineal de azul oscuro a azul
+  col=colorRampPalette(c("darkgreen", "green"))(15),
+	horiz=TRUE,
+	las=1,
+	#nombres
+	names.arg=nombres,
+	cex.names=0.5,
+	cex.axis=0.5,
+
+	)
+
+
+medianas <- c()
+
+
+#iterar por cada lenguaje de programación
+for (current in language){
+  this <- encuesta[encuesta[current] == TRUE,]
+	promedio <- median(this$ConvertedCompYearly[language == current])
+	medianas[current] <- promedio
+}
+
+
+medianas <- sort(medianas, decreasing = TRUE)
+medianas <- data.frame(medianas)
+
+
+
+medianas 
+
+porcentajeshelper <- medianas$medianas[1:15]
+nombres <- rownames(medianas)[1:15]
+
+
+barplot(porcentajeshelper, 
+	main="Medianas", 
+	xlab="Salario Medianas", 
+  #degradado lineal de azul oscuro a azul
+  #color verde pastel
+  col=colorRampPalette(c("darkgreen", "green"))(15),
+	horiz=TRUE,
+	las=1,
+	#nombres
+	names.arg=nombres,
+	cex.names=0.5,
+	cex.axis=0.5,
+
+	)
+
+```
+
+Es curioso ver como los lenguaje más populares tienen un salario promedio mucho menor que el de los pocos populares.
+
+Así mismo, parece ser que los lenguajes que identificamos como "problemáticos" tienen un mayor salario. Veamos como se comporta cada problema mental con respecto al salario.
+
+```{r}
+encuesta %>%
+ filter(ConvertedCompYearly >= 3611 & ConvertedCompYearly <= 758445) %>%
+ ggplot() +
+  aes(x = ConvertedCompYearly, y = Memoria) +
+  geom_boxplot(fill = "#FFD6D6") +
+  theme_minimal()
+```
+
+```{r}
+encuesta %>%
+ filter(ConvertedCompYearly >= 3611L & ConvertedCompYearly <= 758445L) %>%
+ ggplot() +
+  aes(x = ConvertedCompYearly, y = Emotional) +
+  geom_boxplot(fill = "#E3FFD6") +
+  theme_minimal()
+```
+
+```{r}
+encuesta %>%
+ filter(ConvertedCompYearly >= 3611L & ConvertedCompYearly <= 758445L) %>%
+ ggplot() +
+  aes(x = ConvertedCompYearly, y = Anxiety) +
+  geom_boxplot(fill = "#D6D9FF") +
+  theme_minimal()
+```
+
+```{r}
+encuesta %>%
+ filter(ConvertedCompYearly >= 3611L & ConvertedCompYearly <= 758445L) %>%
+ ggplot() +
+  aes(x = ConvertedCompYearly, y = Autism) +
+  geom_boxplot(fill = "#FFD6F8") +
+  theme_minimal()
+```
+
+```{r}
+encuesta %>%
+ filter(ConvertedCompYearly >= 3611L & ConvertedCompYearly <= 255222L) %>%
+ ggplot() +
+  aes(x = ConvertedCompYearly, y = Learning) +
+  geom_boxplot(fill = "#FFD6F8") +
+  theme_minimal()
 ```
 
 ### Conclusiones Parciales

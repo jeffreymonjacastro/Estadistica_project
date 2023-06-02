@@ -9,6 +9,11 @@ library(readr)
 
 promedios <- c()
 
+language <- encuesta %>%
+  separate_rows(LanguageHaveWorkedWith, sep = ";") %>%
+  group_by(LanguageHaveWorkedWith) %>%
+  summarize() %>%
+  pull()
 
 #iterar por cada lenguaje de programación
 for (current in language){
@@ -29,7 +34,7 @@ nombres <- rownames(promedios)[1:15]
 
 barplot(porcentajeshelper, 
 	main="Promedio", 
-	xlab="Porcentaje de personas", 
+	xlab="Salario Promedio", 
   #degradado lineal de azul oscuro a azul
   col=colorRampPalette(c("darkblue", "blue"))(15),
 	horiz=TRUE,
@@ -42,28 +47,29 @@ barplot(porcentajeshelper,
 	)
 
 
-promedios <- c()
+medianas <- c()
 
 
 #iterar por cada lenguaje de programación
 for (current in language){
   this <- encuesta[encuesta[current] == TRUE,]
 	promedio <- median(this$ConvertedCompYearly[language == current])
-	promedios[current] <- promedio
+	medianas[current] <- promedio
 }
 
 
 
-promedios <- data.frame(promedios)
+medianas <- data.frame(medianas)
 
-promedios
+medianas
 
-porcentajeshelper <- promedios$promedios[1:15]
-nombres <- rownames(promedios)[1:15]
+porcentajeshelper <- medianas$medianas[1:15]
+nombres <- rownames(medianas)[1:15]
+
 
 barplot(porcentajeshelper, 
-	main="Promedio", 
-	xlab="Porcentaje de personas", 
+	main="Medianas", 
+	xlab="Salario Medianas", 
   #degradado lineal de azul oscuro a azul
   col=colorRampPalette(c("darkblue", "blue"))(15),
 	horiz=TRUE,
@@ -74,6 +80,5 @@ barplot(porcentajeshelper,
 	cex.axis=0.5,
 
 	)
-
 
 ```
