@@ -1,5 +1,5 @@
 ---
-title: "Estudio sobre la relación del lenguaje de programación que usan los desarrolladores en su trabajo y su salud mental"
+title: "Estudio sobre la relación entre las tecnologías que usan los desarrolladores en su trabajo y su salud mental"
 author: "Grupo 7"
 output: 
   html_document:
@@ -13,7 +13,7 @@ output:
 
 Hablar del mundo de la programación es adentrarse en un universo inmenso, lleno de posibilidades y retos. Sin embargo, si nuestro objetivo es adentrarnos en este mundo, debemos tomar en cuenta nuestra salud por encima de todo.
 
-\### Relevancia e importancia
+### Relevancia e importancia
 
 Actualmente se ve una preferencia enorme por las empresas en usar las nuevas tecnologías, por lo que si queremos enfocarnos en este rubro será de mucha utilidad saber cómo es que influye el lenguaje de programación que usan con la calidad de vida que tienen los desarrolladores.
 
@@ -74,11 +74,11 @@ Informe prolijo:first_16, after first_15, 2d
 
 ### Objetivo principal
 
-Demostrar que la salud mental del programador depende, en parte, del lenguaje de programación que escojas para trabajar.
+Demostrar que la salud mental del programador depende, en parte, del lenguaje de programación que escoja para trabajar.
 
 ### Objetivos secundarios
 
--   Demostrar que la popularidad de un lenguaje de programación no significa que trabajar con este brinde mayor satisfacción laboral.
+-   Demostrar que la popularidad de un lenguaje de programación no significa que trabajar con este brinde un mejor estado de salud mental.
 
 -   Encontrar una relación entre el acceso a información del lenguaje de programación escogido por el programador y su salud mental.
 
@@ -148,10 +148,18 @@ En resumen, en esta sección se registran todas las variables utilizadas a parti
 
 ### Carga de librerías
 
-### Carga de datos
-
 ```{r warning=FALSE}
 library(readr)
+library(dplyr)
+library(readr)
+library(ggplot2)
+library(tidyverse)
+library(stringr)
+```
+
+### Carga de datos
+
+```{r warning=FALSE, include=FALSE}
 
 languages = read_csv("https://pldb.com/pldb.csv")
 encuesta = read_csv("../db/upload_survey_results.csv")
@@ -310,13 +318,11 @@ for (i in 1:nrow(dataframe)){
 ```
 
 ### Limpieza de "survey results"
+>>>>>>> main
 
 -   Encuestas de Stack Overflow (33880 registros obtenidos de 73268)
 
 ```{r warning=FALSE, echo=FALSE}
-library(readr)
-library(dplyr)
-
 #Leer la base de datos
 encuesta = read_csv("../db/upload_survey_results.csv")
 
@@ -327,7 +333,6 @@ encuesta = read_csv("../db/upload_survey_results.csv")
 Revisaremos cuantos casos completos hay
 
 ```{r}
-
 #complete cases
 table(complete.cases(encuesta))
 ```
@@ -335,7 +340,6 @@ table(complete.cases(encuesta))
 Observamos que parece que ninguna observación esta completa. HORROR! Sin embargo mejor enfoquémonos en las variables que queremos analizar y revisemos de nuevo.
 
 ```{r}
-
 #borrar las filas que no queremos
 encuesta = select(encuesta, MainBranch, Employment, RemoteWork, CodingActivities, DevType, Country, EdLevel, Currency, ConvertedCompYearly, MentalHealth, Ethnicity, Gender, Age, `OpSysPersonal use`, `OpSysProfessional use`, LanguageHaveWorkedWith)
 
@@ -362,6 +366,7 @@ Para esta primera instancia analizaremos primero las variables numéricas, de es
 ```{r}
 #minimo unos 3600 dolares anuales
 encuesta = encuesta[encuesta$ConvertedCompYearly > 3600,]
+encuesta = encuesta[encuesta$ConvertedCompYearly < 150000,]
 ```
 
 Filtrar por los géneros. En la encuesta se permite elegir géneros de varios tipos. Sin embargo, para fines de estudio nos limitaremos a hombre o mujeres, más obviaremos a los no binarios, entre otros.
@@ -381,8 +386,6 @@ encuesta = encuesta[encuesta$Age != "Prefer not to say",]
 Con respecto a la parte de la encuesta donde se definen los estados de salud mental, eliminaremos las que son escritas ya que son muy dificiles de analizar y no representan una gran parte de la muestra.
 
 ```{r}
-library(stringr)
-
 #si tiene la palabra: "in your own words" eliminarla,
 #ya que no es una respuesta válida
 encuesta = encuesta[!str_detect(encuesta$MentalHealth, "in your own words"),]
@@ -402,10 +405,6 @@ Listo, eso es todo lo que querremos filtrar en la base de datos.
 Ahora crearemos columnas para cada lenguaje de programación, esto con el fin de poder hacer un análisis más sencillo.
 
 ```{r}
-library(tidyverse)
-library(stringr)
-
-
 # Separar los lenguajes y crear columnas separadas
 language <- encuesta %>%
   separate_rows(LanguageHaveWorkedWith, sep = ";") %>%
@@ -487,20 +486,720 @@ columna_booleana <- str_detect(encuesta$`OpSysPersonal use`, paste0("\\b", "macO
 encuesta$Mac <- columna_booleana
 ```
 
-### Encuestas de Stakoverflow
-
-### PLDB Lenguajes de Programación
-
 ## Variables de estudio Finales
 
 ## Preguntas e Hipótesis
 
+#### Pregunta 1:
+
+-   ¿Existe una relación entre el lenguaje de programación utilizado por un desarrollador y su salud mental?
+
+Hipótesis:
+
+-   La elección del lenguaje de programación utilizado por un desarrollador influye en su salud mental. Se espera que algunos lenguajes de programación estén asociados con niveles más altos de estrés o frustración, mientras que otros puedan promover una mayor satisfacción y bienestar.
+
+#### Pregunta 2:
+
+-   ¿Hay alguna relación entre la popularidad de un lenguaje de programación y la satisfacción laboral de los programadores que lo utilizan?
+
+Hipótesis:
+
+-   No existe una correlación significativa entre la popularidad de un lenguaje de programación y la satisfacción laboral de los programadores. Se espera que la satisfacción laboral esté influenciada por otros factores, como la dificultad del lenguaje, el acceso a información que este brinda, entre otros.
+
+#### Pregunta 3:
+
+-   ¿Existe una relación entre el acceso a información relevante sobre un lenguaje de programación y la salud mental de los programadores que lo utilizan?
+
+Hipótesis:
+
+-   El acceso a información adecuada sobre un lenguaje de programación está relacionado con una mejor salud mental de los programadores. Se espera que los desarrolladores que tienen un fácil acceso a recursos de aprendizaje y documentación de su lenguaje de programación experimenten mejores estados mentales.
+
+#### Pregunta 4:
+
+-   ¿Hay una relación entre el salario asociado a un lenguaje de programación y la salud mental de los programadores que lo utilizan?
+
+Hipótesis:
+
+-   El salario ofrecido por un lenguaje de programación no tiene una influencia directa en la salud mental de los programadores. Se espera que otros factores, como el ambiente laboral, tengan un impacto más significativo en la salud mental de los desarrolladores que el salario.
+
+#### Pregunta 5:
+
+-   ¿Existe una relación entre el sistema operativo utilizado en el trabajo y la salud mental de los individuos?
+
+Hipótesis:
+
+-   Se espera que sistema operativo utilizado en el ámbito profesional se relacione de forma debil con la salud mental de los individuos.
+
 ## Análisis Descriptivo
 
-### Análisis univariado
+### ¿Existe una relación entre el lenguaje de programación utilizado por un desarrollador y su salud mental?
 
-### Análisis bivariado
+Para responder a esta pregunta utilizaremos los siguientes gráficos:
 
-### Análisis multivariado
+#### Salud mental vs. Tecnologías de desarrollo
+
+Vamos a crear un gráfico de barras por cada problema mental identificado. En el cuál pondremos una barra por cada lenguaje de programación
+
+Recordemos que nuestros datos principales se llaman "encuesta"
+
+> ##### Variables necesarias:
+
+```{r}
+#seleccionar todos los registros con Memoria = True
+
+memoria <- filter(encuesta, Memoria == TRUE)
+ansiedad <- filter(encuesta, Anxiety == TRUE)
+emocional <- filter(encuesta, Emotional == TRUE)
+autismo <- filter(encuesta, Autism == TRUE)
+aprendizaje <- filter(encuesta, Learning == TRUE)
+
+
+language <- encuesta %>%
+  separate_rows(LanguageHaveWorkedWith, sep = ";") %>%
+  group_by(LanguageHaveWorkedWith) %>%
+  summarize() %>%
+  pull()
+
+```
+
+#### Memoria:
+
+> ##### Tabla de frecuencias:
+
+```{r}
+
+porcentajes <- c()
+
+
+#iterar por cada lenguaje de programación
+for (current in language){
+	cantidad = nrow(memoria[memoria[[current]] == TRUE, ])
+	cantidadTotal = nrow(encuesta[encuesta[[current]] == TRUE, ])
+	porcentajes[current] <- cantidad/cantidadTotal
+}
+
+
+#ordenar porcentajes de mayor a menor
+porcentajes <- sort(porcentajes, decreasing = TRUE)
+
+#mostrar tabla en formato de tabla
+porcentajes = data.frame(porcentajes)
+
+porcentajes
+```
+
+> ##### Gráfico de barras, porcentaje de personas que sufre usando una tecnología:
+
+```{r}
+
+porcentajeshelper <- porcentajes$porcentajes[1:15]
+nombres <- rownames(porcentajes)[1:15]
+
+#plotear porcentajes en grafico de barras de lado
+
+barplot(porcentajeshelper, 
+	main="% Personas que sufren de problemas de Memoria", 
+	xlab="Porcentaje de personas", 
+  #degradado lineal de azul oscuro a azul
+  col=colorRampPalette(c("darkblue", "blue"))(15),
+	xlim = c(0,0.25),
+	horiz=TRUE,
+	las=1,
+	#nombres
+	names.arg=nombres,
+	cex.names=0.5,
+	cex.axis=0.5,
+
+	)
+
+
+porcentajeshelper <- porcentajes$porcentajes[25:40]
+nombres <- rownames(porcentajes)[25:40]
+
+#plotear porcentajes en grafico de barras de lado
+
+barplot(porcentajeshelper, 
+	main="% Personas que sufren de problemas de Memoria", 
+	xlab="Porcentaje de personas", 
+  #degradado lineal de azul oscuro a azul
+  col=colorRampPalette(c("darkblue", "blue"))(15),
+	xlim = c(0,0.25),
+	horiz=TRUE,
+	las=1,
+	#nombres
+	names.arg=nombres,
+	cex.names=0.5,
+	cex.axis=0.5,
+
+	)
+```
+
+#### Ansiedad
+
+> ##### Tabla de frecuencias:
+
+```{r}
+
+porcentajes <- c()
+
+
+#iterar por cada lenguaje de programación
+for (current in language){
+	cantidad = nrow(ansiedad[ansiedad[[current]] == TRUE, ])
+	cantidadTotal = nrow(encuesta[encuesta[[current]] == TRUE, ])
+	porcentajes[current] <- cantidad/cantidadTotal
+}
+
+
+#ordenar porcentajes de mayor a menor
+porcentajes <- sort(porcentajes, decreasing = TRUE)
+
+#mostrar tabla en formato de tabla
+porcentajes = data.frame(porcentajes)
+
+porcentajes
+```
+
+> ##### Gráfico de barras, porcentaje de personas que sufre usando una tecnología:
+
+```{r}
+
+porcentajeshelper <- porcentajes$porcentajes[1:15]
+nombres <- rownames(porcentajes)[1:15]
+
+#plotear porcentajes en grafico de barras de lado
+
+barplot(porcentajeshelper, 
+	main="% Personas que sufren de problemas de Ansiedad", 
+	xlab="Porcentaje de personas", 
+  #degradado lineal de azul oscuro a azul
+  col=colorRampPalette(c("darkblue", "blue"))(15),
+	xlim = c(0,0.16),
+	horiz=TRUE,
+	las=1,
+	#nombres
+	names.arg=nombres,
+	cex.names=0.5,
+	cex.axis=0.5,
+
+	)
+
+
+porcentajeshelper <- porcentajes$porcentajes[25:40]
+nombres <- rownames(porcentajes)[25:40]
+
+#plotear porcentajes en grafico de barras de lado
+
+barplot(porcentajeshelper, 
+	main="% Personas que sufren de problemas de Ansiedad", 
+	xlab="Porcentaje de personas", 
+  #degradado lineal de azul oscuro a azul
+  col=colorRampPalette(c("darkblue", "blue"))(15),
+	xlim = c(0,0.16),
+
+	horiz=TRUE,
+	las=1,
+	#nombres
+	names.arg=nombres,
+	cex.names=0.5,
+	cex.axis=0.5,
+
+	)
+```
+
+#### Emocional:
+
+> ##### Tabla de frecuencias:
+
+```{r}
+
+porcentajes <- c()
+
+
+#iterar por cada lenguaje de programación
+for (current in language){
+	cantidad = nrow(emocional[emocional[[current]] == TRUE, ])
+	cantidadTotal = nrow(encuesta[encuesta[[current]] == TRUE, ])
+	porcentajes[current] <- cantidad/cantidadTotal
+}
+
+
+#ordenar porcentajes de mayor a menor
+porcentajes <- sort(porcentajes, decreasing = TRUE)
+
+#mostrar tabla en formato de tabla
+porcentajes = data.frame(porcentajes)
+
+porcentajes
+```
+
+> ##### Gráfico de barras, porcentaje de personas que sufre usando una tecnología:
+
+```{r}
+
+porcentajeshelper <- porcentajes$porcentajes[1:15]
+nombres <- rownames(porcentajes)[1:15]
+
+#plotear porcentajes en grafico de barras de lado
+
+barplot(porcentajeshelper, 
+	main="% Personas que sufren de problemas de Emocionales", 
+	xlab="Porcentaje de personas", 
+  #degradado lineal de azul oscuro a azul
+  col=colorRampPalette(c("darkblue", "blue"))(15),
+	xlim = c(0,0.15),
+	horiz=TRUE,
+	las=1,
+	#nombres
+	names.arg=nombres,
+	cex.names=0.5,
+	cex.axis=0.5,
+
+	)
+
+
+
+porcentajeshelper <- porcentajes$porcentajes[25:40]
+nombres <- rownames(porcentajes)[25:40]
+
+#plotear porcentajes en grafico de barras de lado
+
+barplot(porcentajeshelper, 
+	main="% Personas que sufren de problemas de Emocionales", 
+	xlab="Porcentaje de personas", 
+  #degradado lineal de azul oscuro a azul
+  col=colorRampPalette(c("darkblue", "blue"))(15),
+	xlim = c(0,0.15),
+	horiz=TRUE,
+	las=1,
+	#nombres
+	names.arg=nombres,
+	cex.names=0.5,
+	cex.axis=0.5,
+
+	)
+```
+
+#### Autismo
+
+> ##### Tabla de frecuencias:
+
+```{r}
+
+porcentajes <- c()
+
+
+#iterar por cada lenguaje de programación
+for (current in language){
+	cantidad = nrow(autismo[autismo[[current]] == TRUE, ])
+	cantidadTotal = nrow(encuesta[encuesta[[current]] == TRUE, ])
+	porcentajes[current] <- cantidad/cantidadTotal
+}
+
+
+#ordenar porcentajes de mayor a menor
+porcentajes <- sort(porcentajes, decreasing = TRUE)
+
+#mostrar tabla en formato de tabla
+porcentajes = data.frame(porcentajes)
+
+porcentajes
+```
+
+> ##### Gráfico de barras, porcentaje de personas que sufre usando una tecnología:
+
+```{r}
+
+porcentajeshelper <- porcentajes$porcentajes[1:15]
+nombres <- rownames(porcentajes)[1:15]
+
+#plotear porcentajes en grafico de barras de lado
+
+barplot(porcentajeshelper, 
+	main="% Personas que sufren de problemas de Autismo", 
+	xlab="Porcentaje de personas", 
+  #degradado lineal de azul oscuro a azul
+  col=colorRampPalette(c("darkblue", "blue"))(15),
+	xlim = c(0,0.1),
+	horiz=TRUE,
+	las=1,
+	#nombres
+	names.arg=nombres,
+	cex.names=0.5,
+	cex.axis=0.5,
+
+	)
+
+
+
+porcentajeshelper <- porcentajes$porcentajes[25:40]
+nombres <- rownames(porcentajes)[25:40]
+
+#plotear porcentajes en grafico de barras de lado
+
+barplot(porcentajeshelper, 
+	main="% Personas que sufren de problemas de Autismo", 
+	xlab="Porcentaje de personas", 
+  #degradado lineal de azul oscuro a azul
+  col=colorRampPalette(c("darkblue", "blue"))(15),
+	xlim = c(0,0.1),
+
+	horiz=TRUE,
+	las=1,
+	#nombres
+	names.arg=nombres,
+	cex.names=0.5,
+	cex.axis=0.5,
+
+	)
+```
+
+#### Aprendizaje
+
+> ##### Tabla de frecuencias:
+
+```{r}
+
+porcentajes <- c()
+
+
+#iterar por cada lenguaje de programación
+for (current in language){
+	cantidad = nrow(aprendizaje[aprendizaje[[current]] == TRUE, ])
+	cantidadTotal = nrow(encuesta[encuesta[[current]] == TRUE, ])
+	porcentajes[current] <- cantidad/cantidadTotal
+}
+
+
+#ordenar porcentajes de mayor a menor
+porcentajes <- sort(porcentajes, decreasing = TRUE)
+
+#mostrar tabla en formato de tabla
+porcentajes = data.frame(porcentajes)
+
+porcentajes
+```
+
+##### Gráfico de barras, porcentaje de personas que sufre usando una tecnología:
+
+```{r}
+
+porcentajeshelper <- porcentajes$porcentajes[1:15]
+nombres <- rownames(porcentajes)[1:15]
+
+#plotear porcentajes en grafico de barras de lado
+
+barplot(porcentajeshelper, 
+	main="% Personas que sufren de problemas de Aprendizaje", 
+	xlab="Porcentaje de personas", 
+  #degradado lineal de azul oscuro a azul
+  col=colorRampPalette(c("darkblue", "blue"))(15),
+
+	xlim = c(0,0.1),
+	
+	horiz=TRUE,
+	las=1,
+	#nombres
+	names.arg=nombres,
+	cex.names=0.5,
+	cex.axis=0.5,
+
+	)
+
+
+porcentajeshelper <- porcentajes$porcentajes[25:40]
+nombres <- rownames(porcentajes)[25:40]
+
+#plotear porcentajes en grafico de barras de lado
+
+barplot(porcentajeshelper, 
+	main="% Personas que sufren de problemas de Aprendizaje", 
+	xlab="Porcentaje de personas", 
+  #degradado lineal de azul oscuro a azul
+  col=colorRampPalette(c("darkblue", "blue"))(15),
+
+  xlim = c(0,0.1),
+	
+	horiz=TRUE,
+	las=1,
+	#nombres
+	names.arg=nombres,
+	cex.names=0.5,
+	cex.axis=0.5,
+	
+
+	)
+
+```
+
+De estos gráficos podemos identificar distintos lenguajes que generan problemas a los desarrolladores.
+
+Tipos de problemas mentales:
+
+-   Aprendizaje
+
+    -   Entre las personas que sufren de problemas de aprendizaje, podemos identificar como principales a los siguientes lenguajes: **APL, SAS y LUA**.
+
+-   Autismo
+
+    -   Entre las personas que sufren problemas de autismo, podemos identificar como principales a los siguientes lenguajes: **Crystal, Lua, Julia y SAS.**
+
+-   Emocionales
+
+    -   Entre las personas que sufren problemas emocionales, podemos identificar como principales a **Erlang, Lua, SAS y Haskell.**
+
+-   Ansiedad
+
+    -   En cuanto a los problemas de ansiedad: **SAS, Lua y Ruby.**
+
+-   Memoria
+
+    -   Finalmente, en cuanto a las personas con problemas de memoria, podemos identificar a los siguientes lenguajes: **Erlang, Crystal y Lua.**
+
+Resulta evidente la repetición de ciertos lenguajes en todos los tipos de problemas mentales, de los cuales destacan **SAS, Erlang, Crystal y Lua.** Dichos lenguajes parecen ser los más problematicos. Mientras que los menos problemáticos parecen ser lenguajes como **Java, C++ o MATLAB**.
+
+Podemos pensar entonces que el lenguaje de programación si afecta de cierta forma al estado mental de una persona ya sea por su complejidad, falta de información u otros factores. La relación se hace presente puesto que podemos separar a lenguajes "**problemáticos" (que producen mayor cantidad de problemas mentales)** de lenguajes **"poco problemáticos" (que producen una cantidad baja de problemas mentales)**.
+
+Prontamente observaremos las causas por las que estos lenguajes son más "problemáticos".
+
+### ¿Hay alguna relación entre la popularidad de un lenguaje de programación y la satisfacción laboral de los programadores que lo utilizan?
+
+Para esto analizaremos los datos de los lenguajes de programación. Veremos entonces la lista de lenguajes más populares y compararemos.
+
+```{r}
+languages %>% arrange(desc(N_Usuarios)) -> OrdenUsuarios
+select(OrdenUsuarios, Nombre, N_Usuarios) %>% arrange(Nombre)
+
+barplot(OrdenUsuarios$N_Usuarios, 
+        names.arg = OrdenUsuarios$Nombre,
+        col = "pink",
+        main = "Cantidad de usuarios por Lenguaje",
+        xlab = "Lenguajes de programación",
+        ylab = "N° usuarios",
+        cex.names = 0.6,
+        cex.axis = 0.7,
+        ylim = c(0,8000000),
+        las = 2
+        )
+
+```
+
+Entonces busquemos nuestros lenguajes más "problemáticos" y los "poco problemáticos" en base a su popularidad.
+
+Rápidamente notaremos que son los lenguajes "poco problemáticos" (Java, C++, MATLAB) los que gozan de los primeros puestos en cuanto a popularidad se trata, por otro lado a los que calificamos como "problemáticos" se encuentran en puestos bajos (SAS, Lua, Erlang, Crystal).
+
+Pero parémonos a analizar un momento y pensemos, ¿es la popularidad lo que está definiendo que un lenguaje sea "problemático", es decir, afecte negativamente en la salud mental de un desarrollador? O por otro lado, ¿es un lenguaje popular porque puede ser calificado como **"poco problemático"**?
+
+```{r}
+languages %>% arrange(desc(N_Trabajos)) -> OrdenTrabajos
+select(OrdenTrabajos, Nombre, N_Trabajos) %>% arrange(Nombre)
+```
+
+```{r}
+barplot(OrdenTrabajos$N_Trabajos, 
+        names.arg = OrdenTrabajos$Nombre,
+        col = "blue",
+        main = "Cantidad de trabajados por Lenguaje",
+        xlab = "Lenguajes de programación",
+        ylab = "N° trabajados",
+        cex.names = 0.6,
+        ylim = c(0,250000),
+        las = 2
+        )
+```
+
+Si analizamos el número de trabajos por lenguaje notaremos la misma **tendencia** que se presentó en el de popularidad. Es natural puesto que si un lenguaje es más popular ha de tener mayor cantidad de trabajos y viceversa.
+
+Aún es demasiado temprano para sacar conclusiones sobre si existe una relación clara entre la popularidad del lenguaje y su efecto en la salud mental, faltarían analizar otros factores que veremos ahora mismo.
+
+### ¿Existe una relación entre el acceso a información relevante sobre un lenguaje de programación y la salud mental de los programadores que lo utilizan?
+
+El acceso a la información, o la cantidad de documentación que existe sobre cierto lenguaje podría influir significativamente en la popularidad y la salud mental de un programador.
+
+Analizaremos el siguiente gráfico:
+
+```{r}
+languages %>% arrange(desc(Github_repos)) -> OrdenGithubrep
+select(OrdenGithubrep, Nombre, Github_repos) %>% arrange((Nombre))
+```
+
+```{r}
+barplot(OrdenGithubrep$Github_repos, 
+        names.arg = OrdenGithubrep$Nombre,
+        col = "red",
+        main = "Cantidad de repositorios en Github por Lenguaje",
+        xlab = "Lenguajes de programación",
+        ylab = "N° Repositorios en Github",
+        cex.names = 0.6,
+        cex.axis = 0.7,
+        ylim = c(0,20000000),
+        las = 2
+        )
+```
+
+```{r}
+languages %>% arrange(desc(BigQuery_repos)) -> OrdenBigQueryrep
+select(OrdenBigQueryrep, Nombre, BigQuery_repos) %>% arrange((Nombre))
+```
+
+```{r}
+barplot(OrdenBigQueryrep$BigQuery_repos, 
+        names.arg = OrdenBigQueryrep$Nombre,
+        col = "green",
+        main = "Cantidad de repositorios en BigQuery por Lenguaje",
+        xlab = "Lenguajes de programación",
+        ylab = "N° Repositorios en BigQuery",
+        cex.names = 0.6,
+        cex.axis = 0.7,
+        ylim = c(0,1200000),
+        las = 2
+        )
+
+```
+
+Analizando los gráficos notaremos que son los lenguajes a los que clasificamos como **"poco problemáticos"** son los que presentan mayor número de repositorios disponibles (C++ y Java).
+
+Por otro lado, notaremos que son justo los lenguajes **"problematicos"** los que presentan muchisimo menos número (por no decir cero) de repositorios (Erlang, Lua, SAS, Crystal).
+
+Con este análisis la visión es distinta. Si lo vemos en conjunto con el de popularidad podríamos decir que es natural que los lenguajes más populares tengan mayor cantidad de contenido disponible en la web. Entonces notaremos una transitividad:
+
+> Mayor popularidad del lenguaje -\> Mayor cantidad de repositorios -\> Menos "problemáticos"
+>
+> Menor popularidad del lenguaje -\> Menor cantidad de repositorios -\> Más "problemáticos"
+
+### ¿Hay una relación entre el salario asociado a un lenguaje de programación y la salud mental de los programadores que lo utilizan?
+
+Pero no solo es la popularidad o la cantidad de información acerca del lenguaje los que pueden ser factores que afecten a la salud mental del desarrollador. También podemos analizar el salario medio de cada lenguaje y ver como este afecta a la salud mental del desarrollador.
+
+```{r}
+promedios <- c()
+
+language <- encuesta %>%
+  separate_rows(LanguageHaveWorkedWith, sep = ";") %>%
+  group_by(LanguageHaveWorkedWith) %>%
+  summarize() %>%
+  pull()
+
+#iterar por cada lenguaje de programación
+for (current in language){
+  this <- encuesta[encuesta[current] == TRUE,]
+	promedio <- mean(this$ConvertedCompYearly[language == current])
+	promedios[current] <- promedio
+}
+
+
+#ordenar promedios de mayor a menor
+
+promedios <- sort(promedios, decreasing = TRUE)
+
+promedios <- data.frame(promedios)
+
+promedios
+
+porcentajeshelper <- promedios$promedios[1:15]
+nombres <- rownames(promedios)[1:15]
+
+barplot(porcentajeshelper, 
+	main="Promedio", 
+	xlab="Salario Promedio", 
+  #degradado lineal de azul oscuro a azul
+  col=colorRampPalette(c("darkgreen", "green"))(15),
+	horiz=TRUE,
+	las=1,
+	#nombres
+	names.arg=nombres,
+	cex.names=0.5,
+	cex.axis=0.5,
+
+	)
+
+
+medianas <- c()
+
+
+#iterar por cada lenguaje de programación
+for (current in language){
+  this <- encuesta[encuesta[current] == TRUE,]
+	promedio <- median(this$ConvertedCompYearly[language == current])
+	medianas[current] <- promedio
+}
+
+
+medianas <- sort(medianas, decreasing = TRUE)
+medianas <- data.frame(medianas)
+
+
+
+medianas 
+
+porcentajeshelper <- medianas$medianas[1:15]
+nombres <- rownames(medianas)[1:15]
+
+
+barplot(porcentajeshelper, 
+	main="Medianas", 
+	xlab="Salario Medianas", 
+  #degradado lineal de azul oscuro a azul
+  #color verde pastel
+  col=colorRampPalette(c("darkgreen", "green"))(15),
+	horiz=TRUE,
+	las=1,
+	#nombres
+	names.arg=nombres,
+	cex.names=0.5,
+	cex.axis=0.5,
+
+	)
+
+```
+
+Es curioso ver como los lenguaje más populares tienen un salario promedio mucho menor que el de los pocos populares.
+
+Así mismo, parece ser que los lenguajes que identificamos como "problemáticos" tienen un mayor salario. Veamos como se comporta cada problema mental con respecto al salario.
+
+```{r}
+encuesta %>%
+ filter(ConvertedCompYearly >= 3611 & ConvertedCompYearly <= 758445) %>%
+ ggplot() +
+  aes(x = ConvertedCompYearly, y = Memoria) +
+  geom_boxplot(fill = "#FFD6D6") +
+  theme_minimal()
+```
+
+```{r}
+encuesta %>%
+ filter(ConvertedCompYearly >= 3611L & ConvertedCompYearly <= 758445L) %>%
+ ggplot() +
+  aes(x = ConvertedCompYearly, y = Emotional) +
+  geom_boxplot(fill = "#E3FFD6") +
+  theme_minimal()
+```
+
+```{r}
+encuesta %>%
+ filter(ConvertedCompYearly >= 3611L & ConvertedCompYearly <= 758445L) %>%
+ ggplot() +
+  aes(x = ConvertedCompYearly, y = Anxiety) +
+  geom_boxplot(fill = "#D6D9FF") +
+  theme_minimal()
+```
+
+```{r}
+encuesta %>%
+ filter(ConvertedCompYearly >= 3611L & ConvertedCompYearly <= 758445L) %>%
+ ggplot() +
+  aes(x = ConvertedCompYearly, y = Autism) +
+  geom_boxplot(fill = "#FFD6F8") +
+  theme_minimal()
+```
+
+```{r}
+encuesta %>%
+ filter(ConvertedCompYearly >= 3611L & ConvertedCompYearly <= 255222L) %>%
+ ggplot() +
+  aes(x = ConvertedCompYearly, y = Learning) +
+  geom_boxplot(fill = "#FFD6F8") +
+  theme_minimal()
+```
 
 ### Conclusiones Parciales

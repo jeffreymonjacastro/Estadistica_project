@@ -1,0 +1,159 @@
+---
+title: "Tests"
+format: html
+editor: visual
+---
+
+## Testing
+
+Limpiando la variable Salario
+
+```{r}
+summary(encuesta$ConvertedCompYearly)
+```
+
+Arreglar Salario
+
+```{r}
+encuesta <- encuesta[encuesta$ConvertedCompYearly < 400000, ]
+```
+
+```{r}
+boxplot(encuesta$ConvertedCompYearly,
+        horizontal = TRUE)
+```
+
+```{r}
+q1 <- quantile(encuesta$ConvertedCompYearly, 0.25, type = 3, na.rm = TRUE)
+q3 <- quantile(encuesta$ConvertedCompYearly, 0.75, type = 3, na.rm = TRUE)
+
+ric <- q3 - q1
+ric
+```
+
+```{r}
+IQR(encuesta$ConvertedCompYearly)
+```
+
+```{r}
+q3 + 1.5 * ric
+table(encuesta$ConvertedCompYearly > q3 + 1.5 * ric)
+```
+
+```{r}
+encuesta %>%
+ filter(!(Employment %in% "Employed, full-time")) %>%
+ filter(ConvertedCompYearly >= 3611L & 
+ ConvertedCompYearly <= 790506L) %>%
+ ggplot() +
+  aes(x = ConvertedCompYearly) +
+  geom_density(adjust = 1L, fill = "#B8FFB8") +
+  labs(
+    x = "Salario anual en dolares",
+    y = "Densidad",
+    title = "Densidad Salarial"
+  ) +
+  theme_minimal()
+```
+
+Gráfiquita
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(readr)
+
+promedios <- c()
+
+
+#iterar por cada lenguaje de programación
+for (current in language){
+this <- encuesta[encuesta[current] == TRUE,]
+promedio <- mean(this$ConvertedCompYearly[language == current])
+promedios[current] <- promedio
+}
+
+
+#ordenar promedios de mayor a menor
+promedios <- sort(promedios, decreasing = TRUE)
+
+promedios <- data.frame(promedios)
+
+promedios
+
+porcentajeshelper <- promedios$promedios[1:15]
+nombres <- rownames(promedios)[1:15]
+
+barplot(porcentajeshelper, 
+	main="Promedio", 
+	xlab="Porcentaje de personas", 
+  #degradado lineal de azul oscuro a azul
+  col=colorRampPalette(c("darkblue", "blue"))(15),
+	horiz=TRUE,
+	las=1,
+	#nombres
+	names.arg=nombres,
+	cex.names=0.5,
+	cex.axis=0.5,
+
+	)
+```
+
+```{r}
+encuesta %>%
+ filter(ConvertedCompYearly >= 3611 & ConvertedCompYearly <= 758445) %>%
+ ggplot() +
+  aes(x = ConvertedCompYearly, y = Memoria) +
+  geom_boxplot(fill = "#FFD6D6") +
+  theme_minimal()
+```
+
+```{r}
+encuesta %>%
+ filter(ConvertedCompYearly >= 3611L & ConvertedCompYearly <= 758445L) %>%
+ ggplot() +
+  aes(x = ConvertedCompYearly, y = Emotional) +
+  geom_boxplot(fill = "#E3FFD6") +
+  theme_minimal()
+```
+
+```{r}
+encuesta %>%
+ filter(ConvertedCompYearly >= 3611L & ConvertedCompYearly <= 758445L) %>%
+ ggplot() +
+  aes(x = ConvertedCompYearly, y = Anxiety) +
+  geom_boxplot(fill = "#D6D9FF") +
+  theme_minimal()
+```
+
+```{r}
+encuesta %>%
+ filter(ConvertedCompYearly >= 3611L & ConvertedCompYearly <= 758445L) %>%
+ ggplot() +
+  aes(x = ConvertedCompYearly, y = Autism) +
+  geom_boxplot(fill = "#FFD6F8") +
+  theme_minimal()
+```
+
+```{r}
+table(encuesta$Autism)
+```
+
+```{r}
+encuesta %>%
+ filter(ConvertedCompYearly >= 3611L & ConvertedCompYearly <= 255222L) %>%
+ ggplot() +
+  aes(x = ConvertedCompYearly, y = Learning) +
+  geom_boxplot(fill = "#FFD6F8") +
+  theme_minimal()
+```
+
+```{r}
+table(encuesta$Learning)
+```
+
+```{r}
+boxplot(encuesta$ConvertedCompYearly[encuesta$ConvertedCompYearly < 500000] ~ encuesta$Learning, 
+        horizontal = TRUE
+        )
+```

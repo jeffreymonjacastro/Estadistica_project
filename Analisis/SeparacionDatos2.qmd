@@ -145,7 +145,8 @@ barplot((data.matrix(Tabla_promedio)),
         col = colorRampPalette(c("orange", "darkorange"))(5),
         main = "Salario vs salud mental", 
         xlab = "Salud Mental", 
-        ylab = "Promedio del salario")
+        ylab = "Promedio del salario",
+        ylim= c(150000,250000))
 ```
 
 ### Salud mental vs. Tecnologías de desarrollo
