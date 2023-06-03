@@ -112,7 +112,7 @@ En resumen, en esta sección se registran todas las variables utilizadas a parti
 ### Encuestas de Stakoverflow
 
 | Nombre de la variable   | Tipo de variable   | Descripción                                                        | Restricciones                   |
-|----------------|----------------|-----------------------|----------------|
+|-----------------|-----------------|----------------------|-----------------|
 | MainBranch              | Categórica nominal | Contiene información sobre el estado profesional del desarrollador | \-                              |
 | Employment              | Categórica nominal | El tipo de empleo que tiene le desarrollador                       | separado por punto y coma       |
 | RemoteWork              | Categórica nominal | De que forma ejercen el trabajo remoto                             | \-                              |
@@ -133,7 +133,7 @@ En resumen, en esta sección se registran todas las variables utilizadas a parti
 ### PLDB Lenguajes de Programación
 
 | Nombre de la variable | Tipo de variable   | Descripción                                                       | Restricciones                   |
-|-----------------|-----------------|-----------------------|-----------------|
+|-----------------|-----------------|---------------------|-----------------|
 | Title                 | Categórica Nominal | Nombre original del lenguaje de programación                      | \-                              |
 | Appeared              | Numérica discreta  | Año en donde apareció por primera vez el lenguaje de programación | \>= 1945                        |
 | Rank                  | Numérica discreta  | Un ranking hecho por PLDB                                         | \>=0                            |
@@ -148,7 +148,7 @@ En resumen, en esta sección se registran todas las variables utilizadas a parti
 
 ### Carga de librerías
 
-```{r warning=FALSE}
+```{r warning=FALSE, echo = TRUE}
 library(readr)
 library(dplyr)
 library(readr)
@@ -159,7 +159,7 @@ library(stringr)
 
 ### Carga de datos
 
-```{r warning=FALSE, include=FALSE}
+```{r warning=FALSE}
 
 planguages <- read_csv("../db/Programming_languages.csv")
 encuesta <- read_csv("../db/upload_survey_results.csv")
@@ -188,7 +188,6 @@ Vamos a eliminar las columnas que no necesitemos:
 
 ```{r}
 planguages <- select(planguages, title, appeared, type, rank, numberOfJobs, numberOfUsers, country, githubLanguage.repos, githubBigQuery.repos)
-
 ```
 
 Renombraremos las variables para una mejor manipulación:
@@ -252,7 +251,7 @@ planguages$BigQuery_repos[planguages$BigQuery_repos == 0] <- NA
 Usaremos algunos lenguajes de programación, para que coincida con los usados por los usuarios de Stackoverflow
 
 ```{r}
-language <- c('APL', 'Assembly', 'Bash', 'C', 'C#', 'C++', 'Clojure', 'COBOL', 'Crystal', 'Dart', 'Delphi', 'Elixir', 'Erlang', 'F#', 'Fortran', 'Go', 'Groovy', 'Haskell', 'HTML','CSS', 'Java', 'JavaScript', 'Julia', 'Kotlin', 'LISP', 'Lua', 'MATLAB', 'OCaml', 'Objective-C', 'Perl', 'PHP', 'PowerShell', 'Python', 'R', 'Ruby', 'Rust', 'SAS', 'Scala', 'Solidity', 'SQL', 'Swift', 'TypeScript', 'VBA')
+languages <- c('APL', 'Assembly', 'Bash', 'C', 'C#', 'C++', 'Clojure', 'COBOL', 'Crystal', 'Dart', 'Delphi', 'Elixir', 'Erlang', 'F#', 'Fortran', 'Go', 'Groovy', 'Haskell', 'HTML','CSS', 'Java', 'JavaScript', 'Julia', 'Kotlin', 'LISP', 'Lua', 'MATLAB', 'OCaml', 'Objective-C', 'Perl', 'PHP', 'PowerShell', 'Python', 'R', 'Ruby', 'Rust', 'SAS', 'Scala', 'Solidity', 'SQL', 'Swift', 'TypeScript', 'VBA')
 ```
 
 ```{r}
@@ -263,12 +262,17 @@ agregar_fila <- function(fila) {
 }
 
 for (i in 1:nrow(planguages)){
-  if (planguages$Nombre[i] %in% language){
+  if (planguages$Nombre[i] %in% languages){
     fila <- subset(planguages, Nombre == planguages$Nombre[i])
     df <- rbind(df, fila)
   }
 }
 
+planguages <- df
+rm(df)
+rm(fila)
+rm(i)
+rm(agregar_fila)
 ```
 
 ### Limpieza de "Survey Results"
@@ -278,7 +282,7 @@ for (i in 1:nrow(planguages)){
 ### Borrado de columnas innecesarias
 
 ```{r}
-encuesta = select(encuesta, MainBranch, Employment, RemoteWork, CodingActivities, DevType, Country, EdLevel, Currency, ConvertedCompYearly, MentalHealth, Ethnicity, Gender, Age, `OpSysPersonal use`, `OpSysProfessional use`, LanguageHaveWorkedWith)
+encuesta <- select(encuesta, MainBranch, Employment, RemoteWork, CodingActivities, DevType, Country, EdLevel, Currency, ConvertedCompYearly, MentalHealth, Ethnicity, Gender, Age, `OpSysPersonal use`, `OpSysProfessional use`, LanguageHaveWorkedWith)
 ```
 
 Renombraremos las variables para una mejor manipulación:
@@ -299,7 +303,7 @@ table(complete.cases(encuesta))
 Solo 34672 casos están completos. Seleccionaremos justo estos.
 
 ```{r}
-encuesta = na.omit(encuesta)
+encuesta <- na.omit(encuesta)
 ```
 
 ### Limpieza de Datos no útiles
@@ -307,14 +311,14 @@ encuesta = na.omit(encuesta)
 Para la variable `salario`
 
 ```{r}
-encuesta = encuesta[encuesta$Salary > 3600,]
-encuesta = encuesta[encuesta$Salary < 150000,]
+encuesta <- encuesta[encuesta$Salary > 3600,]
+encuesta <- encuesta[encuesta$Salary < 150000,]
 ```
 
 Filtrar por los géneros. En la encuesta se permite elegir géneros de varios tipos. Sin embargo, para fines de estudio nos limitaremos a hombre o mujeres, más obviaremos a los no binarios, entre otros.
 
 ```{r}
-encuesta = encuesta[encuesta$Gender == "Man" | encuesta$Gender == "Woman",]
+encuesta <- encuesta[encuesta$Gender == "Man" | encuesta$Gender == "Woman",]
 
 table(encuesta$Gender)
 ```
@@ -322,32 +326,26 @@ table(encuesta$Gender)
 Con respecto a las edades, eliminaremos a los que no prefirieron responder.
 
 ```{r}
-encuesta = encuesta[encuesta$Age != "Prefer not to say",]
+encuesta <- encuesta[encuesta$Age != "Prefer not to say",]
 ```
 
-Con respecto a la parte de la encuesta donde se definen los estados de salud mental, eliminaremos las que son escritas ya que son muy dificiles de analizar y no representan una gran parte de la muestra.
+En la variable `MentalHealth`, eliminaremos los datos que contengan "*in your own words*" o "*prefer not to say*"
 
 ```{r}
-#si tiene la palabra: "in your own words" eliminarla,
-#ya que no es una respuesta válida
 encuesta = encuesta[!str_detect(encuesta$MentalHealth, "in your own words"),]
 
-#si tiene la palabra: "Prefer not to say" eliminarla,
-#ya que no es una respuesta válida
-
 encuesta = encuesta[!str_detect(encuesta$MentalHealth, "Prefer not to say"),]
-
-
 ```
 
 Listo, eso es todo lo que querremos filtrar en la base de datos.
 
-#### Crear columnas para lenguajes de programación
+### Creación de columnas
 
-Ahora crearemos columnas para cada lenguaje de programación, esto con el fin de poder hacer un análisis más sencillo.
+#### Lenguajes de Programación
+
+Crearemos columnas para cada lenguaje de programación, esto con el fin de poder hacer un análisis más sencillo.
 
 ```{r}
-# Separar los lenguajes y crear columnas separadas
 language <- encuesta %>%
   separate_rows(ProgLanguages, sep = ";") %>%
   group_by(ProgLanguages) %>%
@@ -364,38 +362,40 @@ for (i in 1:nrow(encuesta)) {
   }
 }
 
-
-
+rm(elem)
+rm(i)
+rm(name)
 ```
 
-#### Crear columnas para los problemas mentales
+#### Mental Health
 
-Ahora crearemos columnas para cada problema mental, esto con el fin de poder hacer un análisis más sencillo.
+También crearemos columnas para cada problema mental.
 
 ```{r}
-
 # op1
 columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "concentration", "\\b"))
 encuesta$Memoria <- columna_booleana
 
 # op2
 columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "mood", "\\b"))
-encuesta$Emotional <- columna_booleana
+encuesta$Emocional <- columna_booleana
 
 # op3
 columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "anxiety", "\\b"))
-encuesta$Anxiety <- columna_booleana
+encuesta$Anciedad <- columna_booleana
 
 # op4
 columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "autism", "\\b"))
-encuesta$Autism <- columna_booleana
+encuesta$Autismo <- columna_booleana
 
 # op5
 columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "learning", "\\b"))
-encuesta$Learning <- columna_booleana
+encuesta$Aprendizaje <- columna_booleana
+
+rm(columna_booleana)
 ```
 
-#### Crear columnas para sistemas operativos
+#### Sistemas operativos
 
 ```{r}
 encuesta$BSD <- logical(nrow(encuesta))
@@ -487,13 +487,11 @@ Recordemos que nuestros datos principales se llaman "encuesta"
 > ##### Variables necesarias:
 
 ```{r}
-#seleccionar todos los registros con Memoria = True
-
 memoria <- filter(encuesta, Memoria == TRUE)
-ansiedad <- filter(encuesta, Anxiety == TRUE)
-emocional <- filter(encuesta, Emotional == TRUE)
-autismo <- filter(encuesta, Autism == TRUE)
-aprendizaje <- filter(encuesta, Learning == TRUE)
+ansiedad <- filter(encuesta, Anciedad == TRUE)
+emocional <- filter(encuesta, Emocional == TRUE)
+autismo <- filter(encuesta, Autismo == TRUE)
+aprendizaje <- filter(encuesta, Aprendizaje == TRUE)
 
 
 language <- encuesta %>%
@@ -909,7 +907,7 @@ Prontamente observaremos las causas por las que estos lenguajes son más "proble
 Para esto analizaremos los datos de los lenguajes de programación. Veremos entonces la lista de lenguajes más populares y compararemos.
 
 ```{r}
-language %>% arrange(desc(N_Usuarios)) -> OrdenUsuarios
+planguages %>% arrange(desc(N_Usuarios)) -> OrdenUsuarios
 select(OrdenUsuarios, Nombre, N_Usuarios) %>% arrange(Nombre)
 
 barplot(OrdenUsuarios$N_Usuarios, 
@@ -933,7 +931,7 @@ Rápidamente notaremos que son los lenguajes "poco problemáticos" (Java, C++, M
 Pero parémonos a analizar un momento y pensemos, ¿es la popularidad lo que está definiendo que un lenguaje sea "problemático", es decir, afecte negativamente en la salud mental de un desarrollador? O por otro lado, ¿es un lenguaje popular porque puede ser calificado como **"poco problemático"**?
 
 ```{r}
-language %>% arrange(desc(N_Trabajos)) -> OrdenTrabajos
+planguages %>% arrange(desc(N_Trabajos)) -> OrdenTrabajos
 select(OrdenTrabajos, Nombre, N_Trabajos) %>% arrange(Nombre)
 ```
 
@@ -961,7 +959,7 @@ El acceso a la información, o la cantidad de documentación que existe sobre ci
 Analizaremos el siguiente gráfico:
 
 ```{r}
-language %>% arrange(desc(Github_repos)) -> OrdenGithubrep
+planguages %>% arrange(desc(Github_repos)) -> OrdenGithubrep
 select(OrdenGithubrep, Nombre, Github_repos) %>% arrange((Nombre))
 ```
 
@@ -980,7 +978,7 @@ barplot(OrdenGithubrep$Github_repos,
 ```
 
 ```{r}
-language %>% arrange(desc(BigQuery_repos)) -> OrdenBigQueryrep
+planguages %>% arrange(desc(BigQuery_repos)) -> OrdenBigQueryrep
 select(OrdenBigQueryrep, Nombre, BigQuery_repos) %>% arrange((Nombre))
 ```
 
@@ -1112,7 +1110,7 @@ encuesta %>%
 encuesta %>%
  filter(Salary >= 3611L & Salary <= 758445L) %>%
  ggplot() +
-  aes(x = Salary, y = Emotional) +
+  aes(x = Salary, y = Emocional) +
   geom_boxplot(fill = "#E3FFD6") +
   theme_minimal()
 ```
@@ -1121,7 +1119,7 @@ encuesta %>%
 encuesta %>%
  filter(Salary >= 3611L & Salary <= 758445L) %>%
  ggplot() +
-  aes(x = Salary, y = Anxiety) +
+  aes(x = Salary, y = Anciedad) +
   geom_boxplot(fill = "#D6D9FF") +
   theme_minimal()
 ```
@@ -1130,7 +1128,7 @@ encuesta %>%
 encuesta %>%
  filter(Salary >= 3611L & Salary <= 758445L) %>%
  ggplot() +
-  aes(x = Salary, y = Autism) +
+  aes(x = Salary, y = Autismo) +
   geom_boxplot(fill = "#FFD6F8") +
   theme_minimal()
 ```
@@ -1139,7 +1137,7 @@ encuesta %>%
 encuesta %>%
  filter(Salary >= 3611L & Salary <= 255222L) %>%
  ggplot() +
-  aes(x = Salary, y = Learning) +
+  aes(x = Salary, y = Aprendizaje) +
   geom_boxplot(fill = "#FFD6F8") +
   theme_minimal()
 ```
