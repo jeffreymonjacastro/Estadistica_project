@@ -31,7 +31,7 @@ library(tidyverse)
 #### Lenguajes de desarrollo de software más usados:
 
 ```{r}
-#sleccionar lo importante
+#seleccionar lo importante
 language = select(encuesta, LanguageHaveWorkedWith)
 language = na.omit(language)
 

@@ -109,10 +109,10 @@ Nuestros datos se basarán en dos bases de datos:
 
 En resumen, en esta sección se registran todas las variables utilizadas a partir de las dos bases de datos debidamente prolijas, con el objetivo de comprender adecuadamente el procesamiento de la información. En un principio, hay un total de `variables` variables.
 
-### Encuestas de Stakoverflow
+### Encuestas de Stackoverflow
 
 | Nombre de la variable | Tipo de variable   | Descripción                                                        | Restricciones                   |
-|-----------------------|--------------------|--------------------------------------------------------------------|---------------------------------|
+|------------------|------------------|-------------------|------------------|
 | MainBranch            | Categórica nominal | Contiene información sobre el estado profesional del desarrollador | \-                              |
 | Employment            | Categórica nominal | El tipo de empleo que tiene le desarrollador                       | separado por punto y coma       |
 | RemoteWork            | Categórica nominal | De que forma ejercen el trabajo remoto                             | \-                              |
@@ -133,7 +133,7 @@ En resumen, en esta sección se registran todas las variables utilizadas a parti
 ### PLDB Lenguajes de Programación
 
 | Nombre de la variable | Tipo de variable   | Descripción                                                       | Restricciones                   |
-|-----------------------|--------------------|-------------------------------------------------------------------|---------------------------------|
+|------------------|------------------|-------------------|------------------|
 | Title                 | Categórica Nominal | Nombre original del lenguaje de programación                      | \-                              |
 | Appeared              | Numérica discreta  | Año en donde apareció por primera vez el lenguaje de programación | \>= 1945                        |
 | Rank                  | Numérica discreta  | Un ranking hecho por PLDB                                         | \>=0                            |
@@ -148,6 +148,13 @@ En resumen, en esta sección se registran todas las variables utilizadas a parti
 
 ### Carga de librerías
 
+```{r}
+library(dplyr)
+library(readr)
+library(ggplot2)
+library(tidyverse)
+```
+
 ### Carga de datos
 
 ```{r warning=FALSE}
@@ -159,7 +166,167 @@ encuesta = read_csv("../db/upload_survey_results.csv")
 
 ## Limpieza de Datos
 
-### Encuestas de Stakoverflow
+#### Revisar que la base de datos esté limpia:
+
+Revisaremos cuantos casos completos hay
+
+```{r}
+
+#complete cases
+table(complete.cases(encuesta))
+```
+
+Observamos que parece que ninguna observación esta completa. HORROR! Sin embargo mejor enfoquémonos en las variables que queremos analizar y revisemos de nuevo.
+
+```{r}
+
+#borrar las filas que no queremos
+encuesta = select(encuesta, MainBranch, Employment, RemoteWork, CodingActivities, DevType, Country, EdLevel, Currency, ConvertedCompYearly, MentalHealth, Ethnicity, Gender, Age, `OpSysPersonal use`, `OpSysProfessional use`, LanguageHaveWorkedWith)
+```
+
+Ahora si, revisemos de nuevo cuantos casos completos tenemos.
+
+```{r}
+#casos completos
+table(complete.cases(encuesta))
+```
+
+Tal parece que solo 34672 casos están completos, por lo que seleccionaremos justo estos.
+
+```{r}
+#eliminar nulos
+encuesta = na.omit(encuesta)
+```
+
+#### Revisar valores de las columnas
+
+Para esta primera instancia analizaremos primero las variables numéricas, de esta forma podemos eliminar lo que creemos que se aleja de la realidad, como salarios extremadamente bajos que solo entorpecen el análisis.
+
+```{r}
+#minimo unos 3600 dolares anuales
+encuesta = encuesta[encuesta$ConvertedCompYearly > 3600,]
+```
+
+Filtrar por los géneros. En la encuesta se permite elegir géneros de varios tipos. Sin embargo, para fines de estudio nos limitaremos a hombre o mujeres, más obviaremos a los no binarios, entre otros.
+
+```{r}
+encuesta = encuesta[encuesta$Gender == "Man" | encuesta$Gender == "Woman",]
+
+table(encuesta$Gender)
+```
+
+Con respecto a las edades, eliminaremos a los que no prefirieron responder.
+
+```{r}
+encuesta = encuesta[encuesta$Age != "Prefer not to say",]
+```
+
+Con respecto a la parte de la encuesta donde se definen los estados de salud mental, eliminaremos las que son escritas ya que son muy dificiles de analizar y no representan una gran parte de la muestra.
+
+```{r}
+library(stringr)
+
+#si tiene la palabra: "in your own words" eliminarla,
+#ya que no es una respuesta válida
+encuesta = encuesta[!str_detect(encuesta$MentalHealth, "in your own words"),]
+
+#si tiene la palabra: "Prefer not to say" eliminarla,
+#ya que no es una respuesta válida
+
+encuesta = encuesta[!str_detect(encuesta$MentalHealth, "Prefer not to say"),]
+
+```
+
+Listo, eso es todo lo que querremos filtrar en la base de datos.
+
+#### Crear columnas para lenguajes de programación
+
+Ahora crearemos columnas para cada lenguaje de programación, esto con el fin de poder hacer un análisis más sencillo.
+
+```{r}
+library(tidyverse)
+library(stringr)
+
+
+# Separar los lenguajes y crear columnas separadas
+language <- encuesta %>%
+  separate_rows(LanguageHaveWorkedWith, sep = ";") %>%
+  group_by(LanguageHaveWorkedWith) %>%
+  summarize() %>%
+  pull()
+
+for (name in language) {
+  encuesta[name] = FALSE
+}
+
+for (i in 1:nrow(encuesta)) {
+  for (elem in unlist(strsplit(encuesta$LanguageHaveWorkedWith[i],";"))){
+    encuesta[i, elem] <- TRUE
+  }
+}
+
+```
+
+#### Crear columnas para los problemas mentales
+
+Ahora crearemos columnas para cada problema mental, esto con el fin de poder hacer un análisis más sencillo.
+
+```{r}
+# op1
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "concentration", "\\b"))
+encuesta$Memoria <- columna_booleana
+
+# op2
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "mood", "\\b"))
+encuesta$Emotional <- columna_booleana
+
+# op3
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "anxiety", "\\b"))
+encuesta$Anxiety <- columna_booleana
+
+# op4
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "autism", "\\b"))
+encuesta$Autism <- columna_booleana
+
+# op5
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "learning", "\\b"))
+encuesta$Learning <- columna_booleana
+```
+
+#### Crear columnas para sistemas operativos
+
+```{r}
+encuesta$BSD <- logical(nrow(encuesta))
+encuesta$Linux_Based <- logical(nrow(encuesta))
+encuesta$Windows <- logical(nrow(encuesta))
+encuesta$Windows_for_Linux <- logical(nrow(encuesta))
+encuesta$Mac <- logical(nrow(encuesta))
+
+opciones_a_verificar <- c("BSD", "Linux-based", "Windows", "Windows Subsystem for Linux (WSL)",
+                         "macOS")
+
+# op1
+columna_booleana <- str_detect(encuesta$`OpSysPersonal use`, paste0("\\b", "BSD", "\\b"))
+encuesta$BSD <- columna_booleana
+
+# op2
+columna_booleana <- str_detect(encuesta$`OpSysPersonal use`, paste0("\\b", "based", "\\b"))
+encuesta$Linux_Based <- columna_booleana
+
+# op3
+columna_booleana <- str_detect(encuesta$`OpSysPersonal use`, paste0("\\b", "Windows", "\\b"))
+encuesta$Windows <- columna_booleana
+
+# op4
+columna_booleana <- str_detect(encuesta$`OpSysPersonal use`, paste0("\\b", "Subsystem", "\\b"))
+encuesta$Windows_for_Linux <- columna_booleana
+
+# op5
+columna_booleana <- str_detect(encuesta$`OpSysPersonal use`, paste0("\\b", "macOS", "\\b"))
+encuesta$Mac <- columna_booleana
+```
+
+### Encuestas de Stackoverflow
 
 ### PLDB Lenguajes de Programación
 
@@ -169,10 +336,861 @@ encuesta = read_csv("../db/upload_survey_results.csv")
 
 ## Análisis Descriptivo
 
-### Análisis univariado
+### Análisis Univariado
 
-### Análisis bivariado
+------------------------------------------------------------------------
+
+### Frecuencias:
+
+#### Lenguajes de desarrollo de software más usados:
+
+```{r}
+#seleccionar lo importante
+language = select(encuesta, LanguageHaveWorkedWith)
+language = na.omit(language)
+
+#dividir por ;
+language = language %>%
+  separate_rows(LanguageHaveWorkedWith, sep=";") %>%
+  group_by(LanguageHaveWorkedWith) %>%
+  summarise(CantUsers = n())
+
+#ordenar de mayor a menor
+language = arrange(language, desc(CantUsers))
+
+language
+
+rm(language)
+include = FALSE
+```
+
+El lenguaje más usado por los desarrolladores encuestados es el de **Javascript,** le sigue **SQL** y claramente **HTML/CSS**. Es natural puesto que son lenguajes muy sencillos de aprender.
+
+#### Estados de salud mental más sufridos por los encuestados:
+
+```{r}
+#seleccionar
+health = select(encuesta, MentalHealth);
+
+#group
+health = health %>% 
+  separate_rows(MentalHealth, sep=";") %>%
+  group_by(MentalHealth) %>%
+  summarise(Personas = n())
+
+health
+
+rm(health)
+include = FALSE
+```
+
+Notamos que la mayoría de personas no sufren de desordenes mentales. Sin embargo, podemos decir que la enfermedad más común padecida por los encuestados es la **ansiedad**.
+
+Nuestro objetivo es averiguar el por qué
+
+#### Frecuencia de edades de los encuestados.
+
+```{r}
+#seleccionar
+age = select(encuesta, Age);
+
+age = age %>% 
+  group_by(Age) %>%
+  summarise(Personas = n())
+
+age
+
+rm(age)
+include = FALSE
+```
+
+Es curioso observar como en su mayoría los desarrolladores que usan Stack Overflow son personas de entre **25 a 34 años** edad, mientras que son poquísimos los menores de edad.
+
+### Análisis Bivariado
+
+------------------------------------------------------------------------
+
+### Salario vs. Salud Mental
+
+#### Creamos una tabla con los datos que necesitamos
+
+```{r}
+tabla <- data.frame(Salario = encuesta$ConvertedCompYearly, Memoria = encuesta$Memoria, Emotional = encuesta$Emotional, Anxiety = encuesta$Anxiety, Autism = encuesta$Autism, Learning = encuesta$Learning)
+
+tabla <- filter(tabla)
+
+tabla
+```
+
+#### Convertimos los booleanos a numérico
+
+```{r}
+tabla$Memoria <- as.numeric(tabla$Memoria)
+tabla$Emotional <- as.numeric(tabla$Emotional)
+tabla$Anxiety <- as.numeric(tabla$Anxiety)
+tabla$Autism <- as.numeric(tabla$Autism)
+tabla$Learning <- as.numeric(tabla$Learning)
+```
+
+#### Hallamos el promedio del Salario por cada Salud Mental
+
+```{r}
+#Memoria
+Tabla_Memoria <- data.frame(Salario = tabla$Salario, Memoria = tabla$Memoria)
+Tabla_Memoria <- filter(Tabla_Memoria, Tabla_Memoria$Memoria == 1)
+Prom_Memoria <- mean(Tabla_Memoria$Salario)
+
+#Emotional
+Tabla_Emotional <- data.frame(Salario = tabla$Salario, Emotional = tabla$Emotional)
+Tabla_Emotional <- filter(Tabla_Emotional, Tabla_Emotional$Emotional == 1)
+Prom_Emotional <- mean(Tabla_Emotional$Salario)
+
+#Anxiety
+Tabla_Anxiety <- data.frame(Salario = tabla$Salario, Anxiety = tabla$Anxiety)
+Tabla_Anxiety <- filter(Tabla_Anxiety, Tabla_Anxiety$Anxiety == 1)
+Prom_Anxiety <- mean(Tabla_Anxiety$Salario)
+
+#Autism
+Tabla_Autism <- data.frame(Salario = tabla$Salario, Autism = tabla$Autism)
+Tabla_Autism <- filter(Tabla_Autism, Tabla_Autism$Autism == 1)
+Prom_Autism <- mean(Tabla_Autism$Salario)
+
+#Learning
+Tabla_Learning <- data.frame(Salario = tabla$Salario, Learning = tabla$Learning)
+Tabla_Learning <- filter(Tabla_Learning, Tabla_Learning$Learning == 1)
+Prom_Learning <- mean(Tabla_Learning$Salario)
+```
+
+#### Creamos una tabla con el promedio del salario por cada estado de salud mental
+
+```{r}
+Tabla_promedio <- data.frame(Memoria = Prom_Memoria, Emotional = Prom_Emotional, Anxiety = Prom_Anxiety, Autism = Prom_Autism, Learning= Prom_Learning)
+
+Tabla_promedio
+```
+
+#### Graficamos "Salario vs salud mental"
+
+```{r}
+barplot((data.matrix(Tabla_promedio)), 
+        col = colorRampPalette(c("orange", "darkorange"))(5),
+        main = "Salario vs salud mental", 
+        xlab = "Salud Mental", 
+        ylab = "Promedio del salario")
+```
+
+### Salud mental vs. Tecnologías de desarrollo
+
+Vamos a crear un gráfico de barras por cada problema mental identificado. En el cuál pondremos una barra por cada lenguaje de programación
+
+Recordemos que nuestros datos principales se llaman "encuesta"
+
+#### Variables necesarias:
+
+```{r}
+library(ggplot2)
+
+
+#tabla para Memoria
+
+
+#seleccionar todos los registros con Memoria = True
+
+memoria <- filter(encuesta, Memoria == TRUE)
+ansiedad <- filter(encuesta, Anxiety == TRUE)
+emocional <- filter(encuesta, Emotional == TRUE)
+autismo <- filter(encuesta, Autism == TRUE)
+aprendizaje <- filter(encuesta, Learning == TRUE)
+
+
+language <- encuesta %>%
+  separate_rows(LanguageHaveWorkedWith, sep = ";") %>%
+  group_by(LanguageHaveWorkedWith) %>%
+  summarize() %>%
+  pull()
+	
+```
+
+### Memoria:
+
+> #### Tabla de frecuencias:
+>
+> ```{r}
+>
+> porcentajes <- c()
+>
+>
+> #iterar por cada lenguaje de programación
+> for (current in language){
+> 	cantidad = nrow(memoria[memoria[[current]] == TRUE, ])
+> 	cantidadTotal = nrow(encuesta[encuesta[[current]] == TRUE, ])
+> 	porcentajes[current] <- cantidad/cantidadTotal
+> }
+>
+>
+> #ordenar porcentajes de mayor a menor
+> porcentajes <- sort(porcentajes, decreasing = TRUE)
+>
+> #mostrar tabla en formato de tabla
+> porcentajes = data.frame(porcentajes)
+>
+> porcentajes
+> ```
+
+> #### Gráfico de barras, porcentaje de personas que sufre usando una tecnología:
+>
+> ```{r}
+>
+> porcentajeshelper <- porcentajes$porcentajes[1:15]
+> nombres <- rownames(porcentajes)[1:15]
+>
+> #plotear porcentajes en grafico de barras de lado
+>
+> barplot(porcentajeshelper, 
+> 	main="% Personas que sufren de problemas de Memoria", 
+> 	xlab="Porcentaje de personas", 
+>   #degradado lineal de azul oscuro a azul
+>   col=colorRampPalette(c("darkblue", "blue"))(15),
+> 	xlim = c(0,0.25),
+> 	horiz=TRUE,
+> 	las=1,
+> 	#nombres
+> 	names.arg=nombres,
+> 	cex.names=0.5,
+> 	cex.axis=0.5,
+>
+> 	)
+>
+>
+> porcentajeshelper <- porcentajes$porcentajes[25:40]
+> nombres <- rownames(porcentajes)[25:40]
+>
+> #plotear porcentajes en grafico de barras de lado
+>
+> barplot(porcentajeshelper, 
+> 	main="% Personas que sufren de problemas de Memoria", 
+> 	xlab="Porcentaje de personas", 
+>   #degradado lineal de azul oscuro a azul
+>   col=colorRampPalette(c("darkblue", "blue"))(15),
+> 	xlim = c(0,0.25),
+> 	horiz=TRUE,
+> 	las=1,
+> 	#nombres
+> 	names.arg=nombres,
+> 	cex.names=0.5,
+> 	cex.axis=0.5,
+>
+> 	)
+> ```
+
+### Ansiedad
+
+> #### Tabla de frecuencias:
+>
+> ```{r}
+>
+> porcentajes <- c()
+>
+>
+> #iterar por cada lenguaje de programación
+> for (current in language){
+> 	cantidad = nrow(ansiedad[ansiedad[[current]] == TRUE, ])
+> 	cantidadTotal = nrow(encuesta[encuesta[[current]] == TRUE, ])
+> 	porcentajes[current] <- cantidad/cantidadTotal
+> }
+>
+>
+> #ordenar porcentajes de mayor a menor
+> porcentajes <- sort(porcentajes, decreasing = TRUE)
+>
+> #mostrar tabla en formato de tabla
+> porcentajes = data.frame(porcentajes)
+>
+> porcentajes
+> ```
+
+> #### Gráfico de barras, porcentaje de personas que sufre usando una tecnología:
+>
+> ```{r}
+>
+> porcentajeshelper <- porcentajes$porcentajes[1:15]
+> nombres <- rownames(porcentajes)[1:15]
+>
+> #plotear porcentajes en grafico de barras de lado
+>
+> barplot(porcentajeshelper, 
+> 	main="% Personas que sufren de problemas de Ansiedad", 
+> 	xlab="Porcentaje de personas", 
+>   #degradado lineal de azul oscuro a azul
+>   col=colorRampPalette(c("darkblue", "blue"))(15),
+> 	xlim = c(0,0.16),
+> 	horiz=TRUE,
+> 	las=1,
+> 	#nombres
+> 	names.arg=nombres,
+> 	cex.names=0.5,
+> 	cex.axis=0.5,
+>
+> 	)
+>
+>
+> porcentajeshelper <- porcentajes$porcentajes[25:40]
+> nombres <- rownames(porcentajes)[25:40]
+>
+> #plotear porcentajes en grafico de barras de lado
+>
+> barplot(porcentajeshelper, 
+> 	main="% Personas que sufren de problemas de Ansiedad", 
+> 	xlab="Porcentaje de personas", 
+>   #degradado lineal de azul oscuro a azul
+>   col=colorRampPalette(c("darkblue", "blue"))(15),
+> 	xlim = c(0,0.16),
+>
+> 	horiz=TRUE,
+> 	las=1,
+> 	#nombres
+> 	names.arg=nombres,
+> 	cex.names=0.5,
+> 	cex.axis=0.5,
+>
+> 	)
+> ```
+
+### Emocional:
+
+> #### Tabla de frecuencias:
+>
+> ```{r}
+>
+> porcentajes <- c()
+>
+>
+> #iterar por cada lenguaje de programación
+> for (current in language){
+> 	cantidad = nrow(emocional[emocional[[current]] == TRUE, ])
+> 	cantidadTotal = nrow(encuesta[encuesta[[current]] == TRUE, ])
+> 	porcentajes[current] <- cantidad/cantidadTotal
+> }
+>
+>
+> #ordenar porcentajes de mayor a menor
+> porcentajes <- sort(porcentajes, decreasing = TRUE)
+>
+> #mostrar tabla en formato de tabla
+> porcentajes = data.frame(porcentajes)
+>
+> porcentajes
+> ```
+
+> #### Gráfico de barras, porcentaje de personas que sufre usando una tecnología:
+>
+> ```{r}
+>
+> porcentajeshelper <- porcentajes$porcentajes[1:15]
+> nombres <- rownames(porcentajes)[1:15]
+>
+> #plotear porcentajes en grafico de barras de lado
+>
+> barplot(porcentajeshelper, 
+> 	main="% Personas que sufren de problemas de Emocionales", 
+> 	xlab="Porcentaje de personas", 
+>   #degradado lineal de azul oscuro a azul
+>   col=colorRampPalette(c("darkblue", "blue"))(15),
+> 	xlim = c(0,0.15),
+> 	horiz=TRUE,
+> 	las=1,
+> 	#nombres
+> 	names.arg=nombres,
+> 	cex.names=0.5,
+> 	cex.axis=0.5,
+>
+> 	)
+>
+>
+>
+> porcentajeshelper <- porcentajes$porcentajes[25:40]
+> nombres <- rownames(porcentajes)[25:40]
+>
+> #plotear porcentajes en grafico de barras de lado
+>
+> barplot(porcentajeshelper, 
+> 	main="% Personas que sufren de problemas de Emocionales", 
+> 	xlab="Porcentaje de personas", 
+>   #degradado lineal de azul oscuro a azul
+>   col=colorRampPalette(c("darkblue", "blue"))(15),
+> 	xlim = c(0,0.15),
+> 	horiz=TRUE,
+> 	las=1,
+> 	#nombres
+> 	names.arg=nombres,
+> 	cex.names=0.5,
+> 	cex.axis=0.5,
+>
+> 	)
+> ```
+
+### Autismo
+
+> #### Tabla de frecuencias:
+>
+> ```{r}
+>
+> porcentajes <- c()
+>
+>
+> #iterar por cada lenguaje de programación
+> for (current in language){
+> 	cantidad = nrow(autismo[autismo[[current]] == TRUE, ])
+> 	cantidadTotal = nrow(encuesta[encuesta[[current]] == TRUE, ])
+> 	porcentajes[current] <- cantidad/cantidadTotal
+> }
+>
+>
+> #ordenar porcentajes de mayor a menor
+> porcentajes <- sort(porcentajes, decreasing = TRUE)
+>
+> #mostrar tabla en formato de tabla
+> porcentajes = data.frame(porcentajes)
+>
+> porcentajes
+> ```
+
+> #### Gráfico de barras, porcentaje de personas que sufre usando una tecnología:
+>
+> ```{r}
+>
+> porcentajeshelper <- porcentajes$porcentajes[1:15]
+> nombres <- rownames(porcentajes)[1:15]
+>
+> #plotear porcentajes en grafico de barras de lado
+>
+> barplot(porcentajeshelper, 
+> 	main="% Personas que sufren de problemas de Autismo", 
+> 	xlab="Porcentaje de personas", 
+>   #degradado lineal de azul oscuro a azul
+>   col=colorRampPalette(c("darkblue", "blue"))(15),
+> 	xlim = c(0,0.1),
+> 	horiz=TRUE,
+> 	las=1,
+> 	#nombres
+> 	names.arg=nombres,
+> 	cex.names=0.5,
+> 	cex.axis=0.5,
+>
+> 	)
+>
+>
+>
+> porcentajeshelper <- porcentajes$porcentajes[25:40]
+> nombres <- rownames(porcentajes)[25:40]
+>
+> #plotear porcentajes en grafico de barras de lado
+>
+> barplot(porcentajeshelper, 
+> 	main="% Personas que sufren de problemas de Autismo", 
+> 	xlab="Porcentaje de personas", 
+>   #degradado lineal de azul oscuro a azul
+>   col=colorRampPalette(c("darkblue", "blue"))(15),
+> 	xlim = c(0,0.1),
+>
+> 	horiz=TRUE,
+> 	las=1,
+> 	#nombres
+> 	names.arg=nombres,
+> 	cex.names=0.5,
+> 	cex.axis=0.5,
+>
+> 	)
+> ```
+
+### Aprendizaje
+
+> #### Tabla de frecuencias:
+>
+> ```{r}
+>
+> porcentajes <- c()
+>
+>
+> #iterar por cada lenguaje de programación
+> for (current in language){
+> 	cantidad = nrow(aprendizaje[aprendizaje[[current]] == TRUE, ])
+> 	cantidadTotal = nrow(encuesta[encuesta[[current]] == TRUE, ])
+> 	porcentajes[current] <- cantidad/cantidadTotal
+> }
+>
+>
+> #ordenar porcentajes de mayor a menor
+> porcentajes <- sort(porcentajes, decreasing = TRUE)
+>
+> #mostrar tabla en formato de tabla
+> porcentajes = data.frame(porcentajes)
+>
+> porcentajes
+> ```
+
+#### Gráfico de barras, porcentaje de personas que sufre usando una tecnología:
+
+```{r}
+
+porcentajeshelper <- porcentajes$porcentajes[1:15]
+nombres <- rownames(porcentajes)[1:15]
+
+#plotear porcentajes en grafico de barras de lado
+
+barplot(porcentajeshelper, 
+	main="% Personas que sufren de problemas de Aprendizaje", 
+	xlab="Porcentaje de personas", 
+  #degradado lineal de azul oscuro a azul
+  col=colorRampPalette(c("darkblue", "blue"))(15),
+
+	xlim = c(0,0.1),
+	
+	horiz=TRUE,
+	las=1,
+	#nombres
+	names.arg=nombres,
+	cex.names=0.5,
+	cex.axis=0.5,
+
+	)
+
+
+porcentajeshelper <- porcentajes$porcentajes[25:40]
+nombres <- rownames(porcentajes)[25:40]
+
+#plotear porcentajes en grafico de barras de lado
+
+barplot(porcentajeshelper, 
+	main="% Personas que sufren de problemas de Aprendizaje", 
+	xlab="Porcentaje de personas", 
+  #degradado lineal de azul oscuro a azul
+  col=colorRampPalette(c("darkblue", "blue"))(15),
+
+  xlim = c(0,0.1),
+	
+	horiz=TRUE,
+	las=1,
+	#nombres
+	names.arg=nombres,
+	cex.names=0.5,
+	cex.axis=0.5,
+	
+
+	)
+```
+
+### N° Usuarios vs. Lenguaje de programación
+
+#### Lenguajes con más usuarios
+
+```{r}
+df %>% arrange(desc(N_Usuarios)) -> OrdenUsuarios
+select(OrdenUsuarios, Nombre, N_Usuarios) %>% arrange(Nombre)
+```
+
+```{r}
+barplot(OrdenUsuarios$N_Usuarios[0:20], 
+        names.arg = OrdenUsuarios$Nombre[0:20],
+        col = "pink",
+        main = "Cantidad de usuarios por Lenguaje",
+        xlab = "Lenguajes de programación",
+        ylab = "N° usuarios",
+        cex.names = 0.6,
+        cex.axis = 0.7,
+        ylim = c(0,8000000),
+        las = 2
+        )
+```
+
+### N° Trabajadores vs Lenguaje de programación
+
+```{r}
+df %>% arrange(desc(N_Trabajos)) -> OrdenTrabajos
+select(OrdenTrabajos, Nombre, N_Trabajos) %>% arrange(Nombre)
+```
+
+```{r}
+barplot(OrdenTrabajos$N_Trabajos[0:20], 
+        names.arg = OrdenTrabajos$Nombre[0:20],
+        col = "blue",
+        main = "Cantidad de trabajados por Lenguaje",
+        xlab = "Lenguajes de programación",
+        ylab = "N° trabajadores",
+        cex.names = 0.6,
+        ylim = c(0,250000),
+        las = 2
+        )
+
+
+barplot(OrdenTrabajos$N_Trabajos[25:40], 
+        names.arg = OrdenTrabajos$Nombre[25:40],
+        col = "blue",
+        main = "Cantidad de trabajados por Lenguaje",
+        xlab = "Lenguajes de programación",
+        ylab = "N° trabajadores",
+        cex.names = 0.6,
+        ylim = c(0,2500),
+        las = 2
+        )
+```
+
+```{r}
+barplot(OrdenGithubrep$Github_repos[0:20], 
+        names.arg = OrdenGithubrep$Nombre[0:20],
+        col = "red",
+        main = "Cantidad de repositorios en Github por Lenguaje",
+        xlab = "Lenguajes de programación",
+        ylab = "N° Repositorios en Github",
+        cex.names = 0.6,
+        cex.axis = 0.7,
+        ylim = c(0,20000000),
+        las = 2
+        )
+
+
+barplot(OrdenGithubrep$Github_repos[25:40], 
+        names.arg = OrdenGithubrep$Nombre[25:40],
+        col = "red",
+        main = "Cantidad de repositorios en Github por Lenguaje",
+        xlab = "Lenguajes de programación",
+        ylab = "N° Repositorios en Github",
+        cex.names = 0.6,
+        cex.axis = 0.7,
+        ylim = c(0,200000),
+        las = 2
+        )
+```
+
+### Cantidad de Repositorios en BigQuery vs Lenguajes de Programación
+
+```{r}
+df %>% arrange(desc(BigQuery_repos)) -> OrdenBigQueryrep
+select(OrdenBigQueryrep, Nombre, BigQuery_repos) %>% arrange((Nombre))
+```
+
+```{r}
+barplot(OrdenBigQueryrep$BigQuery_repos[0:20], 
+        names.arg = OrdenBigQueryrep$Nombre[0:20],
+        col = "green",
+        main = "Cantidad de repositorios en BigQuery por Lenguaje",
+        xlab = "Lenguajes de programación",
+        ylab = "N° Repositorios en BigQuery",
+        cex.names = 0.6,
+        cex.axis = 0.7,
+        ylim = c(0,1200000),
+        las = 2
+        )
+
+
+barplot(OrdenBigQueryrep$BigQuery_repos[25:40], 
+        names.arg = OrdenBigQueryrep$Nombre[25:40],
+        col = "green",
+        main = "Cantidad de repositorios en BigQuery por Lenguaje",
+        xlab = "Lenguajes de programación",
+        ylab = "N° Repositorios en BigQuery",
+        cex.names = 0.6,
+        cex.axis = 0.7,
+        ylim = c(0,12000*2),
+        las = 2
+        )
+```
 
 ### Análisis multivariado
 
+### Salud mental vs. Sistema Operativo
+
+> Creamos la tabla con todos los tipos de mental health
+>
+> ```{r}
+> # Creación de la tabla con los mental health
+> tabla2 <- data.frame(Mental_Health = c("Memory","Emotional", "Anxiety", "Autism", "Learning"),
+>                     CantUsers = c(sum(encuesta$Memoria== TRUE),
+>                                   sum(encuesta$Emotional == TRUE),
+>                                   sum(encuesta$Anxiety == TRUE),
+>                                   sum(encuesta$Autism == TRUE),
+>                                   sum(encuesta$Learning == TRUE))
+>                     )
+>
+> print(tabla2)
+> ```
+
+> Creamos una tabla de conteo general con los sistemas operativos
+>
+> ```{r}
+> # Creación de la tabla con los sistemas operativos
+> tabla <- data.frame(`OpSysPersonal use` = c("BSD", "Linux-based", "Windows", "Windows Subsystem for Linux (WSL)", "macOS"),
+>                     CantUsers = c(sum(encuesta$BSD == TRUE),
+>                                   sum(encuesta$Linux_Based == TRUE),
+>                                   sum(encuesta$Windows == TRUE),
+>                                   sum(encuesta$Windows_for_Linux == TRUE),
+>                                   sum(encuesta$Mac == TRUE))
+>                     )
+>
+> print(tabla)
+> ```
+
+> Creamos una tabla por cada sistema operativo para almacenar la Porcentaje de personas que sufren de cada tipo de condición mental
+>
+> #### BSD
+>
+> ```{r}
+> tablaBSD <- data.frame(`OpSysPersonal use` = "BSD",
+> CantUsersMemory = sum(encuesta$BSD == TRUE & encuesta$Memoria == TRUE),
+> CantUsersEmotional = sum(encuesta$BSD == TRUE & encuesta$Emotional == TRUE),
+> CantUsersAnxiety = sum(encuesta$BSD == TRUE & encuesta$Anxiety == TRUE),
+> CantUsersAutism = sum(encuesta$BSD == TRUE & encuesta$Autism == TRUE),
+> CantUsersLearning = sum(encuesta$BSD == TRUE & encuesta$Learning == TRUE),
+> Total = sum(encuesta$BSD == TRUE))
+>
+> print(tablaBSD)
+> ```
+
+#### LINUX BASED
+
+```{r}
+tablaLinuxB <- data.frame(`OpSysPersonal use` = "Linux-based",
+CantUsersMemory = sum(encuesta$Linux_Based == TRUE & encuesta$Memoria == TRUE),
+CantUsersEmotional = sum(encuesta$Linux_Based == TRUE & encuesta$Emotional == TRUE),
+CantUsersAnxiety = sum(encuesta$Linux_Based == TRUE & encuesta$Anxiety == TRUE),
+CantUsersAutism = sum(encuesta$Linux_Based == TRUE & encuesta$Autism == TRUE),
+CantUsersLearning = sum(encuesta$Linux_Based == TRUE & encuesta$Learning == TRUE),
+Total = sum(encuesta$Linux_Based == TRUE))
+
+print(tablaLinuxB)
+```
+
+#### WINDOWS
+
+```{r}
+tablaWindows <- data.frame(`OpSysPersonal use` = "Windows",
+CantUsersMemory = sum(encuesta$Windows == TRUE & encuesta$Memoria == TRUE),
+CantUsersEmotional = sum(encuesta$Windows == TRUE & encuesta$Emotional == TRUE),
+CantUsersAnxiety = sum(encuesta$Windows == TRUE & encuesta$Anxiety == TRUE),
+CantUsersAutism = sum(encuesta$Windows == TRUE & encuesta$Autism == TRUE),
+CantUsersLearning = sum(encuesta$Windows == TRUE & encuesta$Learning == TRUE),
+Total = sum(encuesta$Windows == TRUE))
+
+print(tablaWindows)
+```
+
+**WSL**
+
+```{r}
+tablaWindowsLinux <- data.frame(`OpSysPersonal use` = "Windows_Linux",
+CantUsersMemory = sum(encuesta$Windows_for_Linux == TRUE & encuesta$Memoria == TRUE),
+CantUsersEmotional = sum(encuesta$Windows_for_Linux == TRUE & encuesta$Emotional == TRUE),
+CantUsersAnxiety = sum(encuesta$Windows_for_Linux == TRUE & encuesta$Anxiety == TRUE),
+CantUsersAutism = sum(encuesta$Windows_for_Linux == TRUE & encuesta$Autism == TRUE),
+CantUsersLearning = sum(encuesta$Windows_for_Linux == TRUE & encuesta$Learning == TRUE),
+Total = sum(encuesta$Windows_for_Linux == TRUE))
+
+print(tablaWindowsLinux)
+```
+
+**macOS**
+
+```{r}
+tablaMac <- data.frame(`OpSysPersonal use` = "MacOS",
+CantUsersMemory = sum(encuesta$Mac == TRUE & encuesta$Memoria == TRUE),
+CantUsersEmotional = sum(encuesta$Mac == TRUE & encuesta$Emotional == TRUE),
+CantUsersAnxiety = sum(encuesta$Mac == TRUE & encuesta$Anxiety == TRUE),
+CantUsersAutism = sum(encuesta$Mac == TRUE & encuesta$Autism == TRUE),
+CantUsersLearning = sum(encuesta$Mac == TRUE & encuesta$Learning == TRUE),
+Total = sum(encuesta$Mac == TRUE))
+
+print(tablaMac)
+```
+
+> Unimos todo en una tabla
+>
+> ```{r}
+> # Unir las tablas
+> tabla_final <- rbind(tablaBSD, tablaLinuxB, tablaWindows, tablaWindowsLinux, tablaMac)
+> print(tabla_final)
+> ```
+
+> Hicimos el gráfico de barras apiladas
+>
+> ```{r}
+> library(ggplot2)
+> tabla_larga <- tidyr::gather(tabla_final, key = "MentalHealth", value = "Cantidad Total", -OpSysPersonal.use)
+>
+> tabla_larga <- tabla_larga[tabla_larga$MentalHealth != "Total", ]
+>
+> grafico <- ggplot(tabla_larga, aes(x = OpSysPersonal.use, y = `Cantidad Total`, fill = ifelse(MentalHealth != "Total", MentalHealth, ""))) +
+>   geom_bar(stat = "identity") +
+>   labs(x = "Sistema Operativo para uso profesional", y = "Cantidad Total de Personas", fill = "MentalHealth") +
+>   ggtitle("Salud Mental vs. Sistemas Operativos") +
+>   theme_minimal()
+>
+> print(grafico)
+> ```
+
 ### Conclusiones Parciales
+
+# Análisis de datos
+
+------------------------------------------------------------------------
+
+Empezaremos a realizar el análisis de datos.
+
+## ¿Por qué las personas que usan cierto lenguaje padecen de ciertos desequilibrios mentales?
+
+### Lenguajes con más presencia de desequilibrios mentales:
+
+| Tipo de desequilibrio | Primer Lenguaje | Segundo Lenguaje |
+|-----------------------|-----------------|------------------|
+| Memoria               | Erlang          | Crystal          |
+| Ansiedad              | SAS             | LUA              |
+| Emocionales           | Erlang          | LUA              |
+| Autismo               | Crystal         | LUA              |
+| Aprendizaje           | APL             | SAS              |
+
+> Vemos que los lenguajes más "sufridos" son:
+
+-   Erlang
+
+-   SAS
+
+-   Crystal
+
+-   Lua
+
+-   APL
+
+#### ¿Porqué?
+
+> Analizaremos cada los datos de cada lenguaje por separado y sacaremos nuestras conclusiones.
+
+#### Gráficos:
+
+-   Cantidad de Repositorios en Github vs Lenguajes de Programación
+
+-   Cantidad de Repositorios en BigQuery vs Lenguajes de Programación
+
+> Notaremos que son justo estos lenguajes los que tienen menores cantidades de Repositorios en Github o en BigQuery.
+
+> Por otro lado, justo los lenguajes que son menos "sufridos" son los que presentan mayor cantidad de documentación.
+
+### ¿Modas?
+
+Es curioso observar cómo es que justo los lenguajes menos "sufridos" son también los más utilizados. Esto se puede observar en la tabla de frecuencias :
+
+> #### "Lenguajes de desarrollo de software más usados"
+
+## 
+
+## ¿Es el sistema operativo que usan influyente en su estado mental?
+
+Para este análisis observaremos el gráfico de
+
+> #### "Salud mental vs. Sistemas Operativos"
+
+Notaremos rápidamente en el gráfico que son los problemas emocionales y de ansiedad los más comunes en los desarrolladores.
+
+Es curioso ver como la proporción de personas que sufren los distintos tipos de desequilibrios mentales se mantiene para cada sistema operativo. Sin embargo, podemos notar una pequeña diferencia en el sistema operativo de Windows.
+
+Al parecer, no solo es el más popular, sino el que tiene mayor proporción de personas con ansiedad.
+
+## 
