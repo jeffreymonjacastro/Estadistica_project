@@ -111,29 +111,29 @@ En resumen, en esta sección se registran todas las variables utilizadas a parti
 
 ### Encuestas de Stakoverflow
 
-| Nombre de la variable | Tipo de variable   | Descripción                                                        | Restricciones                   |
-|-----------------|-----------------|--------------------|-----------------|
-| MainBranch            | Categórica nominal | Contiene información sobre el estado profesional del desarrollador | \-                              |
-| Employment            | Categórica nominal | El tipo de empleo que tiene le desarrollador                       | separado por punto y coma       |
-| RemoteWork            | Categórica nominal | De que forma ejercen el trabajo remoto                             | \-                              |
-| CodingActivities      | Categórica Nominal | El modo en que ven a programación                                  | separada por punto y coma       |
-| DevType               | Categórica Nominal | Tipo de desarrollador, lista separada por comas                    | separada por punto y coma       |
-| Country               | Categórica Nominal | País del desarollador                                              | \-                              |
-| EdLevel               | Categórica Nominal | Info sobre el nivel de educación                                   | \-                              |
-| Currency              | Categórica Nominal | El tipo de moneda que usan                                         | \-                              |
-| ConvertedCompYearly   | Numérica Continua  | Cuanto ganan anualmente en dólares                                 | \>0                             |
-| Mental Health         | Categórica Nominal | Como considera que está su salud mental                            | \-                              |
-| Ethnicity             | Categórica Nominal | Raza del desarrollador                                             | \-                              |
-| Gender                | Categórica Nominal | Género                                                             | man, woman y prefer not to say. |
-| Age                   | Categórica Ordinal | Edad                                                               | +18 (Es un rango de edad)       |
-| OpSysProfessional use | Categórica Nominal | Sistema operativo que usan para trabajar profesionalmente          | separada por punto y coma       |
-| OpSysPersonal use     | Categórica Nominal | Sistema operativo que usan para ellos mismos                       | separada por punto y coma       |
-| LanguagesHaveWorkWith | Categótica Nominal | Lista de los lenguajes que han usado                               | separada por punto y coma       |
+| Nombre de la variable   | Tipo de variable   | Descripción                                                        | Restricciones                   |
+|----------------|----------------|-----------------------|----------------|
+| MainBranch              | Categórica nominal | Contiene información sobre el estado profesional del desarrollador | \-                              |
+| Employment              | Categórica nominal | El tipo de empleo que tiene le desarrollador                       | separado por punto y coma       |
+| RemoteWork              | Categórica nominal | De que forma ejercen el trabajo remoto                             | \-                              |
+| CodingActivities        | Categórica Nominal | El modo en que ven a programación                                  | separada por punto y coma       |
+| DevType                 | Categórica Nominal | Tipo de desarrollador, lista separada por comas                    | separada por punto y coma       |
+| Country                 | Categórica Nominal | País del desarollador                                              | \-                              |
+| EdLevel                 | Categórica Nominal | Info sobre el nivel de educación                                   | \-                              |
+| Currency                | Categórica Nominal | El tipo de moneda que usan                                         | \-                              |
+| ConvertedCompYearly     | Numérica Continua  | Cuanto ganan anualmente en dólares                                 | \>0                             |
+| Mental Health           | Categórica Nominal | Como considera que está su salud mental                            | \-                              |
+| Ethnicity               | Categórica Nominal | Raza del desarrollador                                             | \-                              |
+| Gender                  | Categórica Nominal | Género                                                             | man, woman y prefer not to say. |
+| Age                     | Categórica Ordinal | Edad                                                               | +18 (Es un rango de edad)       |
+| OpSysProfessional use   | Categórica Nominal | Sistema operativo que usan para trabajar profesionalmente          | separada por punto y coma       |
+| OpSysPersonal use       | Categórica Nominal | Sistema operativo que usan para ellos mismos                       | separada por punto y coma       |
+| LanguagesHaveWorkedWith | Categótica Nominal | Lista de los lenguajes que han usado                               | separada por punto y coma       |
 
 ### PLDB Lenguajes de Programación
 
 | Nombre de la variable | Tipo de variable   | Descripción                                                       | Restricciones                   |
-|-----------------|-----------------|--------------------|-----------------|
+|-----------------|-----------------|-----------------------|-----------------|
 | Title                 | Categórica Nominal | Nombre original del lenguaje de programación                      | \-                              |
 | Appeared              | Numérica discreta  | Año en donde apareció por primera vez el lenguaje de programación | \>= 1945                        |
 | Rank                  | Numérica discreta  | Un ranking hecho por PLDB                                         | \>=0                            |
@@ -161,8 +161,8 @@ library(stringr)
 
 ```{r warning=FALSE, include=FALSE}
 
-languages = read_csv("https://pldb.com/pldb.csv")
-encuesta = read_csv("../db/upload_survey_results.csv")
+planguages <- read_csv("../db/Programming_languages.csv")
+encuesta <- read_csv("../db/upload_survey_results.csv")
 ```
 
 ## Limpieza de Datos
@@ -171,48 +171,30 @@ encuesta = read_csv("../db/upload_survey_results.csv")
 
 Se procederá a limpiar la base de datos `Programming_languages.csv`.
 
-Primero, se verifica que las librerías estén instaladas:
+### Borrado de columnas innecesarias
+
+Veamos cuántas filas y columnas tiene nuestro `planguages`:
 
 ```{r}
-library(readr)
-library(dplyr)
-```
-
-Luego, se importa la base de datos con la librería `readr`, asignando a una variable llamada `DF`.
-
-```{r, warning=FALSE}
-dataframe <- read_csv("../db/Programming_languages.csv")
-```
-
-Veamos cuántas filas y columnas tiene nuestro `dataframe`:
-
-```{r}
-nrow(dataframe)
-ncol(dataframe)
+nrow(planguages)
+ncol(planguages)
 ```
 
 Como se puede ver, hay muchas columnas (en total 353) que no utilizaremos.
 
-Por ello, procedemos a limpiar nuestro `dataframe`, centrándonos en las variables que nos interesan, las cuales son: `Title`, `Appeared`, `Type`, `Rank`, `numberOfJobs`, `numberOfUsers`, `Country`, `githubLanguage.repos` y `githubBigQuery.repos`.
+Por ello, procedemos a limpiar nuestro `planguages`, centrándonos en las variables que nos interesan, las cuales son: `Title`, `Appeared`, `Type`, `Rank`, `numberOfJobs`, `numberOfUsers`, `Country`, `githubLanguage.repos` y `githubBigQuery.repos`.
 
 Vamos a eliminar las columnas que no necesitemos:
 
 ```{r}
-# Columnas a conservar
-dataframe <- select(dataframe, title, appeared, type, rank, numberOfJobs, numberOfUsers, country, githubLanguage.repos, githubBigQuery.repos)
+planguages <- select(planguages, title, appeared, type, rank, numberOfJobs, numberOfUsers, country, githubLanguage.repos, githubBigQuery.repos)
 
 ```
 
-El resultado de este proceso sería:
+Renombraremos las variables para una mejor manipulación:
 
 ```{r}
-names(dataframe)
-```
-
-Renombraremos las variables para una mejor manipulación
-
-```{r}
-dataframe %>% rename(Nombre = title,
+planguages %>% rename(Nombre = title,
                      Año = appeared,
                      Tipo = type,
                      Rank = rank,
@@ -220,79 +202,51 @@ dataframe %>% rename(Nombre = title,
                      N_Usuarios = numberOfUsers,
                      País = country,
                      Github_repos = githubLanguage.repos,
-                     BigQuery_repos = githubBigQuery.repos) -> dataframe
+                     BigQuery_repos = githubBigQuery.repos) -> planguages
 ```
 
-#### Nombre
-
-La variable `Nombre` ya se encuentra limpia, verifiquemos que esté completa para todas las filas:
-
-```{r}
-any(is.na(dataframe$Nombre))
-```
-
-Efectivamente está completa.
-
-#### Año
+### Limpieza de Datos no útiles
 
 Consideraremos los lenguajes de programación que hayan sido creados posteriores e iguales al año 1945:
 
 ```{r}
-dataframe$Año[dataframe$Año < 1945] <- NA
-
-#dataframe <- dataframe[!is.na(dataframe$Año), ]
+planguages$Año[planguages$Año < 1945] <- NA
 ```
 
-#### Tipo
-
-Queremos que la variable `Tipo` corresponda a lenguajes de programación `pl` o `queryLanguage`, Por lo que se eliminan todos los registros que no sean `pl` (programming languages) o `queryLanguage` (Lenguaje de consulta)
+La variable `Tipo` debe corresponder a lenguajes de programación `pl`, `queryLanguage`, `textMarkup` o `stylesheetLanguage`\`.
 
 ```{r}
-dataframe <- dataframe[dataframe$Tipo == "pl" | dataframe$Tipo == "queryLanguage" | dataframe$Tipo == "textMarkup" | dataframe$Tipo == "stylesheetLanguage" ,]
+planguages <- planguages[planguages$Tipo == "pl" | planguages$Tipo == "queryLanguage" | planguages$Tipo == "textMarkup" | planguages$Tipo == "stylesheetLanguage" ,]
 ```
 
-#### Rank
-
-Como el ranking de esta variable empieza en 0, vamos a sumar 1 a cada fila de esta variable:
+El ranking empieza en 0. Vamos a sumar 1 a cada fila de esta variable:
 
 ```{r}
-dataframe$Rank <- dataframe$Rank + 1
+planguages$Rank <- planguages$Rank + 1
 ```
 
-#### N_Trabajos
-
-Queremos que el lenguaje de programación tenga al menos 1 trabajador:
+Escogemos los lenguajes que tengan al menos 1 trabajador:
 
 ```{r}
-dataframe$N_Trabajos[dataframe$N_Trabajos == 0] <- NA
+planguages$N_Trabajos[planguages$N_Trabajos == 0] <- NA
 ```
 
-#### N_Usuarios
-
-Queremos que el lenguaje de programación tenga más de 10 usuarios:
+Escogemos los lenguajes que tengan más de 10 usuarios:
 
 ```{r}
-dataframe <- dataframe[dataframe$N_Usuarios > 10,] 
+planguages <- planguages[planguages$N_Usuarios > 10,] 
 ```
 
-#### País
-
-Esta variable ya está limpia.
-
-#### Github_repos
-
-Queremos que exista al menos un repositorio al buscar en Github
+Seleccionamos los lenguajes donde al menos exista un repositorio al buscar en Github
 
 ```{r}
-dataframe$Github_repos[dataframe$Github_repos == 0] <- NA
+planguages$Github_repos[planguages$Github_repos == 0] <- NA
 ```
 
-#### BigQuery_repos
-
-Queremos que exista al menos un repositorio al buscar en BigQuery
+Seleccionamos los lenguajes donde al menos exista un repositorio al buscar en BigQuery
 
 ```{r}
-dataframe$BigQuery_repos[dataframe$BigQuery_repos == 0] <- NA
+planguages$BigQuery_repos[planguages$BigQuery_repos == 0] <- NA
 ```
 
 Usaremos algunos lenguajes de programación, para que coincida con los usados por los usuarios de Stackoverflow
@@ -308,65 +262,53 @@ agregar_fila <- function(fila) {
   df <- rbind(df, fila)
 }
 
-for (i in 1:nrow(dataframe)){
-  if (dataframe$Nombre[i] %in% language){
-    fila <- subset(dataframe, Nombre == dataframe$Nombre[i])
+for (i in 1:nrow(planguages)){
+  if (planguages$Nombre[i] %in% language){
+    fila <- subset(planguages, Nombre == planguages$Nombre[i])
     df <- rbind(df, fila)
   }
 }
 
 ```
 
-### Limpieza de "survey results"
->>>>>>> main
+### Limpieza de "Survey Results"
 
 -   Encuestas de Stack Overflow (33880 registros obtenidos de 73268)
 
-```{r warning=FALSE, echo=FALSE}
-#Leer la base de datos
-encuesta = read_csv("../db/upload_survey_results.csv")
-
-```
-
-#### Revisar que la base de datos esté limpia:
-
-Revisaremos cuantos casos completos hay
+### Borrado de columnas innecesarias
 
 ```{r}
-#complete cases
-table(complete.cases(encuesta))
-```
-
-Observamos que parece que ninguna observación esta completa. HORROR! Sin embargo mejor enfoquémonos en las variables que queremos analizar y revisemos de nuevo.
-
-```{r}
-#borrar las filas que no queremos
 encuesta = select(encuesta, MainBranch, Employment, RemoteWork, CodingActivities, DevType, Country, EdLevel, Currency, ConvertedCompYearly, MentalHealth, Ethnicity, Gender, Age, `OpSysPersonal use`, `OpSysProfessional use`, LanguageHaveWorkedWith)
-
 ```
 
-Ahora si, revisemos de nuevo cuantos casos completos tenemos.
+Renombraremos las variables para una mejor manipulación:
 
 ```{r}
-#casos completos
+encuesta %>% rename(Salary = ConvertedCompYearly,
+                    PersonalOS = `OpSysPersonal use`,
+                    ProfessionalOS = `OpSysProfessional use`,
+                    ProgLanguages = LanguageHaveWorkedWith) -> encuesta
+```
+
+Casos completos:
+
+```{r}
 table(complete.cases(encuesta))
 ```
 
-Tal parece que solo 34672 casos están completos, por lo que seleccionaremos justo estos.
+Solo 34672 casos están completos. Seleccionaremos justo estos.
 
 ```{r}
-#eliminar nulos
 encuesta = na.omit(encuesta)
 ```
 
-#### Revisar valores de las columnas
+### Limpieza de Datos no útiles
 
-Para esta primera instancia analizaremos primero las variables numéricas, de esta forma podemos eliminar lo que creemos que se aleja de la realidad, como salarios extremadamente bajos que solo entorpecen el análisis.
+Para la variable `salario`
 
 ```{r}
-#minimo unos 3600 dolares anuales
-encuesta = encuesta[encuesta$ConvertedCompYearly > 3600,]
-encuesta = encuesta[encuesta$ConvertedCompYearly < 150000,]
+encuesta = encuesta[encuesta$Salary > 3600,]
+encuesta = encuesta[encuesta$Salary < 150000,]
 ```
 
 Filtrar por los géneros. En la encuesta se permite elegir géneros de varios tipos. Sin embargo, para fines de estudio nos limitaremos a hombre o mujeres, más obviaremos a los no binarios, entre otros.
@@ -407,8 +349,8 @@ Ahora crearemos columnas para cada lenguaje de programación, esto con el fin de
 ```{r}
 # Separar los lenguajes y crear columnas separadas
 language <- encuesta %>%
-  separate_rows(LanguageHaveWorkedWith, sep = ";") %>%
-  group_by(LanguageHaveWorkedWith) %>%
+  separate_rows(ProgLanguages, sep = ";") %>%
+  group_by(ProgLanguages) %>%
   summarize() %>%
   pull()
 
@@ -417,7 +359,7 @@ for (name in language) {
 }
 
 for (i in 1:nrow(encuesta)) {
-  for (elem in unlist(strsplit(encuesta$LanguageHaveWorkedWith[i],";"))){
+  for (elem in unlist(strsplit(encuesta$ProgLanguages[i],";"))){
     encuesta[i, elem] <- TRUE
   }
 }
@@ -466,23 +408,23 @@ opciones_a_verificar <- c("BSD", "Linux-based", "Windows", "Windows Subsystem fo
                          "macOS")
 
 # op1
-columna_booleana <- str_detect(encuesta$`OpSysPersonal use`, paste0("\\b", "BSD", "\\b"))
+columna_booleana <- str_detect(encuesta$`PersonalOS`, paste0("\\b", "BSD", "\\b"))
 encuesta$BSD <- columna_booleana
 
 # op2
-columna_booleana <- str_detect(encuesta$`OpSysPersonal use`, paste0("\\b", "based", "\\b"))
+columna_booleana <- str_detect(encuesta$`PersonalOS`, paste0("\\b", "based", "\\b"))
 encuesta$Linux_Based <- columna_booleana
 
 # op3
-columna_booleana <- str_detect(encuesta$`OpSysPersonal use`, paste0("\\b", "Windows", "\\b"))
+columna_booleana <- str_detect(encuesta$`PersonalOS`, paste0("\\b", "Windows", "\\b"))
 encuesta$Windows <- columna_booleana
 
 # op4
-columna_booleana <- str_detect(encuesta$`OpSysPersonal use`, paste0("\\b", "Subsystem", "\\b"))
+columna_booleana <- str_detect(encuesta$`PersonalOS`, paste0("\\b", "Subsystem", "\\b"))
 encuesta$Windows_for_Linux <- columna_booleana
 
 # op5
-columna_booleana <- str_detect(encuesta$`OpSysPersonal use`, paste0("\\b", "macOS", "\\b"))
+columna_booleana <- str_detect(encuesta$`PersonalOS`, paste0("\\b", "macOS", "\\b"))
 encuesta$Mac <- columna_booleana
 ```
 
@@ -555,8 +497,8 @@ aprendizaje <- filter(encuesta, Learning == TRUE)
 
 
 language <- encuesta %>%
-  separate_rows(LanguageHaveWorkedWith, sep = ";") %>%
-  group_by(LanguageHaveWorkedWith) %>%
+  separate_rows(ProgLanguages, sep = ";") %>%
+  group_by(ProgLanguages) %>%
   summarize() %>%
   pull()
 
@@ -967,7 +909,7 @@ Prontamente observaremos las causas por las que estos lenguajes son más "proble
 Para esto analizaremos los datos de los lenguajes de programación. Veremos entonces la lista de lenguajes más populares y compararemos.
 
 ```{r}
-languages %>% arrange(desc(N_Usuarios)) -> OrdenUsuarios
+language %>% arrange(desc(N_Usuarios)) -> OrdenUsuarios
 select(OrdenUsuarios, Nombre, N_Usuarios) %>% arrange(Nombre)
 
 barplot(OrdenUsuarios$N_Usuarios, 
@@ -991,7 +933,7 @@ Rápidamente notaremos que son los lenguajes "poco problemáticos" (Java, C++, M
 Pero parémonos a analizar un momento y pensemos, ¿es la popularidad lo que está definiendo que un lenguaje sea "problemático", es decir, afecte negativamente en la salud mental de un desarrollador? O por otro lado, ¿es un lenguaje popular porque puede ser calificado como **"poco problemático"**?
 
 ```{r}
-languages %>% arrange(desc(N_Trabajos)) -> OrdenTrabajos
+language %>% arrange(desc(N_Trabajos)) -> OrdenTrabajos
 select(OrdenTrabajos, Nombre, N_Trabajos) %>% arrange(Nombre)
 ```
 
@@ -1019,7 +961,7 @@ El acceso a la información, o la cantidad de documentación que existe sobre ci
 Analizaremos el siguiente gráfico:
 
 ```{r}
-languages %>% arrange(desc(Github_repos)) -> OrdenGithubrep
+language %>% arrange(desc(Github_repos)) -> OrdenGithubrep
 select(OrdenGithubrep, Nombre, Github_repos) %>% arrange((Nombre))
 ```
 
@@ -1038,7 +980,7 @@ barplot(OrdenGithubrep$Github_repos,
 ```
 
 ```{r}
-languages %>% arrange(desc(BigQuery_repos)) -> OrdenBigQueryrep
+language %>% arrange(desc(BigQuery_repos)) -> OrdenBigQueryrep
 select(OrdenBigQueryrep, Nombre, BigQuery_repos) %>% arrange((Nombre))
 ```
 
@@ -1075,15 +1017,15 @@ Pero no solo es la popularidad o la cantidad de información acerca del lenguaje
 promedios <- c()
 
 language <- encuesta %>%
-  separate_rows(LanguageHaveWorkedWith, sep = ";") %>%
-  group_by(LanguageHaveWorkedWith) %>%
+  separate_rows(ProgLanguages, sep = ";") %>%
+  group_by(ProgLanguages) %>%
   summarize() %>%
   pull()
 
 #iterar por cada lenguaje de programación
 for (current in language){
   this <- encuesta[encuesta[current] == TRUE,]
-	promedio <- mean(this$ConvertedCompYearly[language == current])
+	promedio <- mean(this$Salary[language == current])
 	promedios[current] <- promedio
 }
 
@@ -1120,7 +1062,7 @@ medianas <- c()
 #iterar por cada lenguaje de programación
 for (current in language){
   this <- encuesta[encuesta[current] == TRUE,]
-	promedio <- median(this$ConvertedCompYearly[language == current])
+	promedio <- median(this$Salary[language == current])
 	medianas[current] <- promedio
 }
 
@@ -1159,45 +1101,45 @@ Así mismo, parece ser que los lenguajes que identificamos como "problemáticos"
 
 ```{r}
 encuesta %>%
- filter(ConvertedCompYearly >= 3611 & ConvertedCompYearly <= 758445) %>%
+ filter(Salary >= 3611 & Salary <= 758445) %>%
  ggplot() +
-  aes(x = ConvertedCompYearly, y = Memoria) +
+  aes(x = Salary, y = Memoria) +
   geom_boxplot(fill = "#FFD6D6") +
   theme_minimal()
 ```
 
 ```{r}
 encuesta %>%
- filter(ConvertedCompYearly >= 3611L & ConvertedCompYearly <= 758445L) %>%
+ filter(Salary >= 3611L & Salary <= 758445L) %>%
  ggplot() +
-  aes(x = ConvertedCompYearly, y = Emotional) +
+  aes(x = Salary, y = Emotional) +
   geom_boxplot(fill = "#E3FFD6") +
   theme_minimal()
 ```
 
 ```{r}
 encuesta %>%
- filter(ConvertedCompYearly >= 3611L & ConvertedCompYearly <= 758445L) %>%
+ filter(Salary >= 3611L & Salary <= 758445L) %>%
  ggplot() +
-  aes(x = ConvertedCompYearly, y = Anxiety) +
+  aes(x = Salary, y = Anxiety) +
   geom_boxplot(fill = "#D6D9FF") +
   theme_minimal()
 ```
 
 ```{r}
 encuesta %>%
- filter(ConvertedCompYearly >= 3611L & ConvertedCompYearly <= 758445L) %>%
+ filter(Salary >= 3611L & Salary <= 758445L) %>%
  ggplot() +
-  aes(x = ConvertedCompYearly, y = Autism) +
+  aes(x = Salary, y = Autism) +
   geom_boxplot(fill = "#FFD6F8") +
   theme_minimal()
 ```
 
 ```{r}
 encuesta %>%
- filter(ConvertedCompYearly >= 3611L & ConvertedCompYearly <= 255222L) %>%
+ filter(Salary >= 3611L & Salary <= 255222L) %>%
  ggplot() +
-  aes(x = ConvertedCompYearly, y = Learning) +
+  aes(x = Salary, y = Learning) +
   geom_boxplot(fill = "#FFD6F8") +
   theme_minimal()
 ```
