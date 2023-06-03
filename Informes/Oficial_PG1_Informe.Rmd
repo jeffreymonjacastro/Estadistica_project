@@ -267,6 +267,8 @@ for (i in 1:nrow(planguages)){
     df <- rbind(df, fila)
   }
 }
+
+planguages <- df
 ```
 
 ### Limpieza de "Survey Results"
@@ -326,9 +328,9 @@ encuesta <- encuesta[encuesta$Age != "Prefer not to say",]
 En la variable `MentalHealth`, eliminaremos los datos que contengan "*in your own words*" o "*prefer not to say*"
 
 ```{r}
-encuesta = encuesta[!str_detect(encuesta$MentalHealth, "in your own words"),]
+encuesta <- encuesta[!str_detect(encuesta$MentalHealth, "in your own words"),]
 
-encuesta = encuesta[!str_detect(encuesta$MentalHealth, "Prefer not to say"),]
+encuesta <- encuesta[!str_detect(encuesta$MentalHealth, "Prefer not to say"),]
 ```
 
 Listo, eso es todo lo que querremos filtrar en la base de datos.
@@ -371,7 +373,7 @@ columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "mood", "\\b
 encuesta$Emocional <- columna_booleana
 
 # op3
-columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "anxiety", "\\b"))
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "Anxiety", "\\b"))
 encuesta$Anciedad <- columna_booleana
 
 # op4
@@ -498,8 +500,6 @@ for (current in language){
 porcentajes <- sort(porcentajes, decreasing = TRUE)
 
 porcentajes <- data.frame(porcentajes)
-
-porcentajes
 ```
 
 > ##### Gráfico de barras, porcentaje de personas que sufre usando una tecnología:
@@ -541,71 +541,50 @@ barplot(porcentajeshelper,
 > ##### Tabla de frecuencias:
 
 ```{r}
-
 porcentajes <- c()
 
-
-#iterar por cada lenguaje de programación
 for (current in language){
 	cantidad = nrow(ansiedad[ansiedad[[current]] == TRUE, ])
 	cantidadTotal = nrow(encuesta[encuesta[[current]] == TRUE, ])
 	porcentajes[current] <- cantidad/cantidadTotal
 }
 
-
-#ordenar porcentajes de mayor a menor
 porcentajes <- sort(porcentajes, decreasing = TRUE)
 
-#mostrar tabla en formato de tabla
 porcentajes = data.frame(porcentajes)
-
-porcentajes
 ```
 
 > ##### Gráfico de barras, porcentaje de personas que sufre usando una tecnología:
 
 ```{r}
-
 porcentajeshelper <- porcentajes$porcentajes[1:15]
 nombres <- rownames(porcentajes)[1:15]
-
-#plotear porcentajes en grafico de barras de lado
 
 barplot(porcentajeshelper, 
 	main="% Personas que sufren de problemas de Ansiedad", 
 	xlab="Porcentaje de personas", 
-  #degradado lineal de azul oscuro a azul
   col=colorRampPalette(c("darkblue", "blue"))(15),
 	xlim = c(0,0.16),
 	horiz=TRUE,
 	las=1,
-	#nombres
 	names.arg=nombres,
 	cex.names=0.5,
 	cex.axis=0.5,
-
 	)
-
 
 porcentajeshelper <- porcentajes$porcentajes[25:40]
 nombres <- rownames(porcentajes)[25:40]
 
-#plotear porcentajes en grafico de barras de lado
-
 barplot(porcentajeshelper, 
 	main="% Personas que sufren de problemas de Ansiedad", 
 	xlab="Porcentaje de personas", 
-  #degradado lineal de azul oscuro a azul
   col=colorRampPalette(c("darkblue", "blue"))(15),
 	xlim = c(0,0.16),
-
 	horiz=TRUE,
 	las=1,
-	#nombres
 	names.arg=nombres,
 	cex.names=0.5,
 	cex.axis=0.5,
-
 	)
 ```
 
@@ -614,71 +593,50 @@ barplot(porcentajeshelper,
 > ##### Tabla de frecuencias:
 
 ```{r}
-
 porcentajes <- c()
 
-
-#iterar por cada lenguaje de programación
 for (current in language){
 	cantidad = nrow(emocional[emocional[[current]] == TRUE, ])
 	cantidadTotal = nrow(encuesta[encuesta[[current]] == TRUE, ])
 	porcentajes[current] <- cantidad/cantidadTotal
 }
 
-
-#ordenar porcentajes de mayor a menor
 porcentajes <- sort(porcentajes, decreasing = TRUE)
 
-#mostrar tabla en formato de tabla
 porcentajes = data.frame(porcentajes)
-
-porcentajes
 ```
 
 > ##### Gráfico de barras, porcentaje de personas que sufre usando una tecnología:
 
 ```{r}
-
 porcentajeshelper <- porcentajes$porcentajes[1:15]
 nombres <- rownames(porcentajes)[1:15]
-
-#plotear porcentajes en grafico de barras de lado
 
 barplot(porcentajeshelper, 
 	main="% Personas que sufren de problemas de Emocionales", 
 	xlab="Porcentaje de personas", 
-  #degradado lineal de azul oscuro a azul
   col=colorRampPalette(c("darkblue", "blue"))(15),
 	xlim = c(0,0.15),
 	horiz=TRUE,
 	las=1,
-	#nombres
 	names.arg=nombres,
 	cex.names=0.5,
 	cex.axis=0.5,
-
 	)
-
-
 
 porcentajeshelper <- porcentajes$porcentajes[25:40]
 nombres <- rownames(porcentajes)[25:40]
 
-#plotear porcentajes en grafico de barras de lado
-
 barplot(porcentajeshelper, 
 	main="% Personas que sufren de problemas de Emocionales", 
 	xlab="Porcentaje de personas", 
-  #degradado lineal de azul oscuro a azul
   col=colorRampPalette(c("darkblue", "blue"))(15),
 	xlim = c(0,0.15),
 	horiz=TRUE,
 	las=1,
-	#nombres
 	names.arg=nombres,
 	cex.names=0.5,
 	cex.axis=0.5,
-
 	)
 ```
 
@@ -687,72 +645,50 @@ barplot(porcentajeshelper,
 > ##### Tabla de frecuencias:
 
 ```{r}
-
 porcentajes <- c()
 
-
-#iterar por cada lenguaje de programación
 for (current in language){
 	cantidad = nrow(autismo[autismo[[current]] == TRUE, ])
 	cantidadTotal = nrow(encuesta[encuesta[[current]] == TRUE, ])
 	porcentajes[current] <- cantidad/cantidadTotal
 }
 
-
-#ordenar porcentajes de mayor a menor
 porcentajes <- sort(porcentajes, decreasing = TRUE)
 
-#mostrar tabla en formato de tabla
 porcentajes = data.frame(porcentajes)
-
-porcentajes
 ```
 
 > ##### Gráfico de barras, porcentaje de personas que sufre usando una tecnología:
 
 ```{r}
-
 porcentajeshelper <- porcentajes$porcentajes[1:15]
 nombres <- rownames(porcentajes)[1:15]
-
-#plotear porcentajes en grafico de barras de lado
 
 barplot(porcentajeshelper, 
 	main="% Personas que sufren de problemas de Autismo", 
 	xlab="Porcentaje de personas", 
-  #degradado lineal de azul oscuro a azul
   col=colorRampPalette(c("darkblue", "blue"))(15),
 	xlim = c(0,0.1),
 	horiz=TRUE,
 	las=1,
-	#nombres
 	names.arg=nombres,
 	cex.names=0.5,
 	cex.axis=0.5,
-
 	)
-
-
 
 porcentajeshelper <- porcentajes$porcentajes[25:40]
 nombres <- rownames(porcentajes)[25:40]
 
-#plotear porcentajes en grafico de barras de lado
-
 barplot(porcentajeshelper, 
 	main="% Personas que sufren de problemas de Autismo", 
 	xlab="Porcentaje de personas", 
-  #degradado lineal de azul oscuro a azul
   col=colorRampPalette(c("darkblue", "blue"))(15),
 	xlim = c(0,0.1),
-
 	horiz=TRUE,
 	las=1,
-	#nombres
 	names.arg=nombres,
 	cex.names=0.5,
 	cex.axis=0.5,
-
 	)
 ```
 
@@ -761,77 +697,51 @@ barplot(porcentajeshelper,
 > ##### Tabla de frecuencias:
 
 ```{r}
-
 porcentajes <- c()
 
-
-#iterar por cada lenguaje de programación
 for (current in language){
 	cantidad = nrow(aprendizaje[aprendizaje[[current]] == TRUE, ])
 	cantidadTotal = nrow(encuesta[encuesta[[current]] == TRUE, ])
 	porcentajes[current] <- cantidad/cantidadTotal
 }
 
-
-#ordenar porcentajes de mayor a menor
 porcentajes <- sort(porcentajes, decreasing = TRUE)
 
-#mostrar tabla en formato de tabla
 porcentajes = data.frame(porcentajes)
-
-porcentajes
 ```
 
 ##### Gráfico de barras, porcentaje de personas que sufre usando una tecnología:
 
 ```{r}
-
 porcentajeshelper <- porcentajes$porcentajes[1:15]
 nombres <- rownames(porcentajes)[1:15]
-
-#plotear porcentajes en grafico de barras de lado
 
 barplot(porcentajeshelper, 
 	main="% Personas que sufren de problemas de Aprendizaje", 
 	xlab="Porcentaje de personas", 
-  #degradado lineal de azul oscuro a azul
   col=colorRampPalette(c("darkblue", "blue"))(15),
-
 	xlim = c(0,0.1),
-	
 	horiz=TRUE,
 	las=1,
-	#nombres
 	names.arg=nombres,
 	cex.names=0.5,
 	cex.axis=0.5,
-
 	)
-
 
 porcentajeshelper <- porcentajes$porcentajes[25:40]
 nombres <- rownames(porcentajes)[25:40]
 
-#plotear porcentajes en grafico de barras de lado
-
 barplot(porcentajeshelper, 
 	main="% Personas que sufren de problemas de Aprendizaje", 
 	xlab="Porcentaje de personas", 
-  #degradado lineal de azul oscuro a azul
   col=colorRampPalette(c("darkblue", "blue"))(15),
-
   xlim = c(0,0.1),
-	
 	horiz=TRUE,
 	las=1,
-	#nombres
 	names.arg=nombres,
 	cex.names=0.5,
 	cex.axis=0.5,
-	
-
 	)
-
 ```
 
 De estos gráficos podemos identificar distintos lenguajes que generan problemas a los desarrolladores.
@@ -870,7 +780,6 @@ Para esto analizaremos los datos de los lenguajes de programación. Veremos ento
 
 ```{r}
 planguages %>% arrange(desc(N_Usuarios)) -> OrdenUsuarios
-select(OrdenUsuarios, Nombre, N_Usuarios) %>% arrange(Nombre)
 
 barplot(OrdenUsuarios$N_Usuarios, 
         names.arg = OrdenUsuarios$Nombre,
@@ -894,10 +803,7 @@ Pero parémonos a analizar un momento y pensemos, ¿es la popularidad lo que est
 
 ```{r}
 planguages %>% arrange(desc(N_Trabajos)) -> OrdenTrabajos
-select(OrdenTrabajos, Nombre, N_Trabajos) %>% arrange(Nombre)
-```
 
-```{r}
 barplot(OrdenTrabajos$N_Trabajos, 
         names.arg = OrdenTrabajos$Nombre,
         col = "blue",
@@ -922,10 +828,7 @@ Analizaremos el siguiente gráfico:
 
 ```{r}
 planguages %>% arrange(desc(Github_repos)) -> OrdenGithubrep
-select(OrdenGithubrep, Nombre, Github_repos) %>% arrange((Nombre))
-```
 
-```{r}
 barplot(OrdenGithubrep$Github_repos, 
         names.arg = OrdenGithubrep$Nombre,
         col = "red",
@@ -941,10 +844,7 @@ barplot(OrdenGithubrep$Github_repos,
 
 ```{r}
 planguages %>% arrange(desc(BigQuery_repos)) -> OrdenBigQueryrep
-select(OrdenBigQueryrep, Nombre, BigQuery_repos) %>% arrange((Nombre))
-```
 
-```{r}
 barplot(OrdenBigQueryrep$BigQuery_repos, 
         names.arg = OrdenBigQueryrep$Nombre,
         col = "green",
@@ -976,27 +876,15 @@ Pero no solo es la popularidad o la cantidad de información acerca del lenguaje
 ```{r}
 promedios <- c()
 
-language <- encuesta %>%
-  separate_rows(ProgLanguages, sep = ";") %>%
-  group_by(ProgLanguages) %>%
-  summarize() %>%
-  pull()
-
-#iterar por cada lenguaje de programación
 for (current in language){
   this <- encuesta[encuesta[current] == TRUE,]
 	promedio <- mean(this$Salary[language == current])
 	promedios[current] <- promedio
 }
 
-
-#ordenar promedios de mayor a menor
-
 promedios <- sort(promedios, decreasing = TRUE)
 
 promedios <- data.frame(promedios)
-
-promedios
 
 porcentajeshelper <- promedios$promedios[1:15]
 nombres <- rownames(promedios)[1:15]
@@ -1004,55 +892,38 @@ nombres <- rownames(promedios)[1:15]
 barplot(porcentajeshelper, 
 	main="Promedio", 
 	xlab="Salario Promedio", 
-  #degradado lineal de azul oscuro a azul
   col=colorRampPalette(c("darkgreen", "green"))(15),
 	horiz=TRUE,
 	las=1,
-	#nombres
 	names.arg=nombres,
 	cex.names=0.5,
 	cex.axis=0.5,
-
 	)
-
 
 medianas <- c()
 
-
-#iterar por cada lenguaje de programación
 for (current in language){
   this <- encuesta[encuesta[current] == TRUE,]
 	promedio <- median(this$Salary[language == current])
 	medianas[current] <- promedio
 }
 
-
 medianas <- sort(medianas, decreasing = TRUE)
 medianas <- data.frame(medianas)
-
-
-
-medianas 
 
 porcentajeshelper <- medianas$medianas[1:15]
 nombres <- rownames(medianas)[1:15]
 
-
 barplot(porcentajeshelper, 
 	main="Medianas", 
 	xlab="Salario Medianas", 
-  #degradado lineal de azul oscuro a azul
-  #color verde pastel
   col=colorRampPalette(c("darkgreen", "green"))(15),
 	horiz=TRUE,
 	las=1,
-	#nombres
 	names.arg=nombres,
 	cex.names=0.5,
 	cex.axis=0.5,
-
 	)
-
 ```
 
 Es curioso ver como los lenguaje más populares tienen un salario promedio mucho menor que el de los pocos populares.
@@ -1061,7 +932,7 @@ Así mismo, parece ser que los lenguajes que identificamos como "problemáticos"
 
 ```{r}
 encuesta %>%
- filter(Salary >= 3611 & Salary <= 758445) %>%
+ filter(Salary >= 3611 & Salary <= 150000) %>%
  ggplot() +
   aes(x = Salary, y = Memoria) +
   geom_boxplot(fill = "#FFD6D6") +
@@ -1070,7 +941,7 @@ encuesta %>%
 
 ```{r}
 encuesta %>%
- filter(Salary >= 3611L & Salary <= 758445L) %>%
+ filter(Salary >= 3611L & Salary <= 150000) %>%
  ggplot() +
   aes(x = Salary, y = Emocional) +
   geom_boxplot(fill = "#E3FFD6") +
@@ -1079,7 +950,7 @@ encuesta %>%
 
 ```{r}
 encuesta %>%
- filter(Salary >= 3611L & Salary <= 758445L) %>%
+ filter(Salary >= 3611L & Salary <= 150000) %>%
  ggplot() +
   aes(x = Salary, y = Anciedad) +
   geom_boxplot(fill = "#D6D9FF") +
@@ -1088,7 +959,7 @@ encuesta %>%
 
 ```{r}
 encuesta %>%
- filter(Salary >= 3611L & Salary <= 758445L) %>%
+ filter(Salary >= 3611L & Salary <= 150000) %>%
  ggplot() +
   aes(x = Salary, y = Autismo) +
   geom_boxplot(fill = "#FFD6F8") +
@@ -1097,7 +968,7 @@ encuesta %>%
 
 ```{r}
 encuesta %>%
- filter(Salary >= 3611L & Salary <= 255222L) %>%
+ filter(Salary >= 3611L & Salary <= 150000) %>%
  ggplot() +
   aes(x = Salary, y = Aprendizaje) +
   geom_boxplot(fill = "#FFD6F8") +
@@ -1106,115 +977,90 @@ encuesta %>%
 
 ### ¿Sistemas Operativos vs Salud Mental?
 
-> Creamos la tabla con todos los tipos de mental health
+> Variables necesarias
 
 ```{r}
-# Creación de la tabla con los mental health
-tabla2 <- data.frame(Mental_Health = c("Memory","Emotional", "Anxiety", "Autism", "Learning"),
-                    CantUsers = c(sum(encuesta$Memoria== TRUE),
+tabla2 <- data.frame(Mental_Health = c("Memoria","Emocional", "Anciedad", "Autismo", "Aprendizaje"),
+                    Total = c(sum(encuesta$Memoria== TRUE),
                                   sum(encuesta$Emocional == TRUE),
                                   sum(encuesta$Anciedad == TRUE),
                                   sum(encuesta$Autismo == TRUE),
                                   sum(encuesta$Aprendizaje == TRUE))
                     )
 
-print(tabla2)
-```
-
-> Creamos una tabla de conteo general con los sistemas operativos
-
-```{r}
-# Creación de la tabla con los sistemas operativos
 tabla <- data.frame(`OpSysPersonal use` = c("BSD", "Linux-based", "Windows", "Windows Subsystem for Linux (WSL)", "macOS"),
-                    CantUsers = c(sum(encuesta$BSD == TRUE),
+                    Total = c(sum(encuesta$BSD == TRUE),
                                   sum(encuesta$Linux_Based == TRUE),
                                   sum(encuesta$Windows == TRUE),
                                   sum(encuesta$Windows_for_Linux == TRUE),
                                   sum(encuesta$Mac == TRUE))
                     )
-
-print(tabla)
-
 ```
-
-> Creamos una tabla por cada sistema operativo para almacenar la Porcentaje de personas que sufren de cada tipo de condición mental
 
 #### BSD
 
 ```{r}
 tablaBSD <- data.frame(`OpSysPersonal use` = "BSD",
-CantUsersMemory = sum(encuesta$BSD == TRUE & encuesta$Memoria == TRUE),
-CantUsersEmotional = sum(encuesta$BSD == TRUE & encuesta$Emotional == TRUE),
-CantUsersAnxiety = sum(encuesta$BSD == TRUE & encuesta$Anxiety == TRUE),
-CantUsersAutism = sum(encuesta$BSD == TRUE & encuesta$Autism == TRUE),
-CantUsersLearning = sum(encuesta$BSD == TRUE & encuesta$Learning == TRUE),
-Total = sum(encuesta$BSD == TRUE))
-
-print(tablaBSD)
+TotalMemoria <- sum(encuesta$BSD == TRUE & encuesta$Memoria == TRUE),
+TotalEmocional <- sum(encuesta$BSD == TRUE & encuesta$Emocional == TRUE),
+TotalAnciedad <- sum(encuesta$BSD == TRUE & encuesta$Ansiedad == TRUE),
+TotalAutismo <- sum(encuesta$BSD == TRUE & encuesta$Autismo == TRUE),
+TotalAprendizaje <- sum(encuesta$BSD == TRUE & encuesta$Aprendizaje == TRUE),
+Total <- sum(encuesta$BSD == TRUE))
 ```
 
 #### LINUX BASED
 
 ```{r}
 tablaLinuxB <- data.frame(`OpSysPersonal use` = "Linux-based",
-CantUsersMemory = sum(encuesta$Linux_Based == TRUE & encuesta$Memoria == TRUE),
-CantUsersEmotional = sum(encuesta$Linux_Based == TRUE & encuesta$Emotional == TRUE),
-CantUsersAnxiety = sum(encuesta$Linux_Based == TRUE & encuesta$Anxiety == TRUE),
-CantUsersAutism = sum(encuesta$Linux_Based == TRUE & encuesta$Autism == TRUE),
-CantUsersLearning = sum(encuesta$Linux_Based == TRUE & encuesta$Learning == TRUE),
+TotalMemoria = sum(encuesta$Linux_Based == TRUE & encuesta$Memoria == TRUE),
+TotalEmocional = sum(encuesta$Linux_Based == TRUE & encuesta$Emocional == TRUE),
+TotalAnciedad = sum(encuesta$Linux_Based == TRUE & encuesta$Anciedad == TRUE),
+TotalAutismo = sum(encuesta$Linux_Based == TRUE & encuesta$Autismo == TRUE),
+TotalAprendizaje = sum(encuesta$Linux_Based == TRUE & encuesta$Aprendizaje == TRUE),
 Total = sum(encuesta$Linux_Based == TRUE))
-
-print(tablaLinuxB)
 ```
 
 #### WINDOWS
 
 ```{r}
 tablaWindows <- data.frame(`OpSysPersonal use` = "Windows",
-CantUsersMemory = sum(encuesta$Windows == TRUE & encuesta$Memoria == TRUE),
-CantUsersEmotional = sum(encuesta$Windows == TRUE & encuesta$Emotional == TRUE),
-CantUsersAnxiety = sum(encuesta$Windows == TRUE & encuesta$Anxiety == TRUE),
-CantUsersAutism = sum(encuesta$Windows == TRUE & encuesta$Autism == TRUE),
-CantUsersLearning = sum(encuesta$Windows == TRUE & encuesta$Learning == TRUE),
+TotalMemoria = sum(encuesta$Windows == TRUE & encuesta$Memoria == TRUE),
+TotalEmocional = sum(encuesta$Windows == TRUE & encuesta$Emocional == TRUE),
+TotalAnciedad = sum(encuesta$Windows == TRUE & encuesta$Anciedad == TRUE),
+TotalAutismo = sum(encuesta$Windows == TRUE & encuesta$Autismo == TRUE),
+TotalAprendizaje = sum(encuesta$Windows == TRUE & encuesta$Aprendizaje == TRUE),
 Total = sum(encuesta$Windows == TRUE))
-
-print(tablaWindows)
 ```
 
 **WSL**
 
 ```{r}
 tablaWindowsLinux <- data.frame(`OpSysPersonal use` = "Windows_Linux",
-CantUsersMemory = sum(encuesta$Windows_for_Linux == TRUE & encuesta$Memoria == TRUE),
-CantUsersEmotional = sum(encuesta$Windows_for_Linux == TRUE & encuesta$Emotional == TRUE),
-CantUsersAnxiety = sum(encuesta$Windows_for_Linux == TRUE & encuesta$Anxiety == TRUE),
-CantUsersAutism = sum(encuesta$Windows_for_Linux == TRUE & encuesta$Autism == TRUE),
-CantUsersLearning = sum(encuesta$Windows_for_Linux == TRUE & encuesta$Learning == TRUE),
+TotalMemoria = sum(encuesta$Windows_for_Linux == TRUE & encuesta$Memoria == TRUE),
+TotalEmocional = sum(encuesta$Windows_for_Linux == TRUE & encuesta$Emocional == TRUE),
+TotalAnciedad = sum(encuesta$Windows_for_Linux == TRUE & encuesta$Anciedad == TRUE),
+TotalAutismo = sum(encuesta$Windows_for_Linux == TRUE & encuesta$Autismo == TRUE),
+TotalAprendizaje = sum(encuesta$Windows_for_Linux == TRUE & encuesta$Aprendizaje == TRUE),
 Total = sum(encuesta$Windows_for_Linux == TRUE))
-
-print(tablaWindowsLinux)
 ```
 
 **macOS**
 
 ```{r}
 tablaMac <- data.frame(`OpSysPersonal use` = "MacOS",
-CantUsersMemory = sum(encuesta$Mac == TRUE & encuesta$Memoria == TRUE),
-CantUsersEmotional = sum(encuesta$Mac == TRUE & encuesta$Emotional == TRUE),
-CantUsersAnxiety = sum(encuesta$Mac == TRUE & encuesta$Anxiety == TRUE),
-CantUsersAutism = sum(encuesta$Mac == TRUE & encuesta$Autism == TRUE),
-CantUsersLearning = sum(encuesta$Mac == TRUE & encuesta$Learning == TRUE),
+TotalMemoria = sum(encuesta$Mac == TRUE & encuesta$Memoria == TRUE),
+TotalEmocional = sum(encuesta$Mac == TRUE & encuesta$Emocional == TRUE),
+TotalAnciedad = sum(encuesta$Mac == TRUE & encuesta$Anciedad == TRUE),
+TotalAutismo = sum(encuesta$Mac == TRUE & encuesta$Autismo == TRUE),
+TotalAprendizaje = sum(encuesta$Mac == TRUE & encuesta$Aprendizaje == TRUE),
 Total = sum(encuesta$Mac == TRUE))
-
-print(tablaMac)
 ```
 
 > Unimos todo en una tabla
 
 ```{r}
-# Unir las tablas
 tabla_final <- rbind(tablaBSD, tablaLinuxB, tablaWindows, tablaWindowsLinux, tablaMac)
-print(tabla_final)
 ```
 
 > Hicimos el gráfico de barras apiladas
@@ -1243,7 +1089,7 @@ library(ggplot2)
 tabla_larga <- tidyr::gather(tabla_final, key = "MentalHealth", value = "Cantidad Total", -OpSysPersonal.use)
 tabla_larga <- tabla_larga[tabla_larga$MentalHealth != "Total", ]
 
-# Calcular el total de CantUsers por cada sistema operativo
+# Calcular el total de Usuarios por cada sistema operativo
 total_cant_users <- aggregate(Total ~ OpSysPersonal.use, data = tabla_final, FUN = sum)
 
 # Combinar los datos de tabla_larga y total_cant_users
