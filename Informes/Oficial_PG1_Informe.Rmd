@@ -19,7 +19,7 @@ Actualmente se ve una preferencia enorme por las empresas en usar las nuevas tec
 
 ### Planificación y Factibilidad
 
-Consideramos que el proyecto es viable ya que usamos bases de datos de fuentes confiables como Stackoverflow (la cual es una plataforma abierta y la base de datos resume información pública) y la otra de PLDB (un proyecto opensource creado por desarrolladores para la recolección de datos sobre lenguajes de programación)
+Consideramos que el proyecto es viable ya que usamos bases de datos de fuentes confiables como Stackoverflow (la cual es una plataforma abierta y la base de datos resume información pública) y la otra de PLDB (un proyecto opensource creado por desarrolladores para la recolección de datos sobre lenguajes de programación) 
 
 #### Planificación (Diagrama de Gantt)
 
@@ -166,6 +166,12 @@ encuesta = read_csv("../db/upload_survey_results.csv")
 ## Variables de estudio Finales
 
 ## Preguntas e Hipótesis
+
+1. Pregunta: ¿Influirá la preparación académica que hayan tenido con respecto a un lenguaje de programación en la salud emocional de cada uno?
+
+2. Pregunta: ¿En que medida el salario que brinda el lenguaje de programación repercute en la salud mental de cada desarrollador?
+
+3. Pregunta: ¿Bajo que circunstancias el sistema operativo utilizado en el ámbito profesional impacta en la calidad de vida del desarrollador?
 
 ## Análisis Descriptivo
 
