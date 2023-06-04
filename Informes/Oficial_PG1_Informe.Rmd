@@ -160,7 +160,6 @@ library(stringr)
 ### Carga de datos
 
 ```{r warning=FALSE}
-
 planguages <- read_csv("../db/Programming_languages.csv")
 encuesta <- read_csv("../db/upload_survey_results.csv")
 ```
@@ -308,15 +307,13 @@ Para la variable `salario`
 
 ```{r}
 encuesta <- encuesta[encuesta$Salary > 3600,]
-encuesta <- encuesta[encuesta$Salary < 150000,]
+encuesta <- encuesta[encuesta$Salary < 400000,]
 ```
 
 Filtrar por los géneros. En la encuesta se permite elegir géneros de varios tipos. Sin embargo, para fines de estudio nos limitaremos a hombre o mujeres, más obviaremos a los no binarios, entre otros.
 
 ```{r}
 encuesta <- encuesta[encuesta$Gender == "Man" | encuesta$Gender == "Woman",]
-
-table(encuesta$Gender)
 ```
 
 Con respecto a las edades, eliminaremos a los que no prefirieron responder.
@@ -373,8 +370,8 @@ columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "mood", "\\b
 encuesta$Emocional <- columna_booleana
 
 # op3
-columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "Anxiety", "\\b"))
-encuesta$Anciedad <- columna_booleana
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "anxiety", "\\b"))
+encuesta$Ansiedad <- columna_booleana
 
 # op4
 columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "autism", "\\b"))
@@ -478,7 +475,7 @@ Recordemos que nuestros datos principales se llaman "encuesta"
 
 ```{r}
 memoria <- filter(encuesta, Memoria == TRUE)
-ansiedad <- filter(encuesta, Anciedad == TRUE)
+ansiedad <- filter(encuesta, Ansiedad == TRUE)
 emocional <- filter(encuesta, Emocional == TRUE)
 autismo <- filter(encuesta, Autismo == TRUE)
 aprendizaje <- filter(encuesta, Aprendizaje == TRUE)
@@ -932,46 +929,12 @@ Así mismo, parece ser que los lenguajes que identificamos como "problemáticos"
 
 ```{r}
 encuesta %>%
- filter(Salary >= 3611 & Salary <= 150000) %>%
- ggplot() +
-  aes(x = Salary, y = Memoria) +
-  geom_boxplot(fill = "#FFD6D6") +
-  theme_minimal()
-```
-
-```{r}
-encuesta %>%
- filter(Salary >= 3611L & Salary <= 150000) %>%
- ggplot() +
-  aes(x = Salary, y = Emocional) +
-  geom_boxplot(fill = "#E3FFD6") +
-  theme_minimal()
-```
-
-```{r}
-encuesta %>%
- filter(Salary >= 3611L & Salary <= 150000) %>%
- ggplot() +
-  aes(x = Salary, y = Anciedad) +
-  geom_boxplot(fill = "#D6D9FF") +
-  theme_minimal()
-```
-
-```{r}
-encuesta %>%
- filter(Salary >= 3611L & Salary <= 150000) %>%
- ggplot() +
-  aes(x = Salary, y = Autismo) +
-  geom_boxplot(fill = "#FFD6F8") +
-  theme_minimal()
-```
-
-```{r}
-encuesta %>%
- filter(Salary >= 3611L & Salary <= 150000) %>%
- ggplot() +
-  aes(x = Salary, y = Aprendizaje) +
-  geom_boxplot(fill = "#FFD6F8") +
+  filter(Salary < 100000) %>% 
+  select(Memoria, Emocional, Ansiedad, Autismo, Aprendizaje, Salary) %>%
+  pivot_longer(cols = -Salary, names_to = "Variable", values_to = "Value") %>%
+  ggplot() +
+  aes(x = Salary, y = Variable, fill = Value) +
+  geom_boxplot(alpha = 0.5) +
   theme_minimal()
 ```
 
@@ -980,10 +943,10 @@ encuesta %>%
 > Variables necesarias
 
 ```{r}
-tabla2 <- data.frame(Mental_Health = c("Memoria","Emocional", "Anciedad", "Autismo", "Aprendizaje"),
+tabla2 <- data.frame(Mental_Health = c("Memoria","Emocional", "Ansiedad", "Autismo", "Aprendizaje"),
                     Total = c(sum(encuesta$Memoria== TRUE),
                                   sum(encuesta$Emocional == TRUE),
-                                  sum(encuesta$Anciedad == TRUE),
+                                  sum(encuesta$Ansiedad == TRUE),
                                   sum(encuesta$Autismo == TRUE),
                                   sum(encuesta$Aprendizaje == TRUE))
                     )
@@ -1000,13 +963,18 @@ tabla <- data.frame(`OpSysPersonal use` = c("BSD", "Linux-based", "Windows", "Wi
 #### BSD
 
 ```{r}
+
+```
+
+
+```{r}
 tablaBSD <- data.frame(`OpSysPersonal use` = "BSD",
-TotalMemoria <- sum(encuesta$BSD == TRUE & encuesta$Memoria == TRUE),
-TotalEmocional <- sum(encuesta$BSD == TRUE & encuesta$Emocional == TRUE),
-TotalAnciedad <- sum(encuesta$BSD == TRUE & encuesta$Ansiedad == TRUE),
-TotalAutismo <- sum(encuesta$BSD == TRUE & encuesta$Autismo == TRUE),
-TotalAprendizaje <- sum(encuesta$BSD == TRUE & encuesta$Aprendizaje == TRUE),
-Total <- sum(encuesta$BSD == TRUE))
+TotalMemoria = sum(encuesta$BSD == TRUE & encuesta$Memoria == TRUE),
+TotalEmocional = sum(encuesta$BSD == TRUE & encuesta$Emocional == TRUE),
+TotalAnsiedad = sum(encuesta$BSD == TRUE & encuesta$Ansiedad == TRUE),
+TotalAutismo = sum(encuesta$BSD == TRUE & encuesta$Autismo == TRUE),
+TotalAprendizaje = sum(encuesta$BSD == TRUE & encuesta$Aprendizaje == TRUE),
+Total = sum(encuesta$BSD == TRUE))
 ```
 
 #### LINUX BASED
@@ -1015,7 +983,7 @@ Total <- sum(encuesta$BSD == TRUE))
 tablaLinuxB <- data.frame(`OpSysPersonal use` = "Linux-based",
 TotalMemoria = sum(encuesta$Linux_Based == TRUE & encuesta$Memoria == TRUE),
 TotalEmocional = sum(encuesta$Linux_Based == TRUE & encuesta$Emocional == TRUE),
-TotalAnciedad = sum(encuesta$Linux_Based == TRUE & encuesta$Anciedad == TRUE),
+TotalAnsiedad = sum(encuesta$Linux_Based == TRUE & encuesta$Ansiedad == TRUE),
 TotalAutismo = sum(encuesta$Linux_Based == TRUE & encuesta$Autismo == TRUE),
 TotalAprendizaje = sum(encuesta$Linux_Based == TRUE & encuesta$Aprendizaje == TRUE),
 Total = sum(encuesta$Linux_Based == TRUE))
@@ -1027,31 +995,31 @@ Total = sum(encuesta$Linux_Based == TRUE))
 tablaWindows <- data.frame(`OpSysPersonal use` = "Windows",
 TotalMemoria = sum(encuesta$Windows == TRUE & encuesta$Memoria == TRUE),
 TotalEmocional = sum(encuesta$Windows == TRUE & encuesta$Emocional == TRUE),
-TotalAnciedad = sum(encuesta$Windows == TRUE & encuesta$Anciedad == TRUE),
+TotalAnsiedad = sum(encuesta$Windows == TRUE & encuesta$Ansiedad == TRUE),
 TotalAutismo = sum(encuesta$Windows == TRUE & encuesta$Autismo == TRUE),
 TotalAprendizaje = sum(encuesta$Windows == TRUE & encuesta$Aprendizaje == TRUE),
 Total = sum(encuesta$Windows == TRUE))
 ```
 
-**WSL**
+#### WSL
 
 ```{r}
 tablaWindowsLinux <- data.frame(`OpSysPersonal use` = "Windows_Linux",
 TotalMemoria = sum(encuesta$Windows_for_Linux == TRUE & encuesta$Memoria == TRUE),
 TotalEmocional = sum(encuesta$Windows_for_Linux == TRUE & encuesta$Emocional == TRUE),
-TotalAnciedad = sum(encuesta$Windows_for_Linux == TRUE & encuesta$Anciedad == TRUE),
+TotalAnsiedad = sum(encuesta$Windows_for_Linux == TRUE & encuesta$Ansiedad == TRUE),
 TotalAutismo = sum(encuesta$Windows_for_Linux == TRUE & encuesta$Autismo == TRUE),
 TotalAprendizaje = sum(encuesta$Windows_for_Linux == TRUE & encuesta$Aprendizaje == TRUE),
 Total = sum(encuesta$Windows_for_Linux == TRUE))
 ```
 
-**macOS**
+#### macOS
 
 ```{r}
 tablaMac <- data.frame(`OpSysPersonal use` = "MacOS",
 TotalMemoria = sum(encuesta$Mac == TRUE & encuesta$Memoria == TRUE),
 TotalEmocional = sum(encuesta$Mac == TRUE & encuesta$Emocional == TRUE),
-TotalAnciedad = sum(encuesta$Mac == TRUE & encuesta$Anciedad == TRUE),
+TotalAnsiedad = sum(encuesta$Mac == TRUE & encuesta$Ansiedad == TRUE),
 TotalAutismo = sum(encuesta$Mac == TRUE & encuesta$Autismo == TRUE),
 TotalAprendizaje = sum(encuesta$Mac == TRUE & encuesta$Aprendizaje == TRUE),
 Total = sum(encuesta$Mac == TRUE))
@@ -1063,51 +1031,68 @@ Total = sum(encuesta$Mac == TRUE))
 tabla_final <- rbind(tablaBSD, tablaLinuxB, tablaWindows, tablaWindowsLinux, tablaMac)
 ```
 
-> Hicimos el gráfico de barras apiladas
+> Hacimos el gráfico de barras apiladas
 
 ```{r}
-library(ggplot2)
-tabla_larga <- tidyr::gather(tabla_final, key = "MentalHealth", value = "Cantidad Total", -OpSysPersonal.use)
+tabla_larga <- tidyr::gather(tabla_final, 
+                             key = "MentalHealth", 
+                             value = "Cantidad Total", 
+                             -OpSysPersonal.use)
 
 tabla_larga <- tabla_larga[tabla_larga$MentalHealth != "Total", ]
 
-grafico <- ggplot(tabla_larga, aes(x = OpSysPersonal.use, y = `Cantidad Total`, fill = ifelse(MentalHealth != "Total", MentalHealth, ""))) +
-  geom_bar(stat = "identity") +
-  labs(x = "Sistema Operativo para uso profesional", y = "Cantidad Total de Personas", fill = "MentalHealth") +
-  ggtitle("Salud Mental vs. Sistemas Operativos") +
-  theme_minimal()
-
-print(grafico)
-
+ggplot(tabla_larga, 
+        aes(x = OpSysPersonal.use, 
+            y = `Cantidad Total`, 
+            fill = ifelse(MentalHealth != "Total", MentalHealth, ""))) +
+        geom_bar(stat = "identity") +
+        labs(x = "Sistema Operativo para uso profesional", 
+             y = "Cantidad Total de Personas", 
+             fill = "MentalHealth") +
+        ggtitle("Salud Mental vs. Sistemas Operativos") +
+        theme_minimal()
 ```
 
-> Intentamos poner una barra al costado de cada sistema operativo para indicar el "verdadero" total de personas, ya que una persona puede sufrir de varias condiciones mentales. No sabemos si es necesario, lo dejamos para la entrega final.
+> Intentamos poner una barra al costado de cada sistema operativo para indicar el "verdadero" total de personas, ya que una persona puede sufrir de varias condiciones mentales.
 
 ```{r}
-library(ggplot2)
+tabla_larga <- tidyr::gather(tabla_final, 
+                             key = "MentalHealth",
+                             value = "Cantidad Total", 
+                             -OpSysPersonal.use)
 
-tabla_larga <- tidyr::gather(tabla_final, key = "MentalHealth", value = "Cantidad Total", -OpSysPersonal.use)
 tabla_larga <- tabla_larga[tabla_larga$MentalHealth != "Total", ]
 
-# Calcular el total de Usuarios por cada sistema operativo
-total_cant_users <- aggregate(Total ~ OpSysPersonal.use, data = tabla_final, FUN = sum)
+total_cant_users <- aggregate(Total ~ OpSysPersonal.use, 
+                              data = tabla_final, 
+                              FUN = sum)
 
-# Combinar los datos de tabla_larga y total_cant_users
-tabla_final_completa <- merge(tabla_larga, total_cant_users, by = "OpSysPersonal.use", all.x = TRUE)
+tabla_final_completa <- merge(tabla_larga, 
+                              total_cant_users, 
+                              by = "OpSysPersonal.use", 
+                              all.x = TRUE)
 
-# Ordenar los datos por OpSysPersonal.use para mantener el orden en el gráfico
 tabla_final_completa <- tabla_final_completa[order(tabla_final_completa$OpSysPersonal.use), ]
 
-grafico <- ggplot(tabla_final_completa, aes(x = OpSysPersonal.use, fill = MentalHealth)) +
-  geom_bar(aes(y = Total), stat = "identity", position = "stack") +
-  geom_bar(aes(x = OpSysPersonal.use, y = Total), stat = "identity", fill = "gray", width = 0.3) +
-  geom_text(aes(x = OpSysPersonal.use, y = Total, label = Total), vjust = -0.5, color = "black", size = 3, hjust = 1) +
-  labs(x = "Sistema Operativo para uso profesional", y = "Cantidad Total de Personas", fill = "MentalHealth") +
-  ggtitle("Salud Mental vs. Sistemas Operativos") +
-  theme_minimal()
-
-print(grafico)
-
+ggplot(tabla_final_completa, 
+       aes(x = OpSysPersonal.use, fill = MentalHealth)) +
+       geom_bar(aes(y = Total), 
+                stat = "identity", 
+                position = "stack") +
+       geom_bar(aes(x = OpSysPersonal.use, y = Total), 
+                stat = "identity", 
+                fill = "gray", 
+                width = 0.3) +
+       geom_text(aes(x = OpSysPersonal.use, y = Total, label = Total), 
+                 vjust = -0.5, 
+                 color = "black", 
+                 size = 3, 
+                 hjust = 1) +
+       labs(x = "Sistema Operativo para uso profesional", 
+            y = "Cantidad Total de Personas", 
+            fill = "MentalHealth") +
+       ggtitle("Salud Mental vs. Sistemas Operativos") +
+       theme_minimal()
 ```
 
 ### Conclusiones Parciales
