@@ -395,23 +395,23 @@ opciones_a_verificar <- c("BSD", "Linux-based", "Windows", "Windows Subsystem fo
                          "macOS")
 
 # op1
-columna_booleana <- str_detect(encuesta$`PersonalOS`, paste0("\\b", "BSD", "\\b"))
+columna_booleana <- str_detect(encuesta$ProfessionalOS, paste0("\\b", "BSD", "\\b"))
 encuesta$BSD <- columna_booleana
 
 # op2
-columna_booleana <- str_detect(encuesta$`PersonalOS`, paste0("\\b", "based", "\\b"))
+columna_booleana <- str_detect(encuesta$ProfessionalOS, paste0("\\b", "based", "\\b"))
 encuesta$Linux_Based <- columna_booleana
 
 # op3
-columna_booleana <- str_detect(encuesta$`PersonalOS`, paste0("\\b", "Windows", "\\b"))
+columna_booleana <- str_detect(encuesta$ProfessionalOS, paste0("\\b", "Windows", "\\b"))
 encuesta$Windows <- columna_booleana
 
 # op4
-columna_booleana <- str_detect(encuesta$`PersonalOS`, paste0("\\b", "Subsystem", "\\b"))
+columna_booleana <- str_detect(encuesta$ProfessionalOS, paste0("\\b", "Subsystem", "\\b"))
 encuesta$Windows_for_Linux <- columna_booleana
 
 # op5
-columna_booleana <- str_detect(encuesta$`PersonalOS`, paste0("\\b", "macOS", "\\b"))
+columna_booleana <- str_detect(encuesta$ProfessionalOS, paste0("\\b", "macOS", "\\b"))
 encuesta$Mac <- columna_booleana
 ```
 
@@ -506,7 +506,7 @@ porcentajeshelper <- porcentajes$porcentajes[1:15]
 nombres <- rownames(porcentajes)[1:15]
 
 barplot(porcentajeshelper, 
-	main="% Personas que sufren de problemas de Memoria", 
+	main="% Personas que sufren de problemas de memoria", 
 	xlab="Porcentaje de personas", 
   col=colorRampPalette(c("darkblue", "blue"))(15),
 	xlim = c(0,0.25),
@@ -521,7 +521,7 @@ porcentajeshelper <- porcentajes$porcentajes[25:40]
 nombres <- rownames(porcentajes)[25:40]
 
 barplot(porcentajeshelper, 
-	main="% Personas que sufren de problemas de Memoria", 
+	main="% Personas que sufren de problemas de memoria", 
 	xlab="Porcentaje de personas", 
   col=colorRampPalette(c("darkblue", "blue"))(15),
 	xlim = c(0,0.25),
@@ -610,7 +610,7 @@ porcentajeshelper <- porcentajes$porcentajes[1:15]
 nombres <- rownames(porcentajes)[1:15]
 
 barplot(porcentajeshelper, 
-	main="% Personas que sufren de problemas de Emocionales", 
+	main="% Personas que sufren de problemas Emocionales", 
 	xlab="Porcentaje de personas", 
   col=colorRampPalette(c("darkblue", "blue"))(15),
 	xlim = c(0,0.15),
@@ -625,7 +625,7 @@ porcentajeshelper <- porcentajes$porcentajes[25:40]
 nombres <- rownames(porcentajes)[25:40]
 
 barplot(porcentajeshelper, 
-	main="% Personas que sufren de problemas de Emocionales", 
+	main="% Personas que sufren de problemas Emocionales", 
 	xlab="Porcentaje de personas", 
   col=colorRampPalette(c("darkblue", "blue"))(15),
 	xlim = c(0,0.15),
@@ -929,7 +929,7 @@ Así mismo, parece ser que los lenguajes que identificamos como "problemáticos"
 
 ```{r}
 encuesta %>%
-  filter(Salary < 100000) %>% 
+  filter(Salary < 300000) %>% 
   select(Memoria, Emocional, Ansiedad, Autismo, Aprendizaje, Salary) %>%
   pivot_longer(cols = -Salary, names_to = "Variable", values_to = "Value") %>%
   ggplot() +
@@ -938,91 +938,38 @@ encuesta %>%
   theme_minimal()
 ```
 
-### ¿Sistemas Operativos vs Salud Mental?
-
-> Variables necesarias
-
 ```{r}
-tabla2 <- data.frame(Mental_Health = c("Memoria","Emocional", "Ansiedad", "Autismo", "Aprendizaje"),
-                    Total = c(sum(encuesta$Memoria== TRUE),
-                                  sum(encuesta$Emocional == TRUE),
-                                  sum(encuesta$Ansiedad == TRUE),
-                                  sum(encuesta$Autismo == TRUE),
-                                  sum(encuesta$Aprendizaje == TRUE))
-                    )
+encuesta %>% select(Memoria, Emocional, Autismo, Aprendizaje, Ansiedad) -> ML
+table(ML$Aprendizaje)
 
-tabla <- data.frame(`OpSysPersonal use` = c("BSD", "Linux-based", "Windows", "Windows Subsystem for Linux (WSL)", "macOS"),
-                    Total = c(sum(encuesta$BSD == TRUE),
-                                  sum(encuesta$Linux_Based == TRUE),
-                                  sum(encuesta$Windows == TRUE),
-                                  sum(encuesta$Windows_for_Linux == TRUE),
-                                  sum(encuesta$Mac == TRUE))
-                    )
-```
-
-#### BSD
-
-```{r}
-
+table(ML$Emocional)
 ```
 
 
+### ¿Existe una relación entre el sistema operativo utilizado en el trabajo y la salud mental de los individuos?
+
+#### Tablas Necesarias
+
 ```{r}
-tablaBSD <- data.frame(`OpSysPersonal use` = "BSD",
-TotalMemoria = sum(encuesta$BSD == TRUE & encuesta$Memoria == TRUE),
-TotalEmocional = sum(encuesta$BSD == TRUE & encuesta$Emocional == TRUE),
-TotalAnsiedad = sum(encuesta$BSD == TRUE & encuesta$Ansiedad == TRUE),
-TotalAutismo = sum(encuesta$BSD == TRUE & encuesta$Autismo == TRUE),
-TotalAprendizaje = sum(encuesta$BSD == TRUE & encuesta$Aprendizaje == TRUE),
-Total = sum(encuesta$BSD == TRUE))
+OP <- function(SisOp){
+  SisOp <- substitute(SisOp)
+  data.frame(ProfessionalOS = deparse(SisOp),
+             TotalMemoria = sum(encuesta[[SisOp]] == TRUE & encuesta$Memoria == TRUE),
+             TotalEmocional = sum(encuesta[[SisOp]] == TRUE & encuesta$Emocional == TRUE),
+             TotalAnsiedad = sum(encuesta[[SisOp]] == TRUE & encuesta$Ansiedad == TRUE),
+             TotalAutismo = sum(encuesta[[SisOp]] == TRUE & encuesta$Autismo == TRUE),
+             TotalAprendizaje = sum(encuesta[[SisOp]] == TRUE & encuesta$Aprendizaje == TRUE),
+             Total = sum(encuesta[[SisOp]] == TRUE)
+             )
+}
 ```
 
-#### LINUX BASED
-
 ```{r}
-tablaLinuxB <- data.frame(`OpSysPersonal use` = "Linux-based",
-TotalMemoria = sum(encuesta$Linux_Based == TRUE & encuesta$Memoria == TRUE),
-TotalEmocional = sum(encuesta$Linux_Based == TRUE & encuesta$Emocional == TRUE),
-TotalAnsiedad = sum(encuesta$Linux_Based == TRUE & encuesta$Ansiedad == TRUE),
-TotalAutismo = sum(encuesta$Linux_Based == TRUE & encuesta$Autismo == TRUE),
-TotalAprendizaje = sum(encuesta$Linux_Based == TRUE & encuesta$Aprendizaje == TRUE),
-Total = sum(encuesta$Linux_Based == TRUE))
-```
-
-#### WINDOWS
-
-```{r}
-tablaWindows <- data.frame(`OpSysPersonal use` = "Windows",
-TotalMemoria = sum(encuesta$Windows == TRUE & encuesta$Memoria == TRUE),
-TotalEmocional = sum(encuesta$Windows == TRUE & encuesta$Emocional == TRUE),
-TotalAnsiedad = sum(encuesta$Windows == TRUE & encuesta$Ansiedad == TRUE),
-TotalAutismo = sum(encuesta$Windows == TRUE & encuesta$Autismo == TRUE),
-TotalAprendizaje = sum(encuesta$Windows == TRUE & encuesta$Aprendizaje == TRUE),
-Total = sum(encuesta$Windows == TRUE))
-```
-
-#### WSL
-
-```{r}
-tablaWindowsLinux <- data.frame(`OpSysPersonal use` = "Windows_Linux",
-TotalMemoria = sum(encuesta$Windows_for_Linux == TRUE & encuesta$Memoria == TRUE),
-TotalEmocional = sum(encuesta$Windows_for_Linux == TRUE & encuesta$Emocional == TRUE),
-TotalAnsiedad = sum(encuesta$Windows_for_Linux == TRUE & encuesta$Ansiedad == TRUE),
-TotalAutismo = sum(encuesta$Windows_for_Linux == TRUE & encuesta$Autismo == TRUE),
-TotalAprendizaje = sum(encuesta$Windows_for_Linux == TRUE & encuesta$Aprendizaje == TRUE),
-Total = sum(encuesta$Windows_for_Linux == TRUE))
-```
-
-#### macOS
-
-```{r}
-tablaMac <- data.frame(`OpSysPersonal use` = "MacOS",
-TotalMemoria = sum(encuesta$Mac == TRUE & encuesta$Memoria == TRUE),
-TotalEmocional = sum(encuesta$Mac == TRUE & encuesta$Emocional == TRUE),
-TotalAnsiedad = sum(encuesta$Mac == TRUE & encuesta$Ansiedad == TRUE),
-TotalAutismo = sum(encuesta$Mac == TRUE & encuesta$Autismo == TRUE),
-TotalAprendizaje = sum(encuesta$Mac == TRUE & encuesta$Aprendizaje == TRUE),
-Total = sum(encuesta$Mac == TRUE))
+tablaBSD <- OP(BSD)
+tablaLinuxB <- OP(Linux_Based)
+tablaWindows <- OP(Windows)
+tablaWindowsLinux <- OP(Windows_for_Linux)
+tablaMac <- OP(Mac)
 ```
 
 > Unimos todo en una tabla
@@ -1037,12 +984,12 @@ tabla_final <- rbind(tablaBSD, tablaLinuxB, tablaWindows, tablaWindowsLinux, tab
 tabla_larga <- tidyr::gather(tabla_final, 
                              key = "MentalHealth", 
                              value = "Cantidad Total", 
-                             -OpSysPersonal.use)
+                             -ProfessionalOS)
 
 tabla_larga <- tabla_larga[tabla_larga$MentalHealth != "Total", ]
 
 ggplot(tabla_larga, 
-        aes(x = OpSysPersonal.use, 
+        aes(x = ProfessionalOS, 
             y = `Cantidad Total`, 
             fill = ifelse(MentalHealth != "Total", MentalHealth, ""))) +
         geom_bar(stat = "identity") +
@@ -1055,35 +1002,37 @@ ggplot(tabla_larga,
 
 > Intentamos poner una barra al costado de cada sistema operativo para indicar el "verdadero" total de personas, ya que una persona puede sufrir de varias condiciones mentales.
 
+> CORREGIR
+
 ```{r}
 tabla_larga <- tidyr::gather(tabla_final, 
                              key = "MentalHealth",
                              value = "Cantidad Total", 
-                             -OpSysPersonal.use)
+                             -ProfessionalOS)
 
 tabla_larga <- tabla_larga[tabla_larga$MentalHealth != "Total", ]
 
-total_cant_users <- aggregate(Total ~ OpSysPersonal.use, 
+total_cant_users <- aggregate(Total ~ ProfessionalOS, 
                               data = tabla_final, 
                               FUN = sum)
 
 tabla_final_completa <- merge(tabla_larga, 
                               total_cant_users, 
-                              by = "OpSysPersonal.use", 
+                              by = "ProfessionalOS", 
                               all.x = TRUE)
 
-tabla_final_completa <- tabla_final_completa[order(tabla_final_completa$OpSysPersonal.use), ]
+tabla_final_completa <- tabla_final_completa[order(tabla_final_completa$ProfessionalOS), ]
 
 ggplot(tabla_final_completa, 
-       aes(x = OpSysPersonal.use, fill = MentalHealth)) +
+       aes(x = ProfessionalOS, fill = MentalHealth)) +
        geom_bar(aes(y = Total), 
                 stat = "identity", 
                 position = "stack") +
-       geom_bar(aes(x = OpSysPersonal.use, y = Total), 
+       geom_bar(aes(x = ProfessionalOS, y = Total), 
                 stat = "identity", 
                 fill = "gray", 
                 width = 0.3) +
-       geom_text(aes(x = OpSysPersonal.use, y = Total, label = Total), 
+       geom_text(aes(x = ProfessionalOS, y = Total, label = Total), 
                  vjust = -0.5, 
                  color = "black", 
                  size = 3, 
