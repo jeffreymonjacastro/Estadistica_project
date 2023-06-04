@@ -107,12 +107,12 @@ Nuestros datos se basarán en dos bases de datos:
 
 ## Variables de estudio iniciales
 
-En resumen, en esta sección se registran todas las variables utilizadas a partir de las dos bases de datos debidamente prolijas, con el objetivo de comprender adecuadamente el procesamiento de la información. En un principio, hay un total de `variables` variables.
+En resumen, en esta sección se registran todas las variables que consideramos útiles para nuestro estudio para cada base de datos utilizada. En un principio, hay un total de `25` variables.
 
 ### Encuestas de Stakoverflow
 
 | Nombre de la variable   | Tipo de variable   | Descripción                                                        | Restricciones                   |
-|-----------------|-----------------|---------------------|-----------------|
+|------------------|------------------|-------------------|------------------|
 | MainBranch              | Categórica nominal | Contiene información sobre el estado profesional del desarrollador | \-                              |
 | Employment              | Categórica nominal | El tipo de empleo que tiene le desarrollador                       | separado por punto y coma       |
 | RemoteWork              | Categórica nominal | De que forma ejercen el trabajo remoto                             | \-                              |
@@ -133,7 +133,7 @@ En resumen, en esta sección se registran todas las variables utilizadas a parti
 ### PLDB Lenguajes de Programación
 
 | Nombre de la variable | Tipo de variable   | Descripción                                                       | Restricciones                   |
-|-----------------|-----------------|--------------------|-----------------|
+|------------------|------------------|-------------------|------------------|
 | Title                 | Categórica Nominal | Nombre original del lenguaje de programación                      | \-                              |
 | Appeared              | Numérica discreta  | Año en donde apareció por primera vez el lenguaje de programación | \>= 1945                        |
 | Rank                  | Numérica discreta  | Un ranking hecho por PLDB                                         | \>=0                            |
@@ -303,14 +303,20 @@ encuesta <- na.omit(encuesta)
 
 ### Limpieza de Datos no útiles
 
-Para la variable `salario`
+Para la variable `salario`, buscamos desarrolladores que ganen mínimo 3600 dólares anuales. Y para el máximo, no consideraremos los valores atípicos que sobrepasen el tercer cuantil más 1.5 veces el Rango Intercuantil, es decir, menores a `249153`
 
 ```{r}
-encuesta <- encuesta[encuesta$Salary > 3600,]
-encuesta <- encuesta[encuesta$Salary < 400000,]
+encuesta <- encuesta[encuesta$Salary > 3600, ]
+
+ric <- IQR(encuesta$Salary)
+
+q1 <- quantile(encuesta$Salary)[2]
+q3 <- quantile(encuesta$Salary)[4]
+
+encuesta <- encuesta[encuesta$Salary < q3 + 1.5 * ric, ]
 ```
 
-Filtrar por los géneros. En la encuesta se permite elegir géneros de varios tipos. Sin embargo, para fines de estudio nos limitaremos a hombre o mujeres, más obviaremos a los no binarios, entre otros.
+En la encuesta se permite elegir géneros de varios tipos. Sin embargo, para fines de estudio nos limitaremos a hombre o mujeres, más obviaremos a los no binarios, entre otros.
 
 ```{r}
 encuesta <- encuesta[encuesta$Gender == "Man" | encuesta$Gender == "Woman",]
@@ -329,8 +335,6 @@ encuesta <- encuesta[!str_detect(encuesta$MentalHealth, "in your own words"),]
 
 encuesta <- encuesta[!str_detect(encuesta$MentalHealth, "Prefer not to say"),]
 ```
-
-Listo, eso es todo lo que querremos filtrar en la base de datos.
 
 ### Creación de columnas
 
@@ -361,28 +365,25 @@ for (i in 1:nrow(encuesta)) {
 También crearemos columnas para cada problema mental.
 
 ```{r}
-# op1
 columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "concentration", "\\b"))
 encuesta$Memoria <- columna_booleana
 
-# op2
 columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "mood", "\\b"))
 encuesta$Emocional <- columna_booleana
 
-# op3
 columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "anxiety", "\\b"))
 encuesta$Ansiedad <- columna_booleana
 
-# op4
 columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "autism", "\\b"))
 encuesta$Autismo <- columna_booleana
 
-# op5
 columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "learning", "\\b"))
 encuesta$Aprendizaje <- columna_booleana
 ```
 
 #### Sistemas operativos
+
+Y también creamos columnas para cada sistema operativo
 
 ```{r}
 encuesta$BSD <- logical(nrow(encuesta))
@@ -391,31 +392,33 @@ encuesta$Windows <- logical(nrow(encuesta))
 encuesta$Windows_for_Linux <- logical(nrow(encuesta))
 encuesta$Mac <- logical(nrow(encuesta))
 
-opciones_a_verificar <- c("BSD", "Linux-based", "Windows", "Windows Subsystem for Linux (WSL)",
-                         "macOS")
+opciones_a_verificar <- c("BSD", "Linux-based", "Windows", "Windows Subsystem for Linux (WSL)", "macOS")
 
-# op1
 columna_booleana <- str_detect(encuesta$ProfessionalOS, paste0("\\b", "BSD", "\\b"))
 encuesta$BSD <- columna_booleana
 
-# op2
 columna_booleana <- str_detect(encuesta$ProfessionalOS, paste0("\\b", "based", "\\b"))
 encuesta$Linux_Based <- columna_booleana
 
-# op3
 columna_booleana <- str_detect(encuesta$ProfessionalOS, paste0("\\b", "Windows", "\\b"))
 encuesta$Windows <- columna_booleana
 
-# op4
 columna_booleana <- str_detect(encuesta$ProfessionalOS, paste0("\\b", "Subsystem", "\\b"))
 encuesta$Windows_for_Linux <- columna_booleana
 
-# op5
 columna_booleana <- str_detect(encuesta$ProfessionalOS, paste0("\\b", "macOS", "\\b"))
 encuesta$Mac <- columna_booleana
 ```
 
 ## Variables de estudio Finales
+
+| Nombre de la variable | Tipo de variable   | Descripción                                                | Restricciones                                        |
+|------------------|------------------|-------------------|------------------|
+| Age                   | Categórica Ordinal | Edad                                                       |                                                      |
+| Salary                | Numérica Contínua  | El salario anual en dólares del desarrollador              | [3600 - 249153]                                      |
+| MentalHealth          | Categórica nominal | Como considera que está su salud mental                    | Se omiten "*In your own words*" y "*Prefer not say*" |
+| ProfessionalOP        | Categórica nominal | Sistema operativo que usan para trabajar profesionalmente  | \-                                                   |
+| ProgrLanguages        | Categórica nominal | Lista de los lenguajes que han usado                       | \-                                                   |
 
 ## Preguntas e Hipótesis
 
@@ -929,7 +932,6 @@ Así mismo, parece ser que los lenguajes que identificamos como "problemáticos"
 
 ```{r}
 encuesta %>%
-  filter(Salary < 300000) %>% 
   select(Memoria, Emocional, Ansiedad, Autismo, Aprendizaje, Salary) %>%
   pivot_longer(cols = -Salary, names_to = "Variable", values_to = "Value") %>%
   ggplot() +
@@ -938,13 +940,7 @@ encuesta %>%
   theme_minimal()
 ```
 
-```{r}
-encuesta %>% select(Memoria, Emocional, Autismo, Aprendizaje, Ansiedad) -> ML
-table(ML$Aprendizaje)
-
-table(ML$Emocional)
-```
-
+Comment:
 
 ### ¿Existe una relación entre el sistema operativo utilizado en el trabajo y la salud mental de los individuos?
 
