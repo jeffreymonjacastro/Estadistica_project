@@ -1030,14 +1030,14 @@ Así mismo, parece ser que los lenguajes que identificamos como "problemáticos"
 ```{r}
 encuesta %>%
   select(Memoria, Emocional, Ansiedad, Autismo, Aprendizaje, Salary) %>%
-  pivot_longer(cols = -Salary, names_to = "Variable", values_to = "Value") %>%
+  pivot_longer(cols = -Salary, names_to = "Problemas Mentales", values_to = "Sufre") %>%
   ggplot() +
-  aes(x = Salary, y = Variable, fill = Value) +
+  aes(x = Salary, y = `Problemas Mentales`, fill = Sufre) +
   geom_boxplot(alpha = 0.5) +
   theme_minimal()
 ```
 
-En este gráfico podemos visualizar
+En este gráfico podemos visualizar que efectivamente las personas que sufren un problema mental curiosamente ganan más que las personas que declararon no sufrir. Por lo que se puede deducir que tener un buen salario no necesariamente significa tener un estado de salud mental estable. Tal vez esto sucede debido a que los que sufren un problema mental tienen mayor carga laboral, por lo que ganan más dinero pero no tienen estabilidad mental.
 
 ### ¿Existe una relación entre el sistema operativo utilizado en el trabajo y la salud mental de los individuos?
 
