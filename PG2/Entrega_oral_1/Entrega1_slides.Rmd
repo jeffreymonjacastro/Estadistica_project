@@ -30,13 +30,13 @@ Demostrar que la salud mental del programador depende, en parte, del lenguaje de
 
 ### Objetivos secundarios
 
--   Demostrar que la popularidad de un lenguaje de programación no significa que trabajar con este brinde un mejor estado de salud mental.
+- Demostrar que la popularidad de un lenguaje de programación no significa que trabajar con este brinde un mejor estado de salud mental.
 
--   Encontrar una relación entre el acceso a información del lenguaje de programación escogido por el programador y su salud mental.
+- Encontrar una relación entre el acceso a información del lenguaje de programación escogido por el programador y su salud mental.
 
--   Encontrar una relación entre el salario que brinda el lenguaje de programación que usan los desarrolladores con su salud mental.
+- Encontrar una relación entre el salario que brinda el lenguaje de programación que usan los desarrolladores con su salud mental.
 
--   Demostrar la relación entre el sistema operativo utilizado en el ámbito profesional y la salud mental de los individuos, y encontrar una posible asociación entre los problemas mentales y el tipo de sistema operativo.
+- Demostrar la relación entre el sistema operativo utilizado en el ámbito profesional y la salud mental de los individuos, y encontrar una posible asociación entre los problemas mentales y el tipo de sistema operativo.
 
 ------------------------------------------------------------------------
 
