@@ -60,6 +60,7 @@ h1 {
 }
 h2 {
   color:#F282CC !important;
+  margin-bottom: 10px;
 }
 
 text{
@@ -180,7 +181,7 @@ table.rmdtable > tbody > tr:hover > th {
   background-color: #e5e5e5;
 }
 
-#planificación{
+#planificacion{
   display:flex;
   justify-content: Center;
 }
