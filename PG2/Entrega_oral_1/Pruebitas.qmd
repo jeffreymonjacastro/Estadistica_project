@@ -5,3 +5,96 @@ editor: visual
 ---
 
 ## Pruebitas
+
+```{r}
+install.packages(readr)
+```
+
+```{r}
+library(readr)
+library(dplyr)
+library(tidyverse)
+```
+
+```{r}
+encuesta = read_csv("../S7_fuente/upload_survey_results.csv")
+```
+
+```{r}
+encuesta %>% rename(Salary = ConvertedCompYearly,
+                    PersonalOS = `OpSysPersonal use`,
+                    ProfessionalOS = `OpSysProfessional use`,
+                    ProgLanguages = LanguageHaveWorkedWith) -> encuesta
+```
+
+```{r}
+language <- encuesta %>%
+  separate_rows(ProgLanguages, sep = ";") %>%
+  group_by(ProgLanguages) %>%
+  summarize() %>%
+  pull()
+
+for (name in language) {
+  encuesta[name] = FALSE
+}
+
+for (i in 1:nrow(encuesta)) {
+  for (elem in unlist(strsplit(encuesta$ProgLanguages[i],";"))){
+    encuesta[i, elem] <- TRUE
+  }
+}
+```
+
+```{r}
+CantUsers <- c()
+
+for (lang in language){
+  this <- encuesta[encuesta[lang] == TRUE,]
+	cantidad <- nrow(this)
+	CantUsers[lang] <- cantidad
+}
+
+CantUsers <- sort(CantUsers, decreasing = TRUE)
+
+df1 <- data.frame(CantUsers)
+
+df1
+```
+
+```{r}
+dim(encuesta)
+```
+
+```{r}
+total <- sum(df1$CantUsers)
+total
+```
+
+```{r}
+df1$Probabilidad <- df1$CantUsers / nrow(encuesta)
+df1
+```
+
+```{r}
+df1$Probabilidad2 <- df1$CantUsers / total
+df1
+```
+
+```{r}
+0.004154411
+
+
+nrow(encuesta[encuesta$Salary > 50000,])/nrow(encuesta)
+```
+
+```{r}
+encuesta %>% select(Salary, JavaScript) %>% filter(encuesta$Salary > 50000 & encuesta$JavaScript == TRUE) %>% arrange(Salary)
+```
+
+```{r}
+nrow(encuesta[encuesta$Age == 'Under 18 years old', ])/nrow(encuesta)
+
+nrow(encuesta[encuesta$Fortran == TRUE, ])/nrow(encuesta)
+
+nrow(encuesta[encuesta$Age == 'Under 18 years old' & encuesta$Fortran == TRUE, ])/nrow(encuesta)
+```
