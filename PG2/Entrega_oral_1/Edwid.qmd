@@ -4,7 +4,7 @@ format: html
 editor: visual
 ---
 
-# Rúbrica 1 - Variable Mental Healt
+# Rúbrica 1 - Variable Mental Health
 
 ## Librerías
 
@@ -80,4 +80,51 @@ barplot(unlist(tablaProbOrdenada), xlab = "Estado mental", ylab = "Probabilidad"
         main = "Probabilidad de Mental health", 
         names.arg = names(tablaProbOrdenada), 
         col = colores_celeste)
+```
+
+### Convertimos la variable categórica a numérica con Bernulli
+
+```{r}
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "concentration", "\\b"))
+encuesta$Memoria <- columna_booleana
+
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "mood", "\\b"))
+encuesta$Emocional <- columna_booleana
+
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "anxiety", "\\b"))
+encuesta$Ansiedad <- columna_booleana
+
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "autism", "\\b"))
+encuesta$Autismo <- columna_booleana
+
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "learning", "\\b"))
+encuesta$Aprendizaje <- columna_booleana
+
+BD <- data.frame("Memoria" = encuesta$Memoria, "Ansiedad" = encuesta$Ansiedad, "Aprendizaje" = encuesta$Aprendizaje, "Autismo" = encuesta$Autismo, "Emocional" = encuesta$Emocional)
+
+BD$TabProb2 <- rowSums(BD)
+```
+
+```{r}
+TabProb2 <- data.frame(table(BD$TabProb2))
+TabProb2$Probabilidad <- ((as.numeric(TabProb2$Freq)/nrow(encuesta)))
+```
+
+### Validamos que la suma de probabilidades sea 1
+
+```{r}
+sum(TabProb2$Probabilidad)
+```
+
+### Diagramas
+
+```{r}
+stem(BD$TabProb2)
+```
+
+```{r}
+colores_celeste <- colorRampPalette(c("lightblue", "blue"))(length(tablaProb))
+
+barplot(height = TabProb2$Probabilidad, names.arg = TabProb2$Var1, xlab = "Cantidad de problemas mentales", ylab = "Probabilidad", 
+        main = "Probabilidad de Mental health", col = colores_celeste)
 ```
