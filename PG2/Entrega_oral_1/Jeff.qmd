@@ -4,10 +4,113 @@ format: html
 editor: visual
 ---
 
-## Jeff 
+## Jeff
 
-sjsj
+Hallando la variable "Total de lenguajes de programación"
 
 ```{r}
+library(dplyr)
+```
 
+```{r}
+encuesta$TotalLenguages <- 0
+```
+
+```{r}
+for (i in 1:nrow(encuesta)) {
+  cont <- 0
+  for (pl in language) {
+    if (encuesta[i, pl] == TRUE){
+      cont <- cont + 1
+    }
+  }
+  encuesta[i, 'TotalLenguages'] <- cont
+}
+```
+
+```{r}
+encuesta %>% group_by(TotalLenguages) %>% count()
+```
+
+```{r}
+summary(encuesta$TotalLenguages)
+```
+
+```{r}
+sd(encuesta$TotalLenguages)
+var(encuesta$TotalLenguages)
+```
+
+```{r}
+hist(encuesta$TotalLenguages,
+     col = "skyblue",
+     main = "Histograma del total de lenguajes de Programación",
+     xlab = "Cantidad de lenguajes", 
+     ylab = "Frecuencia",
+     
+)
+
+abline(v= mean(encuesta$TotalLenguages), col = "red", lty = 1)
+
+abline(v= median(encuesta$TotalLenguages), col = "blue", lty = 2)
+
+```
+
+```{r}
+box <- boxplot(encuesta$TotalLenguages, horizontal= TRUE) 
+```
+
+```{r}
+table(box$out)
+```
+
+**Item 1: Análisis probabilístico de la variable "total de lenguajes de programación"**
+
+Espacio de probabilidad de la variable: $(\Omega,\mathcal{F},\mathbb{P})$
+
+Donde:
+
+$$
+\Omega = [42] =\{ \text{ cantidad de lenguajes de programación que usa} \} \\
+\mathcal{F} = 2^\Omega \\
+\mathbb{P}(n) = \{ \text{ probabilidad de que use n lenguajes de programación} \} 
+$$
+
+Calculando las probabilidades empíricas de los eventos atómicos:
+
+```{r}
+encuesta %>% group_by(TotalLenguages) %>% count() -> var1
+var1 %>% rename(Frecuencia = n) -> var1
+```
+
+```{r}
+var1$ProbabilidadAtomica <- var1$Frecuencia / nrow(encuesta)
+```
+
+```{r}
+var1
+```
+
+```{r}
+plot(var1$TotalLenguages, 
+     var1$ProbabilidadAtomica, 
+     type = "h", 
+     col="red",
+     main = "Función de masa de probabilidad para var1",
+     xlab = "Cantidad de lenguajes usados",
+     ylab = "Probabilidad",
+     ylim = c(0,0.2)
+)
+
+points(var1$TotalLenguages, 
+     var1$ProbabilidadAtomica,  
+     pch = 20, 
+     col="red",
+     )
+
+
+```
+
+```{r}
+plot(0:43, ecdf(encuesta$TotalLenguages)(0:43), verticals = TRUE )
 ```
