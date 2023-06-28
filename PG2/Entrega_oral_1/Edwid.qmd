@@ -4,23 +4,127 @@ format: html
 editor: visual
 ---
 
-## Quarto
+# Rúbrica 1 - Variable Mental Health
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+## Librerías
 
-## Running Code
+### Carga de librerías
 
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
-
-```{r}
-1 + 1
+```{r warning=FALSE, echo = TRUE}
+library(readr)
+library(dplyr)
+library(readr)
+library(ggplot2)
+library(tidyverse)
+library(stringr)
 ```
 
-You can add options to executable code like this
+### Carga de datos
 
-```{r}
-#| echo: false
-2 * 2
+```{r warning=FALSE}
+encuesta <- read.csv("upload_survey_results.csv")
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+### Convertimos la variable categórica a numérica con Bernulli
+
+```{r}
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "concentration", "\\b"))
+encuesta$Memoria <- columna_booleana
+
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "mood", "\\b"))
+encuesta$Emocional <- columna_booleana
+
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "anxiety", "\\b"))
+encuesta$Ansiedad <- columna_booleana
+
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "autism", "\\b"))
+encuesta$Autismo <- columna_booleana
+
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "learning", "\\b"))
+encuesta$Aprendizaje <- columna_booleana
+```
+
+```{r}
+DF1 <- nrow(encuesta[encuesta$Memoria == TRUE,])
+DF2 <- nrow(encuesta[encuesta$Ansiedad == TRUE,])
+DF3 <- nrow(encuesta[encuesta$Aprendizaje == TRUE,])
+DF4 <- nrow(encuesta[encuesta$Autismo == TRUE,])
+DF5 <- nrow(encuesta[encuesta$Emocional == TRUE,])
+```
+
+### Hallamos la probabilidad en cada estado mental
+
+```{r}
+ProbMemoria <- DF1/nrow(encuesta)
+ProbAnsiedad <- DF2/nrow(encuesta)
+ProbAprendizaje <- DF3/nrow(encuesta)
+ProbAutismo <- DF4/nrow(encuesta)
+ProbEmocional <- DF5/nrow(encuesta)
+```
+
+### Tabla de probabilidad por cada estado mental
+
+```{r}
+tablaProb <- data.frame("Memoria" = ProbMemoria, "Ansiedad" = ProbAnsiedad, "Aprendizaje" = ProbAprendizaje, "Autismo" = ProbAutismo, "Emocional" = ProbEmocional)
+tablaProb
+```
+
+### Gráfico de barras de la Probabilidad vs Estado mental
+
+```{r}
+tablaProbOrdenada <- sort(tablaProb, decreasing = TRUE)
+
+colores_celeste <- colorRampPalette(c("lightblue", "blue"))(length(tablaProb))
+
+barplot(unlist(tablaProbOrdenada), xlab = "Estado mental", ylab = "Probabilidad", 
+        main = "Probabilidad de Mental health", 
+        names.arg = names(tablaProbOrdenada), 
+        col = colores_celeste)
+```
+
+### Convertimos la variable categórica a numérica con Bernulli
+
+```{r}
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "concentration", "\\b"))
+encuesta$Memoria <- columna_booleana
+
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "mood", "\\b"))
+encuesta$Emocional <- columna_booleana
+
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "anxiety", "\\b"))
+encuesta$Ansiedad <- columna_booleana
+
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "autism", "\\b"))
+encuesta$Autismo <- columna_booleana
+
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "learning", "\\b"))
+encuesta$Aprendizaje <- columna_booleana
+
+BD <- data.frame("Memoria" = encuesta$Memoria, "Ansiedad" = encuesta$Ansiedad, "Aprendizaje" = encuesta$Aprendizaje, "Autismo" = encuesta$Autismo, "Emocional" = encuesta$Emocional)
+
+BD$TabProb2 <- rowSums(BD)
+```
+
+```{r}
+TabProb2 <- data.frame(table(BD$TabProb2))
+TabProb2$Probabilidad <- ((as.numeric(TabProb2$Freq)/nrow(encuesta)))
+```
+
+### Validamos que la suma de probabilidades sea 1
+
+```{r}
+sum(TabProb2$Probabilidad)
+```
+
+### Diagramas
+
+```{r}
+stem(BD$TabProb2)
+```
+
+```{r}
+colores_celeste <- colorRampPalette(c("lightblue", "blue"))(length(tablaProb))
+
+barplot(height = TabProb2$Probabilidad, names.arg = TabProb2$Var1, xlab = "Cantidad de problemas mentales", ylab = "Probabilidad", 
+        main = "Probabilidad de Mental health", col = colores_celeste)
+```
