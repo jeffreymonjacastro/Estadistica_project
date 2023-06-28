@@ -6,6 +6,10 @@ editor: visual
 
 ## Jeff
 
+## Análisis probabilísitico 
+
+## Variable "TotalLenguajes"
+
 Hallando la variable "Total de lenguajes de programación"
 
 ```{r}
@@ -91,6 +95,8 @@ var1$ProbabilidadAtomica <- var1$Frecuencia / nrow(encuesta)
 var1
 ```
 
+### Función de masa de probabilidad 
+
 ```{r}
 plot(var1$TotalLenguages, 
      var1$ProbabilidadAtomica, 
@@ -110,6 +116,8 @@ points(var1$TotalLenguages,
 
 
 ```
+
+### Función de masa de probabilidad acumulada
 
 ```{r}
 plot(0:43, ecdf(encuesta$TotalLenguages)(0:43), verticals = TRUE )
