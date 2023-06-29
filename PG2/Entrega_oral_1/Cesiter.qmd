@@ -91,3 +91,13 @@ cat("diferencia entre lo esperado y lo obtenido:", round(abs(E2 - E2dadoE1),2))
 ```
 
 Con esta relación demostramos que no existe una relación entre si usamos un lenguaje "popular" y nuestra salud mental ya que ambos eventos son independientes.
+
+```{r}
+#mosaic plot
+
+
+# mayor o igual a 2 vector
+total$cantProblemas = total$cantProblemas >= 2
+
+mosaicplot(table(total$evento1, total$cantProblemas), main = "Lenguaje popular y salud mental")
+```
