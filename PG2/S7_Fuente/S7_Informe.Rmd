@@ -170,7 +170,7 @@ library(stringr)
 
 ```{r warning=FALSE}
 planguages <- read_csv("Programming_languages.csv")
-encuesta <- read_csv("survey_results_public.csv")
+encuesta <- read_csv("upload_survey_results.csv")
 ```
 
 ## Limpieza de Datos
@@ -1104,6 +1104,8 @@ Aunque los lenguajes populares y bien documentados pueden proporcionar más recu
 Además, el estudio no encontró una relación directa entre los sistemas operativos utilizados y la salud mental de los desarrolladores. Esto sugiere que la elección del sistema operativo no es un factor determinante en la salud mental de los programadores.
 
 En conclusión, el estudio destaca la importancia de considerar múltiples factores externos en lugar de atribuir el estado de salud mental de los programadores únicamente al lenguaje de programación utilizado. Los resultados muestran que los factores externos tienen un impacto significativo en el bienestar general de los desarrolladores, y es fundamental abordar estos factores para promover un entorno de trabajo saludable y apoyar la salud mental de los profesionales de la programación.
+
+
 
 ## Bibliografías
 
