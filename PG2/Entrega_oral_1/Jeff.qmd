@@ -75,7 +75,7 @@ Espacio de probabilidad de la variable: $(\Omega,\mathcal{F},\mathbb{P})$
 Donde:
 
 $$
-\Omega = [42] =\{ \text{ cantidad de lenguajes de programación que usa } \} \\
+\Omega = [42] - \{0\} =\{ \text{ cantidad de lenguajes de programación que usa } \} \\
 \mathcal{F} = 2^\Omega \\
 \mathbb{P}(n) = \{ \text{ probabilidad de que use n lenguajes de programación } \} 
 $$
@@ -83,33 +83,33 @@ $$
 Calculando las probabilidades empíricas de los eventos atómicos:
 
 ```{r}
-encuesta %>% group_by(TotalLenguages) %>% count() -> var1
-var1 %>% rename(Frecuencia = n) -> var1
+encuesta %>% group_by(TotalLenguages) %>% count() -> probTotalLenguajes
+probTotalLenguajes %>% rename(Frecuencia = n) -> probTotalLenguajes
 ```
 
 ```{r}
-var1$ProbabilidadAtomica <- var1$Frecuencia / nrow(encuesta)
+probTotalLenguajes$ProbabilidadAtomica <- probTotalLenguajes$Frecuencia / nrow(encuesta)
 ```
 
 ```{r}
-var1
+probTotalLenguajes
 ```
 
 ### Función de masa de probabilidad
 
 ```{r}
-plot(var1$TotalLenguages, 
-     var1$ProbabilidadAtomica, 
+plot(probTotalLenguajes$TotalLenguages, 
+     probTotalLenguajes$ProbabilidadAtomica, 
      type = "h", 
      col="red",
-     main = "Función de masa de probabilidad para var1",
+     main = "Función de masa de probabilidad",
      xlab = "Cantidad de lenguajes usados",
      ylab = "Probabilidad",
      ylim = c(0,0.2)
 )
 
-points(var1$TotalLenguages, 
-     var1$ProbabilidadAtomica,  
+points(probTotalLenguajes$TotalLenguages, 
+     probTotalLenguajes$ProbabilidadAtomica,  
      pch = 20, 
      col="red",
 )
