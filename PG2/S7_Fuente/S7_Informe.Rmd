@@ -118,7 +118,7 @@ En resumen, en esta sección se registran todas las variables que consideramos �
 ### Encuestas de Stak Overflow
 
 | Nombre de la variable   | Tipo de variable   | Descripción                                                        | Restricciones                   |
-|---------------|---------------|-----------------------------|---------------|
+|----------------|----------------|-------------------------|----------------|
 | MainBranch              | Categórica nominal | Contiene información sobre el estado profesional del desarrollador | \-                              |
 | Employment              | Categórica nominal | El tipo de empleo que tiene le desarrollador                       | separado por punto y coma       |
 | RemoteWork              | Categórica nominal | De que forma ejercen el trabajo remoto                             | \-                              |
@@ -139,7 +139,7 @@ En resumen, en esta sección se registran todas las variables que consideramos �
 ### PLDB Lenguajes de Programación
 
 | Nombre de la variable | Tipo de variable   | Descripción                                                       | Restricciones                   |
-|---------------|---------------|-----------------------------|---------------|
+|----------------|----------------|-------------------------|----------------|
 | Title                 | Categórica Nominal | Nombre original del lenguaje de programación                      | \-                              |
 | Appeared              | Numérica discreta  | Año en donde apareció por primera vez el lenguaje de programación | \>= 1945                        |
 | Rank                  | Numérica discreta  | Un ranking hecho por PLDB                                         | \>=0                            |
@@ -421,6 +421,7 @@ encuesta$Mac <- columna_booleana
 nrow(encuesta)
 ```
 
+
 En total tenemos `28679` observaciones para nuestro estudio.
 
 ## Variables de estudio Finales
@@ -430,7 +431,7 @@ Luego de la limpieza, decidimos mantenernos con `12` variables que se relacionan
 ### Encuestas de Stakoverflow
 
 | Nombre de la variable | Tipo de variable   | Descripción                                               | Restricciones                                        |
-|--------------|--------------|-----------------------|---------------------|
+|----------------|----------------|---------------------|-------------------|
 | Age                   | Categórica Ordinal | Edad                                                      | \-                                                   |
 | Gender                | Categórica Ordinal | Género                                                    | Man y Woman                                          |
 | Salary                | Numérica Contínua  | El salario anual en dólares del desarrollador             | [3600 - 249153]                                      |
@@ -441,7 +442,7 @@ Luego de la limpieza, decidimos mantenernos con `12` variables que se relacionan
 ### PLDB Lenguajes de Programación
 
 | Nombre de la variable | Tipo de variable   | Descripción                                                       | Restricciones                                                               |
-|--------------|--------------|---------------------|-------------------------|
+|----------------|----------------|------------------|----------------------|
 | Nombre                | Categórica Nominal | Nombre original del lenguaje de programación                      | Deben estar los mismos lenguajes de la encuesta de StackOverflow            |
 | Type                  | Categórica Ordinal | El tipo de lenguaje del que se trata                              | Debe ser "*pl*", "*queryLanguage*", "*textMarkup*" y "*stylesheetLanguage*" |
 | N_Trabajos            | Numérica Discreta  | Número de trabajos relacionados al lenguaje de programación       | Debe ser mayor a 0                                                          |
@@ -1105,10 +1106,9 @@ Además, el estudio no encontró una relación directa entre los sistemas operat
 
 En conclusión, el estudio destaca la importancia de considerar múltiples factores externos en lugar de atribuir el estado de salud mental de los programadores únicamente al lenguaje de programación utilizado. Los resultados muestran que los factores externos tienen un impacto significativo en el bienestar general de los desarrolladores, y es fundamental abordar estos factores para promover un entorno de trabajo saludable y apoyar la salud mental de los profesionales de la programación.
 
-
-
 ## Bibliografías
 
 Stack Overflow (2022). *Stack Overflow Annual Developer Survey.* <https://insights.stackoverflow.com/survey>
 
 PLDB (2023). *Programming Language Data Base.* <https://github.com/breck7/pldb>
+

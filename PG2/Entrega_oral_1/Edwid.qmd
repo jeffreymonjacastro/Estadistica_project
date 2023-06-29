@@ -106,6 +106,45 @@ BD$TabProb2 <- rowSums(BD)
 ```{r}
 TabProb2 <- data.frame(table(BD$TabProb2))
 TabProb2$Probabilidad <- ((as.numeric(TabProb2$Freq)/nrow(encuesta)))
+
+TabProb2
+```
+
+### Otra forma
+
+```{r}
+MentalHealth <- c("Memoria", "Ansiedad", "Aprendizaje", "Autismo", "Emocional")
+```
+
+```{r}
+encuesta$TotalMentalHealth <- 0
+
+for (i in 1:nrow(encuesta)) {
+  cont <- 0
+  for (problem in MentalHealth) {
+    if (encuesta[i, problem] == TRUE){
+      cont <- cont + 1
+    }
+  }
+  encuesta[i, 'TotalMentalHealth'] <- cont
+}
+```
+
+```{r}
+encuesta %>% group_by(TotalMentalHealth) %>% count() -> probMentalHealth
+probMentalHealth %>% rename(Frecuencia = n) -> probMentalHealth
+probMentalHealth$ProbabilidadAtomica <- probMentalHealth$Frecuencia / nrow(encuesta)
+probMentalHealth
+```
+
+```{r}
+barplot(table(encuesta$TotalMentalHealth),
+        main = "Total de problemas de salud mental que sufren",
+        xlab = "Núemro de problemas de salud mental",
+        ylab = "Frecuencia",
+        col = "darkgreen",
+        ylim = c(0,25000)
+)
 ```
 
 ### Validamos que la suma de probabilidades sea 1
@@ -130,14 +169,14 @@ barplot(height = TabProb2$Probabilidad, names.arg = TabProb2$Var1, xlab = "Canti
 ### Función de masa de probabilidad
 
 ```{r}
-TabProb2$Var1 <- as.numeric(as.character(TabProb2$Var1))
+TabProb2$TotalMentalHealth <- as.numeric(as.character(TabProb2$TotalMentalHealth))
 str(TabProb2)
 
 ```
 
 ```{r}
-plot(TabProb2$Var1, 
-     TabProb2$Probabilidad, 
+plot(TabProb2$TotalMentalHealth, 
+     TabProb2$ProbabilidadAtomica, 
      type = "h", 
      col = "red",
      main = "Función de masa de probabilidad para var1",
@@ -146,8 +185,8 @@ plot(TabProb2$Var1,
      ylim = c(0,0.8),
 )
 
-points(TabProb2$Var1, 
-     TabProb2$Probabilidad,  
+points(TabProb2$TotalMentalHealth, 
+     TabProb2$ProbabilidadAtomica,  
      pch = 20, 
      col="red",
 )

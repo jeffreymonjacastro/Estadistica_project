@@ -138,12 +138,97 @@ plot(ecdf_datos,
 
 ### Variable cantidad de problemas de Salud Mental
 
+Esta variable muestra la cantidad total de problemas de salud mental que los desarrolladores sufren. Se puede representar la frecuencia en un barplot:
+```{r}
+BD <- data.frame("Memoria" = encuesta$Memoria, 
+                 "Ansiedad" = encuesta$Ansiedad, 
+                 "Aprendizaje" = encuesta$Aprendizaje, 
+                 "Autismo" = encuesta$Autismo, 
+                 "Emocional" = encuesta$Emocional)
+
+BD$TabProb2 <- rowSums(BD)
+
+TabProb2 <- data.frame(table(BD$TabProb2))
+TabProb2 %>% rename(TotalMentalHealth = Var1, Frecuencia = Freq) -> TabProb2
+
+barplot(TabProb2$Frecuencia,
+        names.arg = TabProb2$TotalMentalHealth,
+        main = "Total de problemas de salud mental que sufren",
+        xlab = "Núemro de problemas de salud mental",
+        ylab = "Frecuencia",
+        col = colorRampPalette(c("lightblue", "blue"))(5),
+        ylim = c(0,25000),
+        xlim = c(0,7)
+)
+```
+
+Donde claramente la moda es que no sufran ningún problema de salud mental.
+
+-----------------------------------
+
+Espacio de probabilidad de la variable: $(\Omega,\mathcal{F},\mathbb{P})$
+
+Donde:
+
+$$
+\Omega = [5] = \text{ Cantidad de problemas de salud mental que sufre } \\
+\mathcal{F} = 2^\Omega = \text{ Subconjuntos de Omega }  \\
+\mathbb{P}(n) = \text{ Probabilidad de que sufra n problemas }
+$$
+
+Calculando las probabilidades empíricas de los eventos atómicos:
+
+```{r}
+TabProb2$ProbabilidadAtomica <- ((as.numeric(TabProb2$Frecuencia)/nrow(encuesta)))
+
+TabProb2
+```
+
+-----------------------
 
 #### Función de masa de probabilidad
+```{r, include = FALSE}
+TabProb2$TotalMentalHealth <- as.numeric(as.character(TabProb2$TotalMentalHealth))
+str(TabProb2)
+```
 
+
+```{r}
+plot(TabProb2$TotalMentalHealth, 
+     TabProb2$ProbabilidadAtomica, 
+     type = "h", 
+     col = "red",
+     main = "Función de masa de probabilidad",
+     ylab = "Probabilidad",
+     xlab = "Cantidad de problemas mentales",
+     ylim = c(0,0.8),
+)
+
+points(TabProb2$TotalMentalHealth, 
+     TabProb2$ProbabilidadAtomica,  
+     pch = 20, 
+     col="red",
+)
+```
+
+-------------------------------------
 
 #### Función de masa de probabilidad acumulada
 
+```{r}
+probAcumulada <- ecdf(BD$TabProb2)
+
+ecdf_datos <- probAcumulada(0:5)
+
+plot(ecdf_datos, 
+     main = "Función de masa de probabilidad acumulada", 
+     xlab = "Valores", 
+     ylab = "Probabilidad acumulada",
+     col = "blue"
+)
+```
+
+------------------------------------
 
 ## Probabilidad condicional
 

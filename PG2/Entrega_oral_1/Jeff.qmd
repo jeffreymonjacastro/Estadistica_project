@@ -58,6 +58,7 @@ abline(v= mean(encuesta$TotalLenguages), col = "red", lty = 1)
 
 abline(v= median(encuesta$TotalLenguages), col = "blue", lty = 2)
 
+legend("topright", legend = c("Media", "Mediana"), col = c("red", "blue"), lty = c(1, 2))
 ```
 
 ```{r}
