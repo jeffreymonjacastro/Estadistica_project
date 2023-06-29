@@ -4,23 +4,90 @@ format: html
 editor: visual
 ---
 
-## Quarto
+# Eventos independientes
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+------------------------------------------------------------------------
 
-## Running Code
+## ¿Usar un lenguaje popular influirá en mi salud mental?
 
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+Para comprobar este punto seleccionaremos dos eventos:
+
+-   E1: Usa un lenguaje que está entre los 5 más populares.
+
+-   E2: Sufre de 2 a más problemas mentales.
+
+### Relación:
+
+Queremos demostrar que nuestra salud mental no depende de si usamos un lenguaje **popular** o no. Para esto debemos demostrar que los eventos son **independientes:**
+
+Entonces debemos pensar que:
+
+-   P(E2\|E1) = P(E2). Es decir que las probabilidades de sufrir de 2 problemas mentales a más son las mismas sin importar si usamos o no uno de los 5 lenguajes más populares.
+
+### Probabilidad E1:
 
 ```{r}
-1 + 1
+#seleccionar los 5 más populares (Java, Javascript, C, Python y SQL)
+
+java = encuesta$Java
+javascirpt = encuesta$JavaScript
+c = encuesta$C
+python = encuesta$Python
+sql = encuesta$SQL
+
+#las columnas son de verdadero y falso, por lo que hay que unirlas como si de ORs se trataran
+
+evento1 = java | javascirpt | c | python | sql
+
+#ahora calcularemos la probabilidad de que E1 sea verdadero
+	
+E1 = sum(evento1)/length(evento1)
+
+rm(java, javascirpt, c, python, sql)
+
+E1
+
 ```
 
-You can add options to executable code like this
+### Probabilidad E2:
 
 ```{r}
-#| echo: false
-2 * 2
+#de la misma forma contaremos los problemas mentales que tiene cada persona
+cantProblemas = encuesta$Memoria + encuesta$Emocional +encuesta$Ansiedad + encuesta$Autismo +encuesta$Aprendizaje
+
+#ahora la probabilidad de tener 2 a más
+E2 = length(cantProblemas[cantProblemas >= 2])/length(cantProblemas)
+
+E2
+
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+### Probabilidad de E2 y E1:
+
+```{r}
+
+#uniremos ambas columnas y contaremos las que cumplen con E1 y E2
+total = data.frame(evento1, cantProblemas)
+
+#ahora contamos los que cumplen con ambas
+E1E2 = nrow(total[total$evento1 == TRUE & total$cantProblemas >= 2,])/nrow(total)
+
+E1E2
+
+```
+
+## ¿Son independientes?
+
+Para comprobar que son independientes calcularemos P(E2\|E1).
+
+```{r}
+
+E2dadoE1 = E1E2/E1
+
+cat("P(E2): ", round(E2, 2), "\n")
+cat("P(E2|E1): ", round(E2dadoE1, 2), "\n")
+
+cat("diferencia entre lo esperado y lo obtenido:", round(abs(E2 - E2dadoE1),2))
+```
+
+Con esta relación demostramos que no existe una relación entre si usamos un lenguaje "popular" y nuestra salud mental ya que ambos eventos son independientes.
