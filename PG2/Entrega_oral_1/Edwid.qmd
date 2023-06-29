@@ -128,3 +128,43 @@ colores_celeste <- colorRampPalette(c("lightblue", "blue"))(length(tablaProb))
 barplot(height = TabProb2$Probabilidad, names.arg = TabProb2$Var1, xlab = "Cantidad de problemas mentales", ylab = "Probabilidad", 
         main = "Probabilidad de Mental health", col = colores_celeste)
 ```
+
+### Función de masa de probabilidad
+
+```{r}
+TabProb2$Var1 <- as.numeric(as.character(TabProb2$Var1))
+str(TabProb2)
+
+```
+
+```{r}
+plot(TabProb2$Var1, 
+     TabProb2$Probabilidad, 
+     type = "h", 
+     col = "red",
+     main = "Función de masa de probabilidad para var1",
+     ylab = "Probabilidad",
+     xlab = "Cantidad de problemas mentales",
+     ylim = c(0,0.8),
+)
+
+points(TabProb2$Var1, 
+     TabProb2$Probabilidad,  
+     pch = 20, 
+     col="red",
+)
+```
+
+### Función de masa de probabilidad acumulada
+
+```{r}
+probAcumulada <- ecdf(BD$TabProb2)
+
+ecdf_datos <- probAcumulada(0:5)
+
+plot(ecdf_datos, 
+     main = "Función de masa de probabilidad acumulada", 
+     xlab = "Valores", 
+     ylab = "Probabilidad acumulada",
+     col = "blue",)
+```
