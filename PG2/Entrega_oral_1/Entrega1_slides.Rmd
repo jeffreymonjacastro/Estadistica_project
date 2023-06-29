@@ -18,10 +18,6 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Introducción
-
-Hablar del mundo de la programación es adentrarse en un universo inmenso, lleno de posibilidades y retos. Sin embargo, si nuestro objetivo es adentrarnos en este mundo, debemos tomar en cuenta nuestra salud por encima de todo.
-
 ## Objetivos
 
 ### Objetivo principal
@@ -38,14 +34,134 @@ Demostrar que la salud mental del programador depende, en parte, del lenguaje de
 
 - Demostrar la relación entre el sistema operativo utilizado en el ámbito profesional y la salud mental de los individuos, y encontrar una posible asociación entre los problemas mentales y el tipo de sistema operativo.
 
-------------------------------------------------------------------------
-
-```{r warning = FALSE, include=FALSE}
+```{r, include=FALSE}
 library(readr)
-
-languages = read_csv("../S7_Fuente/Programming_languages.csv")
-encuesta = read_csv("../S7_fuente/upload_survey_results.csv")
+library(dplyr)
 ```
 
-## Análisis Probabilístico
-Holas
+```{r warning = FALSE, include=FALSE}
+languages = read_csv("../S7_Fuente/Programming_languages.csv")
+encuesta = read_csv("../S7_fuente/temp_encuesta_stackoverflow.csv")
+```
+
+-------------------------------
+
+## Probabilidad empírica
+
+### Variable Total de Lenguajes de programación usados
+
+Esta variable consta en la cantidad total de lenguajes de programación que los desarrolladores mencionaron usar. Se puede representar en un histograma:
+
+```{r}
+hist(encuesta$TotalLenguages,
+     col = "skyblue",
+     main = "Histograma del total de lenguajes de Programación",
+     xlab = "Cantidad de lenguajes", 
+     ylab = "Frecuencia",
+     ylim = c(0,10000),
+     breaks = 20
+)
+
+abline(v= mean(encuesta$TotalLenguages), col = "red", lty = 1)
+
+abline(v= median(encuesta$TotalLenguages), col = "blue", lty = 2)
+
+legend("topright", legend = c("Media", "Mediana"), col = c("red", "blue"), lty = c(1, 2))
+```
+
+Donde la media es: `r mean(encuesta$TotalLenguages)` y la mediana es: `r median(encuesta$TotalLenguages)`.
+Se aprecia que hay una mayor tendencia por trabajar con menos de 5 lenguajes de programación a diferencia con trabajar más de 5 lenguajes.
+
+---------------------------------------------
+
+Espacio de probabilidad de la variable: $(\Omega,\mathcal{F},\mathbb{P})$
+
+Donde:
+
+$$
+\Omega = [42] - \{0\} = \text{ Cantidad de lenguajes de programación que usa } \\
+\mathcal{F} = 2^\Omega = \text{ Subconjuntos de Omega }  \\
+\mathbb{P}(n) = \text{ Probabilidad de que use n lenguajes de programación }
+$$
+
+Calculando las probabilidades empíricas de los eventos atómicos:
+
+```{r}
+encuesta %>% group_by(TotalLenguages) %>% count() -> probTotalLenguajes
+probTotalLenguajes %>% rename(Frecuencia = n) -> probTotalLenguajes
+probTotalLenguajes$ProbabilidadAtomica <- probTotalLenguajes$Frecuencia / nrow(encuesta)
+probTotalLenguajes
+```
+
+----------------------------------
+
+#### Función de masa de probabilidad
+
+```{r}
+plot(probTotalLenguajes$TotalLenguages, 
+     probTotalLenguajes$ProbabilidadAtomica, 
+     type = "h", 
+     col="red",
+     main = "Función de masa de probabilidad",
+     xlab = "Cantidad de lenguajes usados",
+     ylab = "Probabilidad",
+     ylim = c(0,0.2)
+)
+
+points(probTotalLenguajes$TotalLenguages, 
+     probTotalLenguajes$ProbabilidadAtomica,  
+     pch = 20, 
+     col="red",
+)
+```
+
+Evidentemente, hay una mayor probabilidad de que un desarrollador trabaje con entre 3 a 5 lenguajes de programación, debido a que tienden a profesionalizarse más en unos pocos.
+
+----------------------------------
+
+#### Función de masa de probabilidad acumulada
+
+```{r}
+probAcumulada <- ecdf(encuesta$TotalLenguages)
+
+ecdf_datos <- probAcumulada(0:43)
+
+plot(ecdf_datos, 
+     main = "Función de masa de probabilidad acumulada", 
+     xlab = "Cantidad de lenguajes usados", 
+     ylab = "Probabilidad acumulada",
+     col = "blue",
+)
+```
+
+-----------------------------------
+
+### Variable cantidad de problemas de Salud Mental
+
+
+#### Función de masa de probabilidad
+
+
+#### Función de masa de probabilidad acumulada
+
+
+## Probabilidad condicional
+
+#### Eventos dependientes
+
+**Evento 1: Las personas que trabajan con JavaScript y que tenga menos salario que el promedio ** 
+
+
+**Evento 2: Las personas que sufren de ansiedad**
+
+
+**Evento 3: Las personas que sufren de ansiedad dado que trabajan con JavaScript y ganan un salario menor que el promedio**
+
+
+#### Eventos independientes
+
+**Evento 1: **
+
+
+**Evento 2: **
+

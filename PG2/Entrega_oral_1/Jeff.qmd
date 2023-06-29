@@ -124,7 +124,7 @@ ecdf_datos <- probAcumulada(0:43)
 
 plot(ecdf_datos, 
      main = "Función de masa de probabilidad acumulada", 
-     xlab = "Valores", 
+     xlab = "Cantidad de lenguajes usados", 
      ylab = "Probabilidad acumulada",
      col = "blue",
 )
