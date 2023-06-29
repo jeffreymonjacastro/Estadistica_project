@@ -6,7 +6,7 @@ editor: visual
 
 ## Jeff
 
-## Análisis probabilísitico 
+## Análisis probabilísitico
 
 ## Variable "TotalLenguajes"
 
@@ -51,7 +51,7 @@ hist(encuesta$TotalLenguages,
      main = "Histograma del total de lenguajes de Programación",
      xlab = "Cantidad de lenguajes", 
      ylab = "Frecuencia",
-     
+     breaks = 20
 )
 
 abline(v= mean(encuesta$TotalLenguages), col = "red", lty = 1)
@@ -75,9 +75,9 @@ Espacio de probabilidad de la variable: $(\Omega,\mathcal{F},\mathbb{P})$
 Donde:
 
 $$
-\Omega = [42] =\{ \text{ cantidad de lenguajes de programación que usa} \} \\
+\Omega = [42] =\{ \text{ cantidad de lenguajes de programación que usa } \} \\
 \mathcal{F} = 2^\Omega \\
-\mathbb{P}(n) = \{ \text{ probabilidad de que use n lenguajes de programación} \} 
+\mathbb{P}(n) = \{ \text{ probabilidad de que use n lenguajes de programación } \} 
 $$
 
 Calculando las probabilidades empíricas de los eventos atómicos:
@@ -95,7 +95,7 @@ var1$ProbabilidadAtomica <- var1$Frecuencia / nrow(encuesta)
 var1
 ```
 
-### Función de masa de probabilidad 
+### Función de masa de probabilidad
 
 ```{r}
 plot(var1$TotalLenguages, 
@@ -112,13 +112,20 @@ points(var1$TotalLenguages,
      var1$ProbabilidadAtomica,  
      pch = 20, 
      col="red",
-     )
-
-
+)
 ```
 
 ### Función de masa de probabilidad acumulada
 
 ```{r}
-plot(0:43, ecdf(encuesta$TotalLenguages)(0:43), verticals = TRUE )
+probAcumulada <- ecdf(encuesta$TotalLenguages)
+
+ecdf_datos <- probAcumulada(0:43)
+
+plot(ecdf_datos, 
+     main = "Función de masa de probabilidad acumulada", 
+     xlab = "Valores", 
+     ylab = "Probabilidad acumulada",
+     col = "blue",
+)
 ```
