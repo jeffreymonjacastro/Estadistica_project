@@ -33,101 +33,53 @@ mosaicplot(table(encuesta$JavaScript, encuesta$Ansiedad),
            ylab = "Variable2")
 ```
 
-```{r}
-# Crear un dataframe de ejemplo
-dfsito <- data.frame(
-  Variable1 = c("A", "A", "B", "C", "C"),
-  Variable2 = c("X", "Y", "X", "Y", "Z")
-)
-
-# Crear el gráfico de mosaico
-mosaicplot(table(dfsito$Variable1, dfsito$Variable2), main = "Gráfico de Mosaico")
-
-```
-
 Las personas que trabajan en el lenguaje mas usado y que tenga menos salario que el promedio / tenga ansiedad
 
 ```{r}
-suma_APL <- sum(encuesta$APL == TRUE)
-suma_Assembly <- sum(encuesta$Assembly == TRUE)
-suma_bash <- sum(encuesta$`Bash/Shell` == TRUE)
-sumaC <- sum(encuesta$C == TRUE)
-sumaCsharp <- sum(encuesta$`C#` == TRUE)
-sumaCmasmas <- sum(encuesta$`C++`==TRUE)
-sumaCobol <- sum(encuesta$COBOL == TRUE)
-sumaClojure <- sum(encuesta$Clojure == TRUE)
-sumaCrystal <- sum(encuesta$Crystal == TRUE)
-sumaDart <- sum(encuesta$Dart == TRUE)
-sumaDelphi <- sum(encuesta$Delphi == TRUE)
-sumaElixir <- sum(encuesta$Elixir == TRUE)
-sumaErlang <- sum(encuesta$Erlang == TRUE)
-sumaFsharp <- sum(encuesta$`F#` == TRUE)
-sumaFortran <- sum(encuesta$Fortran == TRUE)
-sumaGO <- sum(encuesta$Go == TRUE)
-sumaGroovy <- sum(encuesta$Groovy == TRUE)
-sumaHTML <- sum(encuesta$`HTML/CSS` == TRUE)
-sumaHaskell <- sum(encuesta$Haskell == TRUE)
-sumaJava <- sum(encuesta$Java == TRUE)
-sumaJavaScript <- sum(encuesta$JavaScript == TRUE)
-sumaJulia <- sum(encuesta$Julia == TRUE)
-sumaKotlin <- sum(encuesta$Kotlin == TRUE)
-sumaLISP <- sum(encuesta$LISP == TRUE)
-sumaLua <- sum(encuesta$Lua == TRUE)
-sumaMatlab <- sum(encuesta$MATLAB == TRUE)
-sumaOcaml <- sum(encuesta$OCaml == TRUE)
-sumaOC <- sum(encuesta$`Objective-C` == TRUE)
-sumaPhp <- sum(encuesta$PHP == TRUE)
-sumaPerl <- sum(encuesta$Perl == TRUE)
-sumaPowerShell <- sum(encuesta$PowerShell == TRUE)
-sumaPython <- sum(encuesta$Python == TRUE)
-sumaR <- sum(encuesta$R == TRUE)
-sumaRuby <- sum(encuesta$Ruby == TRUE)
-sumaRust <- sum(encuesta$Rust == TRUE)
-sumaSas <- sum(encuesta$SAS == TRUE)
-sumaSql <- sum(encuesta$SQL == TRUE)
-sumaScala <- sum(encuesta$Scala == TRUE)
-sumaSolidity <- sum(encuesta$Solidity == TRUE)
-sumaSwift <- sum(encuesta$Swift == TRUE)
-sumaTS <- sum(encuesta$TypeScript == TRUE)
-sumaVBA <- sum(encuesta$VBA == TRUE)
-sumas <- c(suma_APL,suma_Assembly, suma_bash, sumaC, sumaCsharp, sumaCmasmas, sumaCobol, sumaClojure, sumaCrystal, sumaDart,sumaDelphi, sumaElixir, sumaErlang,sumaFsharp, sumaFortran, sumaGO,sumaGroovy, sumaHTML,  sumaHaskell,sumaJava, sumaJavaScript, sumaJulia,sumaKotlin,sumaLISP,sumaLua,sumaMatlab,sumaOcaml,sumaOC,sumaPhp,sumaPerl,sumaPowerShell, sumaPython,sumaR ,sumaRuby,sumaRust,sumaSas,sumaSql,sumaScala,sumaSolidity,sumaSwift,sumaTS,sumaVBA )
+CantUsers <- c()
 
-nombres <- c('suma_APL','suma_Assembly', 'suma_bash', 'sumaC', 'sumaCsharp', 'sumaCmasmas', 'sumaCobol', 'sumaClojure', 'sumaCrystal', 'sumaDart','sumaDelphi', 'sumaElixir', 'sumaErlang','sumaFsharp', 'sumaFortran', 'sumaGO','sumaGroovy', 'sumaHTML',  'sumaHaskell','sumaJava', 'JavaScript', 'sumaJulia','sumaKotlin','sumaLISP','sumaLua','sumaMatlab','sumaOcaml','sumaOC','sumaPhp','sumaPerl','sumaPowerShell', 'sumaPython','sumaR' ,'sumaRuby','sumaRust','sumaSas','sumaSql','sumaScala','sumaSolidity','sumaSwift','sumaTS','sumaVBA' )
+for (lang in language){
+  this <- encuesta[encuesta[lang] == TRUE,]
+	cantidad <- nrow(this)
+	CantUsers <- c(CantUsers, cantidad)
+}
 
-indice_max <- which.max(sumas)
-variable_max <- nombres[indice_max]
-cat("El lenguaje de programacion mas usado es:", variable_max)
+df1 <- data.frame(language, CantUsers)
+
+df1 %>% arrange(desc(CantUsers)) -> df1
+
+df1$language[df1$CantUsers == max(df1$CantUsers)]
 ```
 
-Las personas que trabajan en JavaScript y que tenga menos salario que el promedio / tenga ansiedad
+**Las personas que trabajan con JavaScript y que tenga menos salario que el promedio \| tenga ansiedad**
 
 ```{r}
-promedio <- mean(datos2$Salary)
-cat("El promedio del salario de los programadores es de:", promedio)
+mean(encuesta$Salary)
 ```
 
 Las personas que trabajan en JavaScript con salario \< 76153.59 / tenga ansiedad
 
 ```{r}
-cantidad <- sum(encuesta$JavaScript == TRUE & datos2$Salary < 76153.59, na.rm = TRUE)
+cantidad <- sum(encuesta$JavaScript == TRUE & encuesta$Salary < 76153.59)
 cat("La cantidad de personas que trabajan en JavaScript con salario < 76153.59:", cantidad)
 ```
 
 Probabilidad (Las personas que trabajan en JavaScript con salario \< 76153.59)
 
 ```{r}
-probabilidadJS <- cantidad/nrow(encuesta)
-probabilidadJS
+probJSsalario <- cantidad/nrow(encuesta)
+probJSsalario
 ```
 
 ```{r}
 cantAnsiedad <- sum(encuesta$Ansiedad[encuesta$Ansiedad == TRUE])
+cantAnsiedad
 probabilidadAnsiedad <- ansiedad/nrow(encuesta)
 probabilidadAnsiedad
 ```
 
 ```{r}
-pruebita2 <- data.frame(probabilidadJavaScript = c(probabilidadJS, 1-probabilidadJS),
+pruebita2 <- data.frame(probabilidadJavaScript = c(probJSsalario, 1-probJSsalario),
                        probabilidad_ansiedad = c(probabilidadAnsiedad, 1- probabilidadAnsiedad),
                        row.names = c("JavaScript", "No JavaScript"))
 pruebita2
@@ -140,4 +92,48 @@ tabla <- table(pruebita2$probabilidadJavaScript, pruebita2$probabilidad_ansiedad
 # Generar el mosaico plot
 mosaicplot(tabla, main = "Gráfico de Mosaico", xlab = "JavaScript", ylab = "Ansiedad")
 
+```
+
+```{r}
+df2 <- encuesta[encuesta$JavaScript == TRUE & encuesta$Salary < 76153.59 & encuesta$Ansiedad == TRUE, ]
+Interseccion <- nrow(df2)/nrow(encuesta)
+Interseccion
+```
+
+```{r}
+ProbCondicional <- Interseccion/probabilidadAnsiedad
+ProbCondicional
+```
+
+```{r}
+
+
+datos_filtrados <- subset(encuesta, encuesta$JavaScript == TRUE & Salary < 76153.59)
+
+personas_ansiedad <- sum(datos_filtrados$Ansiedad == TRUE)
+personas_ansiedad
+
+total_personas <- nrow(datos_filtrados)
+total_personas
+
+# Paso 5: Crear el objeto de datos para el mosaicplot con las frecuencias correspondientes
+datos_mosaicplot <- matrix(c(personas_ansiedad, total_personas - personas_ansiedad, total_personas), nrow = 3, byrow = TRUE)
+
+datos_mosaicplot
+
+# Paso 6: Realizar el mosaicplot con ejes personalizados
+# mosaicplot(datos_mosaicplot, main = "Relación entre el uso de JavaScript, ganancias y ansiedad",
+#           xlab = "Cantidad de personas que programan en JavaScript y ganan menos de $73,000",
+#           ylab = "Cantidad de personas que sufren ansiedad")
+```
+
+```{r}
+A <- table(encuesta$JavaScript == TRUE & encuesta$Salary < 76153.59)
+B <- table(encuesta$Ansiedad == TRUE)
+
+matrix <- matrix(c(A, B), nrow = 2)
+
+
+
+mosaicplot(matrix)
 ```
