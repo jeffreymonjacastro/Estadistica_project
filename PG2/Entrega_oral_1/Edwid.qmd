@@ -6,8 +6,6 @@ editor: visual
 
 # Rúbrica 1 - Variable Mental Health
 
-## Librerías
-
 ### Carga de librerías
 
 ```{r warning=FALSE, echo = TRUE}
