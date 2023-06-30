@@ -211,6 +211,8 @@ points(TabProb2$TotalMentalHealth,
 )
 ```
 
+Hay mayor probabilidad de que no sufra ningún problema de salud mental, pero existe la probabilidad de que sufra al menos 1 problema de salud mental
+
 ------------------------------------------------------------------------
 
 #### Función de masa de probabilidad acumulada
