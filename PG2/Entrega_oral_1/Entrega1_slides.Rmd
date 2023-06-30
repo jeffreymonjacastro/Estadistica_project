@@ -26,13 +26,13 @@ Demostrar que la salud mental del programador depende, en parte, del lenguaje de
 
 ### Objetivos secundarios
 
-- Demostrar que la popularidad de un lenguaje de programación no significa que trabajar con este brinde un mejor estado de salud mental.
+-   Demostrar que la popularidad de un lenguaje de programación no significa que trabajar con este brinde un mejor estado de salud mental.
 
-- Encontrar una relación entre el acceso a información del lenguaje de programación escogido por el programador y su salud mental.
+-   Encontrar una relación entre el acceso a información del lenguaje de programación escogido por el programador y su salud mental.
 
-- Encontrar una relación entre el salario que brinda el lenguaje de programación que usan los desarrolladores con su salud mental.
+-   Encontrar una relación entre el salario que brinda el lenguaje de programación que usan los desarrolladores con su salud mental.
 
-- Demostrar la relación entre el sistema operativo utilizado en el ámbito profesional y la salud mental de los individuos, y encontrar una posible asociación entre los problemas mentales y el tipo de sistema operativo.
+-   Demostrar la relación entre el sistema operativo utilizado en el ámbito profesional y la salud mental de los individuos, y encontrar una posible asociación entre los problemas mentales y el tipo de sistema operativo.
 
 ```{r, include=FALSE}
 library(readr)
@@ -44,7 +44,7 @@ languages = read_csv("../S7_Fuente/Programming_languages.csv")
 encuesta = read_csv("../S7_fuente/temp_encuesta_stackoverflow.csv")
 ```
 
--------------------------------
+------------------------------------------------------------------------
 
 ## Probabilidad empírica
 
@@ -69,10 +69,9 @@ abline(v= median(encuesta$TotalLenguages), col = "blue", lty = 2)
 legend("topright", legend = c("Media", "Mediana"), col = c("red", "blue"), lty = c(1, 2))
 ```
 
-Donde la media es: `r mean(encuesta$TotalLenguages)` y la mediana es: `r median(encuesta$TotalLenguages)`.
-Se aprecia que hay una mayor tendencia por trabajar con menos de 5 lenguajes de programación a diferencia con trabajar más de 5 lenguajes.
+Donde la media es: `r mean(encuesta$TotalLenguages)` y la mediana es: `r median(encuesta$TotalLenguages)`. Se aprecia que hay una mayor tendencia por trabajar con menos de 5 lenguajes de programación a diferencia con trabajar más de 5 lenguajes.
 
----------------------------------------------
+------------------------------------------------------------------------
 
 Espacio de probabilidad de la variable: $(\Omega,\mathcal{F},\mathbb{P})$
 
@@ -93,7 +92,7 @@ probTotalLenguajes$ProbabilidadAtomica <- probTotalLenguajes$Frecuencia / nrow(e
 probTotalLenguajes
 ```
 
-----------------------------------
+------------------------------------------------------------------------
 
 #### Función de masa de probabilidad
 
@@ -117,7 +116,7 @@ points(probTotalLenguajes$TotalLenguages,
 
 Evidentemente, hay una mayor probabilidad de que un desarrollador trabaje con entre 3 a 5 lenguajes de programación, debido a que tienden a profesionalizarse más en unos pocos.
 
-----------------------------------
+------------------------------------------------------------------------
 
 #### Función de masa de probabilidad acumulada
 
@@ -134,11 +133,12 @@ plot(ecdf_datos,
 )
 ```
 
------------------------------------
+------------------------------------------------------------------------
 
 ### Variable cantidad de problemas de Salud Mental
 
 Esta variable muestra la cantidad total de problemas de salud mental que los desarrolladores sufren. Se puede representar la frecuencia en un barplot:
+
 ```{r}
 BD <- data.frame("Memoria" = encuesta$Memoria, 
                  "Ansiedad" = encuesta$Ansiedad, 
@@ -164,7 +164,7 @@ barplot(TabProb2$Frecuencia,
 
 Donde claramente la moda es que no sufran ningún problema de salud mental.
 
------------------------------------
+------------------------------------------------------------------------
 
 Espacio de probabilidad de la variable: $(\Omega,\mathcal{F},\mathbb{P})$
 
@@ -184,14 +184,14 @@ TabProb2$ProbabilidadAtomica <- ((as.numeric(TabProb2$Frecuencia)/nrow(encuesta)
 TabProb2
 ```
 
------------------------
+------------------------------------------------------------------------
 
 #### Función de masa de probabilidad
+
 ```{r, include = FALSE}
 TabProb2$TotalMentalHealth <- as.numeric(as.character(TabProb2$TotalMentalHealth))
 str(TabProb2)
 ```
-
 
 ```{r}
 plot(TabProb2$TotalMentalHealth, 
@@ -211,7 +211,7 @@ points(TabProb2$TotalMentalHealth,
 )
 ```
 
--------------------------------------
+------------------------------------------------------------------------
 
 #### Función de masa de probabilidad acumulada
 
@@ -228,25 +228,91 @@ plot(ecdf_datos,
 )
 ```
 
-------------------------------------
-
 ## Probabilidad condicional
 
-#### Eventos dependientes
+### Eventos dependientes
 
-**Evento 1: Las personas que trabajan con JavaScript y que tenga menos salario que el promedio ** 
+-   **Evento 1:** Las personas que trabajan con JavaScript y que tenga menos salario que el promedio
 
+-   **Evento 2:** Las personas que sufren de ansiedad
 
-**Evento 2: Las personas que sufren de ansiedad**
+-   **Evento 3:** Las personas que sufren de ansiedad dado que trabajan con JavaScript y ganan un salario menor que el promedio
 
+------------------------------------------------------------------------
 
-**Evento 3: Las personas que sufren de ansiedad dado que trabajan con JavaScript y ganan un salario menor que el promedio**
+### Eventos independientes
 
+-   **Evento 1:** Usa un lenguaje que está entre los 5 más populares.
 
-#### Eventos independientes
+-   **Evento 2:** Sufre de 2 a más problemas mentales.
 
-**Evento 1: **
+### Relación:
 
+Queremos demostrar que nuestra salud mental no depende de si usamos un lenguaje **popular** o no. Para esto debemos demostrar que los eventos son **independientes:**
 
-**Evento 2: **
+-   P(E2\|E1) = P(E2)
+-   P(E1\|E2) = P(E1)
 
+------------------------------------------------------------------------
+
+### Probabilidades de los eventos:
+
+Probabilidad de E1: **0.9317622**
+
+Probabilidad de E2: **0.08944103**
+
+Probabilidad de E1 y E2: **0.08451767**
+
+#### ¿Son independientes?
+
+> P(E2) = **0.09**
+>
+> P(E2\|E1) = P(E1 ∩ E2)/P(E1) = **0.09**
+
+> P(E1) = **0.93**
+>
+> P(E1\|E2) = P(E1 ∩ E2)/P(E2) = **0.94**
+
+Y como la diferencia entre lo esperado y lo obtenido es **APROXIMADAMENTE** nula, podemos decir que son eventos independientes.
+
+------------------------------------------------------------------------
+
+### Mosaic Plot
+
+```{r echo=FALSE}
+java = encuesta$Java
+javascirpt = encuesta$JavaScript
+c = encuesta$C
+python = encuesta$Python
+sql = encuesta$SQL
+
+#las columnas son de verdadero y falso, por lo que hay que unirlas como si de ORs se trataran
+
+evento1 = java | javascirpt | c | python | sql
+
+#ahora calcularemos la probabilidad de que E1 sea verdadero
+	
+E1 = sum(evento1)/length(evento1)
+
+cantProblemas = encuesta$Memoria + encuesta$Emocional +encuesta$Ansiedad + encuesta$Autismo +encuesta$Aprendizaje
+
+#ahora la probabilidad de tener 2 a más
+E2 = length(cantProblemas[cantProblemas >= 2])/length(cantProblemas)
+
+#uniremos ambas columnas y contaremos las que cumplen con E1 y E2
+total = data.frame(evento1, cantProblemas)
+
+#ahora contamos los que cumplen con ambas
+E1E2 = nrow(total[total$evento1 == TRUE & total$cantProblemas >= 2,])/nrow(total)
+
+# mayor o igual a 2 vector
+total$cantProblemas = total$cantProblemas >= 2
+
+#mosaic plot con labels
+mosaicplot(table(total$evento1, total$cantProblemas),
+	main = "Eventos independientes",
+	xlab = "Uno o más de los 5 lenguajes populares",
+	ylab = "2 o más problemas mentales")
+```
+
+Se puede evidenciar en el **Mosaic Plot** que los eventos son **INDEPENDIENTES.**
