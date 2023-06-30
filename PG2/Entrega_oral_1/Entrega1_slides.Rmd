@@ -228,17 +228,74 @@ plot(ecdf_datos,
 )
 ```
 
-## Probabilidad condicional
+## Probabilidad condicional (1)
 
 ### Eventos dependientes
 
--   **Evento 1:** Las personas que trabajan con JavaScript y que tenga menos salario que el promedio
+-   **Evento 1:** Las personas que trabajan con JavaScript y que tenga menos salario que el quartil del 15%
 
 -   **Evento 2:** Las personas que sufren de ansiedad
 
--   **Evento 3:** Las personas que sufren de ansiedad dado que trabajan con JavaScript y ganan un salario menor que el promedio
+> Se espera que las personas que trabajan con JavaScript, al ser el lenguaje más usado entre los entrevistados, y que ganan cifras inferiores a la del quantil del 15% sufran de **ansiedad.** Esto debido a que sería frustrante para el programador usar un lenguaje famoso y no tener las ganancias esperadas.
 
 ------------------------------------------------------------------------
+
+### Quantil y probabilidades.
+
+-   Quantil del 15%:
+
+```{r}
+quantil <- quantile(encuesta$Salary, c(0.15), type = 6)
+cat("El quantil del 15% del salario de los programadores es de:", quantil)
+```
+
+-   Ganar menos que el quantil del 15% y trabajar en JS
+
+```{r}
+cantidad <- sum(encuesta$JavaScript == TRUE & encuesta$Salary < quantil, na.rm = TRUE)
+cat("Probabilidad de trabajar en JS y ganar menos que el quantil", round(100*cantidad/nrow(encuesta),2), "%")
+```
+
+-   Sufrir de ansiedad
+
+```{r}
+cantAnsiedad <- sum(encuesta$Ansiedad[encuesta$Ansiedad == TRUE])
+probabilidadAnsiedad <- cantAnsiedad/nrow(encuesta)
+cat("La probabilidad de que alguien sufra de ansiedad es: ", round(100*probabilidadAnsiedad,2), "%")
+```
+
+------------------------------------------------------------------------
+
+### Mosaic Plot
+
+En el siguiente gráfico de mosaico se evidencia claramente que ambos eventos son dependientes ya que las probabilidades de sufrir ansiedad cuando usas JS y tienes un sueldo menor al quantil del 15% son mayores que cuando no.
+
+```{r echo=FALSE}
+# Contar la cantidad de personas que trabajan en JavaScript y ganan menos que el quantil con ansiedad
+JS_Ansiedad <- sum((encuesta$JavaScript == TRUE & encuesta$Salary < quantil) & encuesta$Ansiedad == TRUE)
+
+# Contar la cantidad de personas que trabajan en JavaScript y ganan menos que el quantil sin ansiedad
+JS_NoAnsiedad <- sum((encuesta$JavaScript == TRUE & encuesta$Salary < quantil) & encuesta$Ansiedad == FALSE)
+
+# Contar la cantidad de personas que no trabajan en JavaScript y ganan mas que el quantil con ansiedad
+NoJS_Ansiedad <- sum((encuesta$JavaScript == FALSE & encuesta$Salary > quantil) & encuesta$Ansiedad == TRUE)
+
+# Contar la cantidad de personas que no trabajan en JavaScript y ganan mas que el quantil sin ansiedad
+NoJS_NoAnsiedad <- sum((encuesta$JavaScript == FALSE & encuesta$Salary > quantil) & encuesta$Ansiedad == FALSE)
+
+# Crear la tabla de contingencia
+tabla_contingencia <- matrix(c(JS_Ansiedad, JS_NoAnsiedad,
+                               NoJS_Ansiedad, NoJS_NoAnsiedad),
+                             nrow = 2, ncol = 2, byrow = TRUE,
+                             dimnames = list(c("JavaScript", "No JavaScript"),
+                                             c("Ansiedad", "No Ansiedad")))
+
+
+# Crear el gráfico de mosaico
+mosaicplot(tabla_contingencia, main = "Gráfico de Mosaico")
+```
+
+## Probabilidad Condicional (2)
 
 ### Eventos independientes
 

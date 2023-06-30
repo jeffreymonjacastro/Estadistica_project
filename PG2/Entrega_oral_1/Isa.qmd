@@ -6,134 +6,133 @@ editor: visual
 
 ## Item 2
 
-Programan en c++ -\> ansiedad
+Las personas que trabajan en el lenguaje mas usado y que tenga menos salario que el quantil / tenga ansiedad
 
 ```{r}
-cmasmas <- sum(encuesta$`C++`[encuesta$`C++` == TRUE])  
-probabilidad <- cmasmas/nrow(encuesta)
-probabilidad
+suma_APL <- sum(encuesta$APL == TRUE)
+suma_Assembly <- sum(encuesta$Assembly == TRUE)
+suma_bash <- sum(encuesta$`Bash/Shell` == TRUE)
+sumaC <- sum(encuesta$C == TRUE)
+sumaCsharp <- sum(encuesta$`C#` == TRUE)
+sumaCmasmas <- sum(encuesta$`C++`==TRUE)
+sumaCobol <- sum(encuesta$COBOL == TRUE)
+sumaClojure <- sum(encuesta$Clojure == TRUE)
+sumaCrystal <- sum(encuesta$Crystal == TRUE)
+sumaDart <- sum(encuesta$Dart == TRUE)
+sumaDelphi <- sum(encuesta$Delphi == TRUE)
+sumaElixir <- sum(encuesta$Elixir == TRUE)
+sumaErlang <- sum(encuesta$Erlang == TRUE)
+sumaFsharp <- sum(encuesta$`F#` == TRUE)
+sumaFortran <- sum(encuesta$Fortran == TRUE)
+sumaGO <- sum(encuesta$Go == TRUE)
+sumaGroovy <- sum(encuesta$Groovy == TRUE)
+sumaHTML <- sum(encuesta$`HTML/CSS` == TRUE)
+sumaHaskell <- sum(encuesta$Haskell == TRUE)
+sumaJava <- sum(encuesta$Java == TRUE)
+sumaJavaScript <- sum(encuesta$JavaScript == TRUE)
+sumaJulia <- sum(encuesta$Julia == TRUE)
+sumaKotlin <- sum(encuesta$Kotlin == TRUE)
+sumaLISP <- sum(encuesta$LISP == TRUE)
+sumaLua <- sum(encuesta$Lua == TRUE)
+sumaMatlab <- sum(encuesta$MATLAB == TRUE)
+sumaOcaml <- sum(encuesta$OCaml == TRUE)
+sumaOC <- sum(encuesta$`Objective-C` == TRUE)
+sumaPhp <- sum(encuesta$PHP == TRUE)
+sumaPerl <- sum(encuesta$Perl == TRUE)
+sumaPowerShell <- sum(encuesta$PowerShell == TRUE)
+sumaPython <- sum(encuesta$Python == TRUE)
+sumaR <- sum(encuesta$R == TRUE)
+sumaRuby <- sum(encuesta$Ruby == TRUE)
+sumaRust <- sum(encuesta$Rust == TRUE)
+sumaSas <- sum(encuesta$SAS == TRUE)
+sumaSql <- sum(encuesta$SQL == TRUE)
+sumaScala <- sum(encuesta$Scala == TRUE)
+sumaSolidity <- sum(encuesta$Solidity == TRUE)
+sumaSwift <- sum(encuesta$Swift == TRUE)
+sumaTS <- sum(encuesta$TypeScript == TRUE)
+sumaVBA <- sum(encuesta$VBA == TRUE)
+sumas <- c(suma_APL,suma_Assembly, suma_bash, sumaC, sumaCsharp, sumaCmasmas, sumaCobol, sumaClojure, sumaCrystal, sumaDart,sumaDelphi, sumaElixir, sumaErlang,sumaFsharp, sumaFortran, sumaGO,sumaGroovy, sumaHTML,  sumaHaskell,sumaJava, sumaJavaScript, sumaJulia,sumaKotlin,sumaLISP,sumaLua,sumaMatlab,sumaOcaml,sumaOC,sumaPhp,sumaPerl,sumaPowerShell, sumaPython,sumaR ,sumaRuby,sumaRust,sumaSas,sumaSql,sumaScala,sumaSolidity,sumaSwift,sumaTS,sumaVBA )
+
+nombres <- c('suma_APL','suma_Assembly', 'suma_bash', 'sumaC', 'sumaCsharp', 'sumaCmasmas', 'sumaCobol', 'sumaClojure', 'sumaCrystal', 'sumaDart','sumaDelphi', 'sumaElixir', 'sumaErlang','sumaFsharp', 'sumaFortran', 'sumaGO','sumaGroovy', 'sumaHTML',  'sumaHaskell','sumaJava', 'JavaScript', 'sumaJulia','sumaKotlin','sumaLISP','sumaLua','sumaMatlab','sumaOcaml','sumaOC','sumaPhp','sumaPerl','sumaPowerShell', 'sumaPython','sumaR' ,'sumaRuby','sumaRust','sumaSas','sumaSql','sumaScala','sumaSolidity','sumaSwift','sumaTS','sumaVBA' )
+
+indice_max <- which.max(sumas)
+variable_max <- nombres[indice_max]
+cat("El lenguaje de programacion mas usado es:", variable_max)
 ```
 
 ```{r}
-ansiedad <- sum(encuesta$Ansiedad[encuesta$Ansiedad == TRUE])
-probabilidad2 <- ansiedad/nrow(encuesta)
-probabilidad2
-```
-
-```{r}
-pruebita <- data.frame(cmasmas = c(probabilidad, 1-probabilidad),
-                       ansiedad = c(probabilidad2, 1- probabilidad2))
-pruebita
-```
-
-```{r}
-mosaicplot(table(encuesta$JavaScript, encuesta$Ansiedad),
-           main = "Gráfico de Mosaico",
-           xlab = "Variable1",
-           ylab = "Variable2")
-```
-
-Las personas que trabajan en el lenguaje mas usado y que tenga menos salario que el promedio / tenga ansiedad
-
-```{r}
-CantUsers <- c()
-
-for (lang in language){
-  this <- encuesta[encuesta[lang] == TRUE,]
-	cantidad <- nrow(this)
-	CantUsers <- c(CantUsers, cantidad)
-}
-
-df1 <- data.frame(language, CantUsers)
-
-df1 %>% arrange(desc(CantUsers)) -> df1
-
-df1$language[df1$CantUsers == max(df1$CantUsers)]
-```
-
-**Las personas que trabajan con JavaScript y que tenga menos salario que el promedio \| tenga ansiedad**
-
-```{r}
-mean(encuesta$Salary)
+quantil <- quantile(encuesta$Salary, c(0.15), type = 6)
+cat("El quantil del 15% del salario de los programadores es de:", quantil)
 ```
 
 Las personas que trabajan en JavaScript con salario \< 76153.59 / tenga ansiedad
 
 ```{r}
-cantidad <- sum(encuesta$JavaScript == TRUE & encuesta$Salary < 76153.59)
-cat("La cantidad de personas que trabajan en JavaScript con salario < 76153.59:", cantidad)
-```
-
-Probabilidad (Las personas que trabajan en JavaScript con salario \< 76153.59)
-
-```{r}
-probJSsalario <- cantidad/nrow(encuesta)
-probJSsalario
+cantidad <- sum(encuesta$JavaScript == TRUE & encuesta$Salary < quantil, na.rm = TRUE)
+cat("La cantidad de personas que trabajan en JavaScript con salario inferior al quantil del 15% son:", cantidad, "\n")
+cat("La probabilidad de estas mismas es: ", round(100*cantidad/nrow(encuesta),2), "%")
 ```
 
 ```{r}
 cantAnsiedad <- sum(encuesta$Ansiedad[encuesta$Ansiedad == TRUE])
-cantAnsiedad
 probabilidadAnsiedad <- ansiedad/nrow(encuesta)
-probabilidadAnsiedad
+cat("La probabilidad de que alguien sufra de ansiedad es: ", round(100*probabilidadAnsiedad,2), "%")
 ```
 
 ```{r}
-pruebita2 <- data.frame(probabilidadJavaScript = c(probJSsalario, 1-probJSsalario),
+pruebita2 <- data.frame(probabilidadJavaScript = c(probabilidadJS, 1-probabilidadJS),
                        probabilidad_ansiedad = c(probabilidadAnsiedad, 1- probabilidadAnsiedad),
                        row.names = c("JavaScript", "No JavaScript"))
 pruebita2
 ```
 
 ```{r}
+# Contar la cantidad de personas que trabajan en JavaScript y ganan menos que el quantil con ansiedad
+JS_Ansiedad <- sum((encuesta$JavaScript == TRUE & encuesta$Salary < quantil) & encuesta$Ansiedad == TRUE)
+
+# Contar la cantidad de personas que trabajan en JavaScript y ganan menos que el quantil sin ansiedad
+JS_NoAnsiedad <- sum((encuesta$JavaScript == TRUE & encuesta$Salary < quantil) & encuesta$Ansiedad == FALSE)
+
+# Contar la cantidad de personas que no trabajan en JavaScript y ganan mas que el quantil con ansiedad
+NoJS_Ansiedad <- sum((encuesta$JavaScript == FALSE & encuesta$Salary > quantil) & encuesta$Ansiedad == TRUE)
+
+# Contar la cantidad de personas que no trabajan en JavaScript y ganan mas que el quantil sin ansiedad
+NoJS_NoAnsiedad <- sum((encuesta$JavaScript == FALSE & encuesta$Salary > quantil) & encuesta$Ansiedad == FALSE)
+
 # Crear la tabla de contingencia
-tabla <- table(pruebita2$probabilidadJavaScript, pruebita2$probabilidad_ansiedad)
+tabla_contingencia <- matrix(c(JS_Ansiedad, JS_NoAnsiedad,
+                               NoJS_Ansiedad, NoJS_NoAnsiedad),
+                             nrow = 2, ncol = 2, byrow = TRUE,
+                             dimnames = list(c("JavaScript", "No JavaScript"),
+                                             c("Ansiedad", "No Ansiedad")))
+tabla_contingencia
 
-# Generar el mosaico plot
-mosaicplot(tabla, main = "Gráfico de Mosaico", xlab = "JavaScript", ylab = "Ansiedad")
+# Crear el gráfico de mosaico
+mosaicplot(tabla_contingencia, main = "Gráfico de Mosaico")
 
 ```
 
 ```{r}
-df2 <- encuesta[encuesta$JavaScript == TRUE & encuesta$Salary < 76153.59 & encuesta$Ansiedad == TRUE, ]
-Interseccion <- nrow(df2)/nrow(encuesta)
-Interseccion
-```
+P_JS <- sum(encuesta$JavaScript == TRUE) / nrow(encuesta)
+P_NoJS <- sum(encuesta$JavaScript == FALSE) / nrow(encuesta)
+P_Ansiedad <- sum(encuesta$Ansiedad == TRUE) / nrow(encuesta)
+P_NoAnsiedad <- sum(encuesta$Ansiedad == FALSE) / nrow(encuesta)
 
-```{r}
-ProbCondicional <- Interseccion/probabilidadAnsiedad
-ProbCondicional
-```
+P_A_given_JS <- JS_Ansiedad / sum(encuesta$JavaScript == TRUE & encuesta$Salary < quantil)
+P_B_given_JS <- JS_Ansiedad / sum((encuesta$JavaScript == TRUE & encuesta$Salary < quantil) & encuesta$Ansiedad == TRUE)
+P_A_given_NoJS <- NoJS_Ansiedad / sum(encuesta$JavaScript == FALSE & encuesta$Salary > quantil)
+P_B_given_NoJS <- NoJS_Ansiedad / sum((encuesta$JavaScript == FALSE & encuesta$Salary > quantil) & encuesta$Ansiedad == TRUE)
 
-```{r}
+if (P_A_given_JS == P_Ansiedad && P_B_given_JS == P_Ansiedad) {
+cat("El evento A (Ansiedad) y el evento B (JavaScript) son independientes.\n")
+} else {
+cat("El evento A (Ansiedad) y el evento B (JavaScript) son dependientes.\n")
+}
 
+if (P_A_given_NoJS == P_Ansiedad && P_B_given_NoJS == P_Ansiedad) {
+cat("El evento A (Ansiedad) y el evento B (No JavaScript) son independientes.\n")
+} else {
+cat("El evento A (Ansiedad) y el evento B (No JavaScript) son dependientes.\n")
+}
 
-datos_filtrados <- subset(encuesta, encuesta$JavaScript == TRUE & Salary < 76153.59)
-
-personas_ansiedad <- sum(datos_filtrados$Ansiedad == TRUE)
-personas_ansiedad
-
-total_personas <- nrow(datos_filtrados)
-total_personas
-
-# Paso 5: Crear el objeto de datos para el mosaicplot con las frecuencias correspondientes
-datos_mosaicplot <- matrix(c(personas_ansiedad, total_personas - personas_ansiedad, total_personas), nrow = 3, byrow = TRUE)
-
-datos_mosaicplot
-
-# Paso 6: Realizar el mosaicplot con ejes personalizados
-# mosaicplot(datos_mosaicplot, main = "Relación entre el uso de JavaScript, ganancias y ansiedad",
-#           xlab = "Cantidad de personas que programan en JavaScript y ganan menos de $73,000",
-#           ylab = "Cantidad de personas que sufren ansiedad")
-```
-
-```{r}
-A <- table(encuesta$JavaScript == TRUE & encuesta$Salary < 76153.59)
-B <- table(encuesta$Ansiedad == TRUE)
-
-matrix <- matrix(c(A, B), nrow = 2)
-
-
-
-mosaicplot(matrix)
 ```
