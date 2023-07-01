@@ -211,6 +211,8 @@ points(TabProb2$TotalMentalHealth,
 )
 ```
 
+Hay mayor probabilidad de que no sufra ningún problema de salud mental, pero existe la probabilidad de que sufra al menos 1 problema de salud mental
+
 ------------------------------------------------------------------------
 
 #### Función de masa de probabilidad acumulada
@@ -253,7 +255,8 @@ cat("El quantil del 15% del salario de los programadores es de:", quantil)
 
 ```{r}
 cantidad <- sum(encuesta$JavaScript == TRUE & encuesta$Salary < quantil, na.rm = TRUE)
-cat("Probabilidad de trabajar en JS y ganar menos que el quantil", round(100*cantidad/nrow(encuesta),2), "%")
+cat("Probabilidad de trabajar en JS y ganar menos que el quantil", 
+    round(100*cantidad/nrow(encuesta),2), "%")
 ```
 
 -   Sufrir de ansiedad
@@ -261,7 +264,8 @@ cat("Probabilidad de trabajar en JS y ganar menos que el quantil", round(100*can
 ```{r}
 cantAnsiedad <- sum(encuesta$Ansiedad[encuesta$Ansiedad == TRUE])
 probabilidadAnsiedad <- cantAnsiedad/nrow(encuesta)
-cat("La probabilidad de que alguien sufra de ansiedad es: ", round(100*probabilidadAnsiedad,2), "%")
+cat("La probabilidad de que alguien sufra de ansiedad es: ",
+    round(100*probabilidadAnsiedad,2), "%")
 ```
 
 ------------------------------------------------------------------------
@@ -314,21 +318,62 @@ Queremos demostrar que nuestra salud mental no depende de si usamos un lenguaje 
 
 ### Probabilidades de los eventos:
 
-Probabilidad de E1: **0.9317622**
+-   Usa un lenguaje entre los 5 más populares
 
-Probabilidad de E2: **0.08944103**
+```{r}
+#seleccionar los 5 más populares (Java, Javascript, C, Python y SQL)
 
-Probabilidad de E1 y E2: **0.08451767**
+java = encuesta$Java
+javascirpt = encuesta$JavaScript
+c = encuesta$C
+python = encuesta$Python
+sql = encuesta$SQL
+
+evento1 = java | javascirpt | c | python | sql
+
+#ahora calcularemos la probabilidad de que E1 sea verdadero
+	
+E1 = sum(evento1)/length(evento1)
+rm(java, javascirpt, c, python, sql)
+
+cat("la probabilidad del evento 1 es: ",E1, "%")
+
+```
+
+-   Sufre de 2 o más problemas de salud mental
+
+```{r}
+#de la misma forma contaremos los problemas mentales que tiene cada persona
+cantProblemas = encuesta$Memoria + encuesta$Emocional +encuesta$Ansiedad + encuesta$Autismo +encuesta$Aprendizaje
+
+#ahora la probabilidad de tener 2 a más
+E2 = length(cantProblemas[cantProblemas >= 2])/length(cantProblemas)
+
+cat("Probabilidad del evento 2 es: ",E2, "%")
+```
+
+-   Usa alguno de los 5 lenguajes más populares y sufre de 2 o más problemas de salud mental
+
+```{r}
+#uniremos ambas columnas y contaremos las que cumplen con E1 y E2
+total = data.frame(evento1, cantProblemas)
+
+#ahora contamos los que cumplen con ambas
+E1E2 = nrow(total[total$evento1 == TRUE & total$cantProblemas >= 2,])/nrow(total)
+
+cat("Prbabilidad del evento 1 y evento 2: ",E1E2, "%")
+```
 
 #### ¿Son independientes?
 
-> P(E2) = **0.09**
->
-> P(E2\|E1) = P(E1 ∩ E2)/P(E1) = **0.09**
+```{r}
+E2dadoE1 = E1E2/E1
 
-> P(E1) = **0.93**
->
-> P(E1\|E2) = P(E1 ∩ E2)/P(E2) = **0.94**
+cat("P(E2): ", round(E2, 4), "\n")
+cat("P(E2|E1): ", round(E2dadoE1, 4), "\n")
+
+cat("diferencia entre lo esperado y lo obtenido:", round(abs(E2 - E2dadoE1),3))
+```
 
 Y como la diferencia entre lo esperado y lo obtenido es **APROXIMADAMENTE** nula, podemos decir que son eventos independientes.
 
