@@ -4,9 +4,9 @@ format: html
 editor: visual
 ---
 
-# Rúbrica 1 - Variable Mental Health
+# Rúbrica 1 - Variable EdLevel
 
-### Carga de librerías
+Carga de librerías
 
 ```{r warning=FALSE, echo = TRUE}
 library(readr)
@@ -23,84 +23,70 @@ library(stringr)
 encuesta <- read.csv("upload_survey_results.csv")
 ```
 
-### Convertimos la variable categórica a numérica con Bernulli
+### Convertimos la variable categorica a numerica con Bernulli
 
 ```{r}
-columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "concentration", "\\b"))
-encuesta$Memoria <- columna_booleana
+columna_booleana <- str_detect(encuesta$CodingActivities, paste0("\\b", "Hobby", "\\b"))
+encuesta$Hobby <- columna_booleana
 
-columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "mood", "\\b"))
-encuesta$Emocional <- columna_booleana
+columna_booleana <- str_detect(encuesta$CodingActivities, paste0("\\b", "I don’t code outside of work", "\\b"))
+encuesta$OutWork <- columna_booleana
 
-columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "anxiety", "\\b"))
-encuesta$Ansiedad <- columna_booleana
+columna_booleana <- str_detect(encuesta$CodingActivities, paste0("\\b", "Freelance/contract work", "\\b"))
+encuesta$Freelance <- columna_booleana
 
-columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "autism", "\\b"))
-encuesta$Autismo <- columna_booleana
+columna_booleana <- str_detect(encuesta$CodingActivities, paste0("\\b", "Contribute to open-source projects", "\\b"))
+encuesta$Contribute <- columna_booleana
 
-columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "learning", "\\b"))
-encuesta$Aprendizaje <- columna_booleana
+columna_booleana <- str_detect(encuesta$CodingActivities, paste0("\\b", "Bootstrapping a business", "\\b"))
+encuesta$Business <- columna_booleana
+
+columna_booleana <- str_detect(encuesta$CodingActivities, paste0("\\b", "School or academic work", "\\b"))
+encuesta$Academic <- columna_booleana
+
+BD <- data.frame("Hobby" = encuesta$Hobby, "OutWork" = encuesta$OutWork, "Freelance" = encuesta$Freelance, "Contribute" = encuesta$Contribute, "Business" = encuesta$Business, "Academic" = encuesta$Academic)
+
+BD$TabProb2<- rowSums(BD)
 ```
 
 ```{r}
-DF1 <- nrow(encuesta[encuesta$Memoria == TRUE,])
-DF2 <- nrow(encuesta[encuesta$Ansiedad == TRUE,])
-DF3 <- nrow(encuesta[encuesta$Aprendizaje == TRUE,])
-DF4 <- nrow(encuesta[encuesta$Autismo == TRUE,])
-DF5 <- nrow(encuesta[encuesta$Emocional == TRUE,])
+DF1 <- nrow(encuesta[encuesta$Hobby == TRUE,])
+DF2 <- nrow(encuesta[encuesta$OutWork == TRUE,])
+DF3 <- nrow(encuesta[encuesta$Freelance == TRUE,])
+DF4 <- nrow(encuesta[encuesta$Contribute == TRUE,])
+DF5 <- nrow(encuesta[encuesta$Business == TRUE,])
+DF6 <- nrow(encuesta[encuesta$Academic == TRUE,])
 ```
 
-### Hallamos la probabilidad en cada estado mental
+### Hallamos la probabilidad en cada actividad
 
 ```{r}
-ProbMemoria <- DF1/nrow(encuesta)
-ProbAnsiedad <- DF2/nrow(encuesta)
-ProbAprendizaje <- DF3/nrow(encuesta)
-ProbAutismo <- DF4/nrow(encuesta)
-ProbEmocional <- DF5/nrow(encuesta)
+ProbHobby <- DF1/nrow(encuesta)
+ProbOutWork <- DF2/nrow(encuesta)
+ProbFreelance <- DF3/nrow(encuesta)
+ProbContribute <- DF4/nrow(encuesta)
+ProbBusiness <- DF5/nrow(encuesta)
+ProbAcademic <- DF6/nrow(encuesta)
 ```
 
-### Tabla de probabilidad por cada estado mental
+### Tabla de probabilidad por cada actividad
 
 ```{r}
-tablaProb <- data.frame("Memoria" = ProbMemoria, "Ansiedad" = ProbAnsiedad, "Aprendizaje" = ProbAprendizaje, "Autismo" = ProbAutismo, "Emocional" = ProbEmocional)
-tablaProb
+tablaProb2 <- data.frame("Hobby" = ProbHobby, "OutWork" = ProbOutWork, "Freelance" = ProbFreelance, "Contribute" = ProbContribute, "Business" = ProbBusiness, "Academic" = ProbAcademic)
+tablaProb2
 ```
 
-### Gráfico de barras de la Probabilidad vs Estado mental
+### Gráfico de barras de la Probabilidad vs Actividad
 
 ```{r}
-tablaProbOrdenada <- sort(tablaProb, decreasing = TRUE)
+tablaProbOrdenada <- sort(tablaProb2, decreasing = TRUE)
 
 colores_celeste <- colorRampPalette(c("lightblue", "blue"))(length(tablaProb))
 
-barplot(unlist(tablaProbOrdenada), xlab = "Estado mental", ylab = "Probabilidad", 
-        main = "Probabilidad de Mental health", 
+barplot(unlist(tablaProbOrdenada), xlab = "Actividad", ylab = "Probabilidad", 
+        main = "Probabilidad de Coding Activities", 
         names.arg = names(tablaProbOrdenada), 
         col = colores_celeste)
-```
-
-### Convertimos la variable categórica a numérica con Bernulli
-
-```{r}
-columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "concentration", "\\b"))
-encuesta$Memoria <- columna_booleana
-
-columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "mood", "\\b"))
-encuesta$Emocional <- columna_booleana
-
-columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "anxiety", "\\b"))
-encuesta$Ansiedad <- columna_booleana
-
-columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "autism", "\\b"))
-encuesta$Autismo <- columna_booleana
-
-columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "learning", "\\b"))
-encuesta$Aprendizaje <- columna_booleana
-
-BD <- data.frame("Memoria" = encuesta$Memoria, "Ansiedad" = encuesta$Ansiedad, "Aprendizaje" = encuesta$Aprendizaje, "Autismo" = encuesta$Autismo, "Emocional" = encuesta$Emocional)
-
-BD$TabProb2 <- rowSums(BD)
 ```
 
 ```{r}
@@ -113,36 +99,36 @@ TabProb2
 ### Otra forma
 
 ```{r}
-MentalHealth <- c("Memoria", "Ansiedad", "Aprendizaje", "Autismo", "Emocional")
+Activities <- c("Hobby", "OutWork", "Freelance", "Contribute", "Business", "Academic")
 ```
 
 ```{r}
-encuesta$TotalMentalHealth <- 0
+encuesta$TotalActivities <- 0
 
 for (i in 1:nrow(encuesta)) {
   cont <- 0
-  for (problem in MentalHealth) {
+  for (problem in Activities) {
     if (encuesta[i, problem] == TRUE){
       cont <- cont + 1
     }
   }
-  encuesta[i, 'TotalMentalHealth'] <- cont
+  encuesta[i, 'TotalActivities'] <- cont
 }
 ```
 
 ```{r}
-encuesta %>% group_by(TotalMentalHealth) %>% count() -> probMentalHealth
-probMentalHealth %>% rename(Frecuencia = n) -> probMentalHealth
-probMentalHealth$ProbabilidadAtomica <- probMentalHealth$Frecuencia / nrow(encuesta)
-probMentalHealth
+encuesta %>% group_by(TotalActivities) %>% count() -> probActivities
+probActivities %>% rename(Frecuencia = n) -> probActivities
+probActivities$ProbabilidadAtomica <- probActivities$Frecuencia / nrow(encuesta)
+probActivities
 ```
 
 ```{r}
-barplot(table(encuesta$TotalMentalHealth),
-        main = "Total de problemas de salud mental que sufren",
-        xlab = "Núemro de problemas de salud mental",
+barplot(table(encuesta$TotalActivities),
+        main = "Total de Actividades",
+        xlab = "Número de actividades",
         ylab = "Frecuencia",
-        col = "darkgreen",
+        col = "lightblue",
         ylim = c(0,25000)
 )
 ```
@@ -162,46 +148,6 @@ stem(BD$TabProb2)
 ```{r}
 colores_celeste <- colorRampPalette(c("lightblue", "blue"))(length(tablaProb))
 
-barplot(height = TabProb2$Probabilidad, names.arg = TabProb2$Var1, xlab = "Cantidad de problemas mentales", ylab = "Probabilidad", 
-        main = "Probabilidad de Mental health", col = colores_celeste)
-```
-
-### Función de masa de probabilidad
-
-```{r}
-TabProb2$TotalMentalHealth <- as.numeric(as.character(TabProb2$TotalMentalHealth))
-str(TabProb2)
-
-```
-
-```{r}
-plot(TabProb2$TotalMentalHealth, 
-     TabProb2$ProbabilidadAtomica, 
-     type = "h", 
-     col = "red",
-     main = "Función de masa de probabilidad para var1",
-     ylab = "Probabilidad",
-     xlab = "Cantidad de problemas mentales",
-     ylim = c(0,0.8),
-)
-
-points(TabProb2$TotalMentalHealth, 
-     TabProb2$ProbabilidadAtomica,  
-     pch = 20, 
-     col="red",
-)
-```
-
-### Función de masa de probabilidad acumulada
-
-```{r}
-probAcumulada <- ecdf(BD$TabProb2)
-
-ecdf_datos <- probAcumulada(0:5)
-
-plot(ecdf_datos, 
-     main = "Función de masa de probabilidad acumulada", 
-     xlab = "Valores", 
-     ylab = "Probabilidad acumulada",
-     col = "blue",)
+barplot(height = TabProb2$Probabilidad, names.arg = TabProb2$Var1, xlab = "Cantidad de actividades", ylab = "Probabilidad", 
+        main = "Probabilidad de CondingActivities", col = colores_celeste)
 ```
