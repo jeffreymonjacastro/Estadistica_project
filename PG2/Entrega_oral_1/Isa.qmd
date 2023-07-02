@@ -136,3 +136,35 @@ cat("El evento A (Ansiedad) y el evento B (No JavaScript) son dependientes.\n")
 }
 
 ```
+
+```{r}
+P_JS <- sum(encuesta$JavaScript == TRUE) / nrow(encuesta)
+P_NoJS <- sum(encuesta$JavaScript == FALSE) / nrow(encuesta)
+P_Ansiedad <- sum(encuesta$Ansiedad == TRUE) / nrow(encuesta)
+P_NoAnsiedad <- sum(encuesta$Ansiedad == FALSE) / nrow(encuesta)
+cat("La probabilidad de que programen en JavaScript es de:", P_JS)
+cat("La probabilidad de que NO programen en JavaScript es de:", P_NoJS)
+cat("La probabilidad de que sufran de ansiedad es de:", P_Ansiedad)
+cat("La probabilidad de que no sufran de ansiedad es de:", P_NoAnsiedad)
+
+P_A_given_JS <- JS_Ansiedad / sum(encuesta$JavaScript == TRUE & encuesta$Salary < quantil)
+  P_B_given_JS <- JS_Ansiedad / sum((encuesta$JavaScript == TRUE & encuesta$Salary < quantil) & encuesta$Ansiedad == TRUE)
+cat("La probabilidad de que sufran de ansiedad y programen en JS (ganando menos que el cuartil inferior) es de:",P_B_given_JS)
+P_A_given_NoJS <- NoJS_Ansiedad / sum(encuesta$JavaScript == FALSE & encuesta$Salary > quantil)
+P_B_given_NoJS <- NoJS_Ansiedad / sum((encuesta$JavaScript == FALSE & encuesta$Salary > quantil) & encuesta$Ansiedad == TRUE)
+cat("La probabilidad de que no sufran de ansiedad y no programen en JS (ganando mas que el cuartil inferior) es de:",P_B_given_JS)
+
+
+
+if (P_A_given_JS == P_Ansiedad && P_B_given_JS == P_Ansiedad) {
+cat("El evento A (Ansiedad) y el evento B (JavaScript) son independientes.\n")
+} else {
+cat("El evento A (Ansiedad) y el evento B (JavaScript) son dependientes.\n")
+}
+
+if (P_A_given_NoJS == P_Ansiedad && P_B_given_NoJS == P_Ansiedad) {
+cat("El evento A (Ansiedad) y el evento B (No JavaScript) son independientes.\n")
+} else {
+cat("El evento A (Ansiedad) y el evento B (No JavaScript) son dependientes.\n")
+}
+```
