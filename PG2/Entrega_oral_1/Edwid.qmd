@@ -151,3 +151,149 @@ colores_celeste <- colorRampPalette(c("lightblue", "blue"))(length(tablaProb))
 barplot(height = TabProb2$Probabilidad, names.arg = TabProb2$Var1, xlab = "Cantidad de actividades", ylab = "Probabilidad", 
         main = "Probabilidad de CondingActivities", col = colores_celeste)
 ```
+
+### Variable Mental Health
+
+### Convertimos la variable categórica a numérica con Bernulli
+
+```{r}
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "concentration", "\\b"))
+encuesta$Memoria <- columna_booleana
+
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "mood", "\\b"))
+encuesta$Emocional <- columna_booleana
+
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "anxiety", "\\b"))
+encuesta$Ansiedad <- columna_booleana
+
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "autism", "\\b"))
+encuesta$Autismo <- columna_booleana
+
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "learning", "\\b"))
+encuesta$Aprendizaje <- columna_booleana
+```
+
+```{r}
+DF1 <- nrow(encuesta[encuesta$Memoria == TRUE,])
+DF2 <- nrow(encuesta[encuesta$Ansiedad == TRUE,])
+DF3 <- nrow(encuesta[encuesta$Aprendizaje == TRUE,])
+DF4 <- nrow(encuesta[encuesta$Autismo == TRUE,])
+DF5 <- nrow(encuesta[encuesta$Emocional == TRUE,])
+```
+
+### Hallamos la probabilidad en cada estado mental
+
+```{r}
+ProbMemoria <- DF1/nrow(encuesta)
+ProbAnsiedad <- DF2/nrow(encuesta)
+ProbAprendizaje <- DF3/nrow(encuesta)
+ProbAutismo <- DF4/nrow(encuesta)
+ProbEmocional <- DF5/nrow(encuesta)
+```
+
+### Tabla de probabilidad por cada estado mental
+
+```{r}
+tablaProb <- data.frame("Memoria" = ProbMemoria, "Ansiedad" = ProbAnsiedad, "Aprendizaje" = ProbAprendizaje, "Autismo" = ProbAutismo, "Emocional" = ProbEmocional)
+tablaProb
+```
+
+### Gráfico de barras de la Probabilidad vs Estado mental
+
+```{r}
+tablaProbOrdenada <- sort(tablaProb, decreasing = TRUE)
+
+colores_celeste <- colorRampPalette(c("lightblue", "blue"))(length(tablaProb))
+
+barplot(unlist(tablaProbOrdenada), xlab = "Estado mental", ylab = "Probabilidad", 
+        main = "Probabilidad de Mental health", 
+        names.arg = names(tablaProbOrdenada), 
+        col = colores_celeste)
+```
+
+### Convertimos la variable categórica a numérica con Bernulli
+
+```{r}
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "concentration", "\\b"))
+encuesta$Memoria <- columna_booleana
+
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "mood", "\\b"))
+encuesta$Emocional <- columna_booleana
+
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "anxiety", "\\b"))
+encuesta$Ansiedad <- columna_booleana
+
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "autism", "\\b"))
+encuesta$Autismo <- columna_booleana
+
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "learning", "\\b"))
+encuesta$Aprendizaje <- columna_booleana
+
+BD <- data.frame("Memoria" = encuesta$Memoria, "Ansiedad" = encuesta$Ansiedad, "Aprendizaje" = encuesta$Aprendizaje, "Autismo" = encuesta$Autismo, "Emocional" = encuesta$Emocional)
+
+BD$TabProb2 <- rowSums(BD)
+```
+
+```{r}
+TabProb2 <- data.frame(table(BD$TabProb2))
+TabProb2$Probabilidad <- ((as.numeric(TabProb2$Freq)/nrow(encuesta)))
+```
+
+### Validamos que la suma de probabilidades sea 1
+
+```{r}
+sum(TabProb2$Probabilidad)
+```
+
+### Diagramas
+
+```{r}
+stem(BD$TabProb2)
+```
+
+```{r}
+colores_celeste <- colorRampPalette(c("lightblue", "blue"))(length(tablaProb))
+
+barplot(height = TabProb2$Probabilidad, names.arg = TabProb2$Var1, xlab = "Cantidad de problemas mentales", ylab = "Probabilidad", 
+        main = "Probabilidad de Mental health", col = colores_celeste)
+```
+
+### Función de masa de probabilidad
+
+```{r}
+TabProb2$Var1 <- as.numeric(as.character(TabProb2$Var1))
+str(TabProb2)
+
+```
+
+```{r}
+plot(TabProb2$Var1, 
+     TabProb2$Probabilidad, 
+     type = "h", 
+     col = "red",
+     main = "Función de masa de probabilidad para var1",
+     ylab = "Probabilidad",
+     xlab = "Cantidad de problemas mentales",
+     ylim = c(0,0.8),
+)
+
+points(TabProb2$Var1, 
+     TabProb2$Probabilidad,  
+     pch = 20, 
+     col="red",
+)
+```
+
+### Función de masa de probabilidad acumulada
+
+```{r}
+probAcumulada <- ecdf(BD$TabProb2)
+
+ecdf_datos <- probAcumulada(0:5)
+
+plot(ecdf_datos, 
+     main = "Función de masa de probabilidad acumulada", 
+     xlab = "Valores", 
+     ylab = "Probabilidad acumulada",
+     col = "blue",)
+```
