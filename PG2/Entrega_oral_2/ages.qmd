@@ -7,6 +7,11 @@ editor: visual
 ## Edad
 
 ```{r}
+library(fitdistrplus)
+library(dplyr)
+```
+
+```{r}
 table(encuesta$Age)
 ```
 
@@ -14,18 +19,22 @@ table(encuesta$Age)
 barplot(table(encuesta$Age))
 ```
 
-encuesta\$ModifiedAge \<- encuesta\$Age
+```{r}
+encuesta$ModifiedAge <- encuesta$Age
 
 numeros = c("0", "1", "2", "3", "4", "5", "6")
 
 for (i in 0:length(ages)) {
 
-encuesta\$ModifiedAge \<- ifelse(encuesta\$ModifiedAge == ages\[i\], numeros\[i\], encuesta\$ModifiedAge)
+encuesta$ModifiedAge <- ifelse(encuesta$ModifiedAge == ages[i], numeros[i], encuesta$ModifiedAge)
 
 }
+```
 
 ```{r}
 ages <- c("Under 18 years old", "18-24 years old", "25-34 years old", "45-54 years old", "55-64 years old", "65 years or older")
+
+encuesta$ModifiedAge <- 0
 
 encuesta$ModifiedAge <- ifelse(
   encuesta$Age == "Under 18 years old", 0, 
@@ -36,20 +45,55 @@ encuesta$ModifiedAge <- ifelse(
           ifelse(encuesta$Age == "55-64 years old", 5, 
             ifelse(encuesta$Age == "65 years or older", 6, encuesta$ModifiedAge)))))))
 
-
-encuesta$ModifiedAge <- encuesta$Age
-numeros = c("0", "1", "2", "3", "4", "5", "6")
-for (i in 0:length(ages)) {
-  encuesta$ModifiedAge <- ifelse(encuesta$ModifiedAge == ages[i], numeros[i], encuesta$ModifiedAge)
+for (i in 1:nrow(encuesta)){
+  for (j in 1:length(ages)){
+    if (encuesta$Age[i] == ages[j]){
+      encuesta$ModifiedAge[i] <- j
+    }
+  }
 }
 ```
 
 ```{r}
-barplot(table(encuesta$ModifiedAge))
+hist(encuesta$ModifiedAge, 
+     breaks=6,
+     main = "Frecuencia Modified Age")
 ```
 
 ```{r}
-library(MASS)
+encuesta %>% group_by(ModifiedAge) %>% count() -> probModifiedAge
+probModifiedAge %>% rename(Frecuencia = n) -> probModifiedAge
+```
 
-fit <- fitdistr(encuesta$ModifiedAge, "binom")
+```{r}
+probModifiedAge$ProbabilidadAtomica <- probModifiedAge$Frecuencia / nrow(encuesta)
+```
+
+```{r}
+probModifiedAge
+```
+
+```{r}
+fit <- fitdist(encuesta$ModifiedAge, "pois")
+summary(fit)
+```
+
+```{r}
+plot(probModifiedAge$ModifiedAge, 
+     probModifiedAge$ProbabilidadAtomica,
+     type = "h",
+     col = "red",
+     lwd = 2)
+
+lambda <- fit$estimate
+x <- 0:6
+densidad <- dpois(x, lambda)
+
+lines(x, densidad, type= "l", lty = 2, col = "blue")
+
+# plot(x, densidad, type = "h", lwd = 2, col = "blue",
+#     xlab = "Valores de x", ylab = "Densidad de probabilidad",
+#     main = "Distribución Poisson")
+
+
 ```

@@ -60,3 +60,25 @@ hist(encuesta$Salary, prob = TRUE)
 Xs <- seq(0, 280000, by = 10)
 lines(Xs, dgamma(Xs, shape = 1.847037, scale = 41656.428380), col = "red")
 ```
+
+Con esta libreria vamos a evaluar que variables nossirve
+
+PASO 1) Definir que distribución utilizaremos
+#### *Distribución Binomial*
+
+paso2) Construir la variable aleatoria
+
+$X: Número\ de\ empresas\ que\ tienen\ 1\ registro$
+paso3) Identificar los parámetros
+
+P(E)= LA probabilidad de éxito 
+n= número de empresas elegidad al azar 
+
+```{r}
+library()
+```
+
+- Distribucion Bernoulli 
+
+
+- Ditribucion Binomial
