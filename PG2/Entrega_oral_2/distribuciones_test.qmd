@@ -1,0 +1,62 @@
+---
+title: "Distribuciones_test"
+format: html
+editor: visual
+---
+
+## Tests
+
+```{r}
+X <- rnorm(50, mean = 17, sd = 3)
+```
+
+```{r}
+hist(X)
+```
+
+```{r}
+descdist(X, boot = 30)
+```
+
+```{r}
+FDN <- fitdist(X, "norm")
+```
+
+```{r}
+FDU <- fitdist(X, "unif")
+```
+
+```{r}
+plot(FDN)
+```
+
+```{r}
+plot(FDU)
+```
+
+## Salary
+
+```{r}
+library(fitdistrplus)
+```
+
+```{r}
+descdist(encuesta$Salary, boot = 5000)
+```
+
+```{r}
+FDG <- fitdist(encuesta$Salary, "gamma", start = list(shape = 1, scale = 2))
+```
+
+
+```{r}
+plot(FDG, pch = ".", col = "blue")
+```
+
+
+
+```{r}
+hist(encuesta$Salary, prob = TRUE)
+Xs <- seq(0, 280000, by = 10)
+lines(Xs, dgamma(Xs, shape = 1.847037, scale = 41656.428380), col = "red")
+```

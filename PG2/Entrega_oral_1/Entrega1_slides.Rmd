@@ -92,6 +92,12 @@ probTotalLenguajes$ProbabilidadAtomica <- probTotalLenguajes$Frecuencia / nrow(e
 probTotalLenguajes
 ```
 
+Comprobamos que todos los eventos atómicos sumen 1:
+```{r}
+sum(probTotalLenguajes$ProbabilidadAtomica)
+```
+
+
 ------------------------------------------------------------------------
 
 #### Función de masa de probabilidad
@@ -113,6 +119,8 @@ points(probTotalLenguajes$TotalLenguages,
      col="red",
 )
 ```
+
+Introducción a la probabildad
 
 Evidentemente, hay una mayor probabilidad de que un desarrollador trabaje con entre 3 a 5 lenguajes de programación, debido a que tienden a profesionalizarse más en unos pocos.
 
@@ -183,6 +191,12 @@ TabProb2$ProbabilidadAtomica <- ((as.numeric(TabProb2$Frecuencia)/nrow(encuesta)
 
 TabProb2
 ```
+
+Comprobamos que todos los eventos atómicos sumen 1:
+```{r}
+
+```
+
 
 ------------------------------------------------------------------------
 
