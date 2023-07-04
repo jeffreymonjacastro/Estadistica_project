@@ -68,15 +68,15 @@ cat("El quantil del 15% del salario de los programadores es de:", quantil)
 Las personas que trabajan en JavaScript con salario \< 76153.59 / tenga ansiedad
 
 ```{r}
-cantidad <- sum(encuesta$JavaScript == TRUE & encuesta$Salary < quantil, na.rm = TRUE)
+cantidad <- sum(encuesta$Erlang == TRUE & encuesta$Salary < quantil, na.rm = TRUE)
 cat("La cantidad de personas que trabajan en JavaScript con salario inferior al quantil del 15% son:", cantidad, "\n")
 cat("La probabilidad de estas mismas es: ", round(100*cantidad/nrow(encuesta),2), "%")
 ```
 
 ```{r}
-cantAnsiedad <- sum(encuesta$Ansiedad[encuesta$Ansiedad == TRUE])
-probabilidadAnsiedad <- ansiedad/nrow(encuesta)
-cat("La probabilidad de que alguien sufra de ansiedad es: ", round(100*probabilidadAnsiedad,2), "%")
+cantAnsiedad <- sum(encuesta$Memoria[encuesta$Memoria == TRUE])
+probabilidadAnsiedad <- cantAnsiedad/nrow(encuesta)
+cat("La probabilidad de que alguien sufra de ansiedad es: ", round(100*probabilidadAnsiedad,5), "%")
 ```
 
 ```{r}

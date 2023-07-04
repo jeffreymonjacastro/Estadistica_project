@@ -1,0 +1,55 @@
+---
+title: "edad"
+format: html
+editor: visual
+---
+
+## Edad
+
+```{r}
+table(encuesta$Age)
+```
+
+```{r}
+barplot(table(encuesta$Age))
+```
+
+encuesta\$ModifiedAge \<- encuesta\$Age
+
+numeros = c("0", "1", "2", "3", "4", "5", "6")
+
+for (i in 0:length(ages)) {
+
+encuesta\$ModifiedAge \<- ifelse(encuesta\$ModifiedAge == ages\[i\], numeros\[i\], encuesta\$ModifiedAge)
+
+}
+
+```{r}
+ages <- c("Under 18 years old", "18-24 years old", "25-34 years old", "45-54 years old", "55-64 years old", "65 years or older")
+
+encuesta$ModifiedAge <- ifelse(
+  encuesta$Age == "Under 18 years old", 0, 
+  ifelse(encuesta$Age == "18-24 years old", 1, 
+    ifelse(encuesta$Age == "25-34 years old", 2, 
+      ifelse(encuesta$Age == "35-44 years old", 3,
+        ifelse(encuesta$Age == "45-54 years old", 4,
+          ifelse(encuesta$Age == "55-64 years old", 5, 
+            ifelse(encuesta$Age == "65 years or older", 6, encuesta$ModifiedAge)))))))
+
+
+encuesta$ModifiedAge <- encuesta$Age
+numeros = c("0", "1", "2", "3", "4", "5", "6")
+for (i in 0:length(ages)) {
+  encuesta$ModifiedAge <- ifelse(encuesta$ModifiedAge == ages[i], numeros[i], encuesta$ModifiedAge)
+}
+```
+
+```{r}
+barplot(table(encuesta$ModifiedAge))
+```
+
+```{r}
+library(MASS)
+
+fit <- fitdistr(encuesta$ModifiedAge, "binom")
+```
