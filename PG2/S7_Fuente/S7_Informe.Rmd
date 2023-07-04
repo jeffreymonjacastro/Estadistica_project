@@ -313,7 +313,7 @@ encuesta <- na.omit(encuesta)
 Para la variable `salario`, buscamos desarrolladores que ganen mínimo 3600 dólares anuales. Y para el máximo, no consideraremos los valores atípicos que sobrepasen el tercer cuantil más 1.5 veces el Rango Intercuantil, es decir, menores a `249153`
 
 ```{r}
-encuesta <- encuesta[encuesta$Salary > 3600, ]
+#encuesta <- encuesta[encuesta$Salary > 3600, ]
 
 ric <- IQR(encuesta$Salary)
 
@@ -322,6 +322,7 @@ q3 <- quantile(encuesta$Salary)[4]
 
 encuesta <- encuesta[encuesta$Salary < q3 + 1.5 * ric, ]
 ```
+
 
 En la encuesta se permite elegir géneros de varios tipos. Sin embargo, para fines de estudio nos limitaremos a hombre o mujeres, más obviaremos a los no binarios, entre otros.
 
@@ -516,6 +517,7 @@ encuesta %>%
   ) +
   theme_minimal()
 ```
+
 
 Se puede visualizar que el salario de los desarrolladores se concentra mayormente entre 50 000 y 60 000 dólares anuales. Además, existe un gran sesgo a la derecha, ya que el promedio es mucho mayor a la media. Esto se debe a que hay muchas personas que trabajan con varios lenguajes de programación.
 
