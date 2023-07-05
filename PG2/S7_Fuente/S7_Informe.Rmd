@@ -1181,9 +1181,69 @@ Notamos que la probabilidad del E1 y la probabilidad del E2 difieren en 0,11 apr
 
 ### Distribución Binomial
 
-#### Esperanza
+Sacamos probabilidad de que alguien programe en JavaScript
 
-#### Varianza
+```{r}
+eJS <- sum(encuesta$JavaScript)
+probJS <- eJS/nrow(encuesta)
+probJS
+```
+
+Escoger una muestra de 100 programadores (con reemplazo) y contar el número de programadores que solo programen en JavaScript y que además ganen un salario mayor al promedio.
+
+**Evento 1: Programan en JS y ganan mas que el promedio**
+
+```{r}
+p <- nrow(encuesta %>% filter(encuesta$JavaScript == TRUE & encuesta$Salary > promedio))/nrow(encuesta)
+p
+```
+
+Asignamos el número de ensayos independientes a la variable n.
+
+```{r}
+n <- 100
+```
+
+Hicimos un gráfico y lo dividimos en un rango de 0 a 100, podemos observar que el pico se encuentra en 26-27 éxitos, lo cual coincide aproximadamente con nuestra probabilidad máxima, calculada anteriormente (0.268).
+
+```{r}
+rango <- 0:100
+
+# Calcular las probabilidades para los valores del rango
+probabilidades <- dbinom(rango, n, p)
+
+# Graficar la distribución binomial
+plot(rango, probabilidades, type = 'h', xlab = "Valores", ylab = "Probabilidades", main = "Distribución Binomial")
+```
+
+Comprobamos que la suma de la función de la distribución binomial da 1.
+
+```{r}
+sum(dbinom(rango,n,p))
+```
+
+#### Calculamos el valor esperado:
+
+```{r}
+media <- n*p
+```
+
+Esto quiere decir que en promedio 27 programadores programan en JavaScript y además ganan más que el salario promedio.
+
+```{r}
+Ex <- sum(rango*dbinom(rango,n,p))
+media
+Ex
+```
+
+Notamos que los valores coinciden.
+
+#### Varianza:
+
+```{r}
+var <- n*p*(1-p)
+var
+```
 
 ### Distribución Hipergeométrica
 
