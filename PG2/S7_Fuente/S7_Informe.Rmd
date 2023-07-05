@@ -118,7 +118,7 @@ En resumen, en esta sección se registran todas las variables que consideramos �
 ### Encuestas de Stak Overflow
 
 | Nombre de la variable   | Tipo de variable   | Descripción                                                        | Restricciones                   |
-|-----------------|-----------------|---------------------|-----------------|
+|------------------|------------------|--------------------|------------------|
 | MainBranch              | Categórica nominal | Contiene información sobre el estado profesional del desarrollador | \-                              |
 | Employment              | Categórica nominal | El tipo de empleo que tiene le desarrollador                       | separado por punto y coma       |
 | RemoteWork              | Categórica nominal | De que forma ejercen el trabajo remoto                             | \-                              |
@@ -139,7 +139,7 @@ En resumen, en esta sección se registran todas las variables que consideramos �
 ### PLDB Lenguajes de Programación
 
 | Nombre de la variable | Tipo de variable   | Descripción                                                       | Restricciones                   |
-|-----------------|-----------------|---------------------|-----------------|
+|------------------|------------------|--------------------|------------------|
 | Title                 | Categórica Nominal | Nombre original del lenguaje de programación                      | \-                              |
 | Appeared              | Numérica discreta  | Año en donde apareció por primera vez el lenguaje de programación | \>= 1945                        |
 | Rank                  | Numérica discreta  | Un ranking hecho por PLDB                                         | \>=0                            |
@@ -430,7 +430,7 @@ Luego de la limpieza, decidimos mantenernos con `12` variables que se relacionan
 ### Encuestas de Stakoverflow
 
 | Nombre de la variable | Tipo de variable   | Descripción                                               | Restricciones                                        |
-|------------------|------------------|--------------------|------------------|
+|------------------|------------------|-------------------|------------------|
 | Age                   | Categórica Ordinal | Edad                                                      | \-                                                   |
 | Gender                | Categórica Ordinal | Género                                                    | Man y Woman                                          |
 | Salary                | Numérica Contínua  | El salario anual en dólares del desarrollador             | [3600 - 249153]                                      |
@@ -441,7 +441,7 @@ Luego de la limpieza, decidimos mantenernos con `12` variables que se relacionan
 ### PLDB Lenguajes de Programación
 
 | Nombre de la variable | Tipo de variable   | Descripción                                                       | Restricciones                                                               |
-|-----------------|-----------------|-----------------|--------------------|
+|------------------|------------------|------------------|-------------------|
 | Nombre                | Categórica Nominal | Nombre original del lenguaje de programación                      | Deben estar los mismos lenguajes de la encuesta de StackOverflow            |
 | Type                  | Categórica Ordinal | El tipo de lenguaje del que se trata                              | Debe ser "*pl*", "*queryLanguage*", "*textMarkup*" y "*stylesheetLanguage*" |
 | N_Trabajos            | Numérica Discreta  | Número de trabajos relacionados al lenguaje de programación       | Debe ser mayor a 0                                                          |
@@ -1099,14 +1099,14 @@ En este gráfico podemos notar que no hay una relación clara entre la salud men
 
 ## Probabilidad Empírica
 
-### Variable Cantidad de lenguajes de Programación
+### Variable Total de lenguajes de Programación
 
 **Justificación:** Se escoge la variable `Total de lenguajes de programación` porque es nuestra variable principal de nuestro estudio. Además, determinar el espacio de probabilidad de algún evento relacionado a esta variable puede ser interesante para los objetivos.
 
-Hallando la variable "Total de lenguajes de programación"
+Hallando la variable `Total de lenguajes de programación`
 
 ```{r}
-encuesta$TotalLenguages <- 0
+encuesta$TotalLenguajes <- 0
 
 for (i in 1:nrow(encuesta)) {
   cont <- 0
@@ -1115,12 +1115,12 @@ for (i in 1:nrow(encuesta)) {
       cont <- cont + 1
     }
   }
-  encuesta[i, 'TotalLenguages'] <- cont
+  encuesta[i, 'TotalLenguajes'] <- cont
 }
 ```
 
 ```{r}
-hist(encuesta$TotalLenguages,
+hist(encuesta$TotalLenguajes,
      col = "skyblue",
      main = "Histograma del total de lenguajes de Programación",
      xlab = "Cantidad de lenguajes", 
@@ -1128,9 +1128,9 @@ hist(encuesta$TotalLenguages,
      breaks = 20
 )
 
-abline(v= mean(encuesta$TotalLenguages), col = "red", lty = 1)
+abline(v= mean(encuesta$TotalLenguajes), col = "red", lty = 1)
 
-abline(v= median(encuesta$TotalLenguages), col = "blue", lty = 2)
+abline(v= median(encuesta$TotalLenguajes), col = "blue", lty = 2)
 
 legend("topright", legend = c("Media", "Mediana"), col = c("red", "blue"), lty = c(1, 2))
 ```
@@ -1138,9 +1138,10 @@ legend("topright", legend = c("Media", "Mediana"), col = c("red", "blue"), lty =
 Donde la media es: `r mean(encuesta$TotalLenguages)` y la mediana es: `r median(encuesta$TotalLenguages)`. Se aprecia que hay una mayor tendencia por trabajar con menos de 5 lenguajes de programación a diferencia con trabajar más de 5 lenguajes
 
 #### Definición del experimento aleatorio:
+
 `E1`: Selecciono un programador y observo la cantidad de lenguajes de programación que utiliza.
 
-+ Espacio de probabilidad de la variable: $(\Omega_1,\mathcal{F_1},\mathbb{P_1})$
+-   Espacio de probabilidad de la variable: $(\Omega_1,\mathcal{F_1},\mathbb{P_1})$
 
 Donde:
 
@@ -1150,10 +1151,10 @@ $$
 \mathbb{P_1}(n) = \{ \text{ probabilidad de que use n lenguajes de programación } \} 
 $$
 
-+ Cálculo de las probabilidades de los eventos atómicos:
+-   Cálculo de las probabilidades de los eventos atómicos:
 
 ```{r}
-encuesta %>% group_by(TotalLenguages) %>% count() -> probTotalLenguajes
+encuesta %>% group_by(TotalLenguajes) %>% count() -> probTotalLenguajes
 probTotalLenguajes %>% rename(Frecuencia = n) -> probTotalLenguajes
 
 probTotalLenguajes$ProbabilidadAtomica <- probTotalLenguajes$Frecuencia / nrow(encuesta)
@@ -1168,6 +1169,7 @@ sum(probTotalLenguajes$ProbabilidadAtomica)
 ```
 
 #### Función de masa de probabilidad
+
 ```{r}
 plot(probTotalLenguajes$TotalLenguages, 
      probTotalLenguajes$ProbabilidadAtomica, 
@@ -1186,7 +1188,7 @@ points(probTotalLenguajes$TotalLenguages,
 )
 ```
 
-Evidentemente, hay una mayor probabilidad de que un desarrollador trabaje con entre 3 a 5 lenguajes de programación, debido a que tienden a profesionalizarse más en unos pocos.
+Al escoger al azar un programador es más probable que trabaje con 3 a 5 lenguajes de programación. Además la probabilidad de que un programador use más de 10 lenguajes es muy poco probable
 
 #### Función de densidad
 
@@ -1203,107 +1205,73 @@ plot(ecdf_datos,
 )
 ```
 
-### Variable Cantidad de problemas de Salud Mental
+### Variable Total de problemas de Salud Mental
 
+**Justificación:** La variable `Total de problemas de Salud Mental` está relacionada con todos los objetivos. Asimismo, el espacio de probabilidad de la variable nos ayudará para analizar diferentes eventos.
 
-
-#### Convertimos la variable categórica a numérica con Bernulli
-
-```{r}
-DF1 <- nrow(encuesta[encuesta$Memoria == TRUE,])
-DF2 <- nrow(encuesta[encuesta$Ansiedad == TRUE,])
-DF3 <- nrow(encuesta[encuesta$Aprendizaje == TRUE,])
-DF4 <- nrow(encuesta[encuesta$Autismo == TRUE,])
-DF5 <- nrow(encuesta[encuesta$Emocional == TRUE,])
-```
-
-#### Hallamos la probabilidad en cada estado mental
+Hallando la variable `Total de problemas de Salud Mental`
 
 ```{r}
-ProbMemoria <- DF1/nrow(encuesta)
-ProbAnsiedad <- DF2/nrow(encuesta)
-ProbAprendizaje <- DF3/nrow(encuesta)
-ProbAutismo <- DF4/nrow(encuesta)
-ProbEmocional <- DF5/nrow(encuesta)
-```
-
-#### Tabla de probabilidad por cada estado mental
-
-```{r}
-tablaProb <- data.frame("Memoria" = ProbMemoria, "Ansiedad" = ProbAnsiedad, "Aprendizaje" = ProbAprendizaje, "Autismo" = ProbAutismo, "Emocional" = ProbEmocional)
-tablaProb
-```
-
-#### Gráfico de barras de la Probabilidad vs. Salud mental
-
-```{r}
-tablaProbOrdenada <- sort(tablaProb, decreasing = TRUE)
-
-colores_celeste <- colorRampPalette(c("lightblue", "blue"))(length(tablaProb))
-
-barplot(unlist(tablaProbOrdenada), xlab = "Estado mental", ylab = "Probabilidad", 
-        main = "Probabilidad de Mental health", 
-        names.arg = names(tablaProbOrdenada), 
-        col = colores_celeste)
-```
-
-#### Convertimos la variable categórica a numérica con Bernulli
-
-```{r}
-columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "concentration", "\\b"))
-encuesta$Memoria <- columna_booleana
-
-columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "mood", "\\b"))
-encuesta$Emocional <- columna_booleana
-
-columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "anxiety", "\\b"))
-encuesta$Ansiedad <- columna_booleana
-
-columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "autism", "\\b"))
-encuesta$Autismo <- columna_booleana
-
-columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "learning", "\\b"))
-encuesta$Aprendizaje <- columna_booleana
-
-BD <- data.frame("Memoria" = encuesta$Memoria, "Ansiedad" = encuesta$Ansiedad, "Aprendizaje" = encuesta$Aprendizaje, "Autismo" = encuesta$Autismo, "Emocional" = encuesta$Emocional)
-
-BD$TabProb2 <- rowSums(BD)
+MentalHealth <- c("Memoria", "Ansiedad", "Aprendizaje", "Autismo", "Emocional")
 ```
 
 ```{r}
-TabProb2 <- data.frame(table(BD$TabProb2))
-TabProb2$Probabilidad <- ((as.numeric(TabProb2$Freq)/nrow(encuesta)))
-```
+encuesta$TotalMentalHealth <- 0
 
-#### Validamos que la suma de probabilidades sea 1
-
-```{r}
-sum(TabProb2$Probabilidad)
-```
-
-#### Diagramas
-
-```{r}
-stem(BD$TabProb2)
+for (i in 1:nrow(encuesta)) {
+  cont <- 0
+  for (problem in MentalHealth) {
+    if (encuesta[i, problem] == TRUE){
+      cont <- cont + 1
+    }
+  }
+  encuesta[i, 'TotalMentalHealth'] <- cont
+}
 ```
 
 ```{r}
-colores_celeste <- colorRampPalette(c("lightblue", "blue"))(length(tablaProb))
+barplot(table(encuesta$TotalMentalHealth),
+     col = colorRampPalette(c("lightblue", "blue"))(6),
+     main = "Total de problemas de salud mental",
+     xlab = "Cantidad de problemass de salud mental", 
+     ylab = "Frecuencia",
+)
+```
 
-barplot(height = TabProb2$Probabilidad, names.arg = TabProb2$Var1, xlab = "Cantidad de problemas mentales", ylab = "Probabilidad", 
-        main = "Probabilidad de Mental health", col = colores_celeste)
+#### Definición del experimento aleatorio:
+
+`E2`: Selecciono un programador y observo la cantidad de problemas de salud mental que posee
+
+-   Espacio de probabilidad de la variable: $(\Omega_2,\mathcal{F_2},\mathbb{P_2})$
+
+Donde:
+
+$$
+\Omega_2 = [5] =\{ \text{ cantidad de problemas de salud mental } \} \\
+\mathcal{F_2} = 2^{|\Omega_2|} \\
+\mathbb{P_2}(n) = \{ \text{ probabilidad de que sufra n problemas de salud mental } \} 
+$$ + Cálculo de las probabilidades de los eventos atómicos:
+
+```{r}
+encuesta %>% group_by(TotalMentalHealth) %>% count() -> probTotalMentalHealth
+probTotalMentalHealth %>% rename(Frecuencia = n) -> probTotalMentalHealth
+
+probTotalMentalHealth$ProbabilidadAtomica <- probTotalMentalHealth$Frecuencia / nrow(encuesta)
+
+probTotalMentalHealth
+```
+
+Para verificar que la suma de las probabilidades de los eventos atómicos utilizaremos la fórmula: $\sum_{x = \Omega_2} \mathbb{P}(x) = 1$
+
+```{r}
+sum(probTotalMentalHealth$ProbabilidadAtomica)
 ```
 
 #### Función de masa de probabilidad
 
 ```{r}
-TabProb2$Var1 <- as.numeric(as.character(TabProb2$Var1))
-str(TabProb2)
-```
-
-```{r}
-plot(TabProb2$Var1, 
-     TabProb2$Probabilidad, 
+plot(probTotalMentalHealth$TotalMentalHealth, 
+     probTotalMentalHealth$ProbabilidadAtomica, 
      type = "h", 
      col = "red",
      main = "Función de masa de probabilidad para var1",
@@ -1312,17 +1280,19 @@ plot(TabProb2$Var1,
      ylim = c(0,0.8),
 )
 
-points(TabProb2$Var1, 
-     TabProb2$Probabilidad,  
+points(probTotalMentalHealth$TotalMentalHealth, 
+     probTotalMentalHealth$ProbabilidadAtomica,  
      pch = 20, 
      col="red",
 )
 ```
 
+Al escoger al azar un programador es más probable que no cuente con ninguna enfermedad de salud mental. No obstante, existe cierta probabilidad que sí sufran alguna enfermedad de salud mental.
+
 #### Función de masa de probabilidad acumulada
 
 ```{r}
-probAcumulada <- ecdf(BD$TabProb2)
+probAcumulada <- ecdf(encuesta$TotalMentalHealth)
 
 ecdf_datos <- probAcumulada(0:5)
 
@@ -1337,7 +1307,9 @@ plot(ecdf_datos,
 
 Usaremos el siguiente criterio:
 
-$|\mathbb{P}(A \cap B) - \mathbb{P}(A)*\mathbb{P}(B)| \leq 0.01$
+$|\mathbb{P}(A \cap B) - \mathbb{P}(A)*\mathbb{P}(B)| < 0.01$
+
+Es decir, si la diferencia de probabilidades es menor a 0.01, lo consideraremos eventos independientes.
 
 ### Eventos Dependientes
 
@@ -1353,36 +1325,32 @@ Seleccionamos los lenguajes que causan más problemas mentales de acuerdo a nues
 
 -   Ansiedad: SAS Ruby Lua
 
-    **Para nuestro primer evento E1, consideramos si un programador utiliza alguno de los lenguajes "problemáticos" y calculamos la probabilidad de este:**
+Entonces, identificamos 2 eventos: E1: Usa 1 o más de los lenguajes "problemáticos" E2: Sufre 1 o más problemas mentales
 
 ```{r}
 list <- c('Crystal', 'Lua', 'Rust', 'APL', 'Assembly', 'Erlang', 'LISP', 'SAS')
 
-e1 = encuesta$Crystal | encuesta$Lua | encuesta$Rust | encuesta$APL | encuesta$Assembly | encuesta$Erlang | encuesta$LISP | encuesta$SAS
+E1 <- encuesta$Crystal | encuesta$Lua | encuesta$Rust | encuesta$APL | encuesta$Assembly | encuesta$Erlang | encuesta$LISP | encuesta$SAS
 
-#Hallamos la probabilidad del evento 1 E1
-probE1 = sum(e1)/nrow(encuesta)
+probE1 <- sum(E1)/nrow(encuesta)
 probE1
 ```
 
-**Para nuestro segundo evento E2, consideramos si un programador sufre de algún problema mental y calculamos la probabilidad de este:**
-
 ```{r}
-encuesta$num_problemas_mentales <- rowSums(encuesta[, c("Memoria", "Aprendizaje", "Autismo", "Ansiedad", "Emocional")])
-probE2 <- sum(encuesta$num_problemas_mentales > 0) / nrow(encuesta)
+probE2 <- sum(encuesta$TotalMentalHealth > 0) / nrow(encuesta)
 probE2
 ```
 
-**Luego, hallamos la probabilidad de ambos eventos (E1 dado E2):**
+Luego, hallamos la probabilidad de ambos eventos (E1 dado E2):
 
 ```{r}
-total = data.frame(e1, encuesta$num_problemas_mentales)
-probe1probE2 = nrow(total[total$e1 == TRUE & total$encuesta.num_problemas_mentales > 0,])/nrow(total)
-probe1probE2
+total = data.frame(E1, encuesta$TotalMentalHealth)
+E1E2 = nrow(total[total$E1 == TRUE & total$encuesta.TotalMentalHealth > 0,])/nrow(total)
+E1E2
 
-total$encuesta.num_problemas_mentales = total$encuesta.num_problemas_mentales > 0
+total$encuesta.TotalMentalHealth <- total$encuesta.TotalMentalHealth > 0
 
-mosaicplot(table(total$e1, total$encuesta.num_problemas_mentales), main = "Problemas mentales y lenguajes problemáticos", xlab="Evento1", ylab="Evento2")
+mosaicplot(table(total$E1, total$encuesta.TotalMentalHealth), main = "Problemas mentales y lenguajes problemáticos", xlab="Evento1", ylab="Evento2")
 ```
 
 Luego de realizar el mosaicplot, notamos que ambos eventos son claramente dependientes, ya que se ven diferencias significativas en las proporciones de las categorías en las combinaciones de las variables. Pero, para comprobar esto de manera definitiva utilizamos algunas fórmulas.
@@ -1390,12 +1358,12 @@ Luego de realizar el mosaicplot, notamos que ambos eventos son claramente depend
 Comprobamos con las fórmulas de probabilidades:
 
 ```{r}
-probE2dE1 <- probe1probE2/probE1
+probE2dE1 <- E1E2/probE1
 cat("P(E2): ", probE2)
 cat("\nP(E2|E1): ", probE2dE1)
 cat("\nE1-E2",  probE2 - probE1)
 
-cat("\nP(E1 ∩ E2)", probe1probE2)
+cat("\nP(E1 ∩ E2)", E1E2)
 cat("\nP(E2)*P(E1)",probE1 * probE2)
 ```
 
@@ -1403,40 +1371,96 @@ Notamos que la probabilidad del E1 y la probabilidad del E2 difieren en 0,11 apr
 
 ### Eventos Independientes
 
+Identificamos dos eventos. - E1: Usa un lenguaje que está entre los 5 más populares. - E2: Sufre de 2 o más problemas mentales.
+
+Justificación: Se quiere demostrar que nuestra salud mental no depende de si usamos un lenguaje popular o no. Para esto demostraremos que los eventos son independientes: - P(E1\|E2) - P(E1) ≈ 0 - P(E2\|E1) - P(E2) ≈ 0 - P(E2 y E1) ≈ P(E2) \* P(E1)
+
+#### Probabilidad de E1
+
+```{r}
+evento1 = encuesta$Java | encuesta$JavaScript | encuesta$C | encuesta$Python | encuesta$SQL
+
+E1 = sum(evento1)/length(evento1)
+
+cat("la probabilidad del evento 1 es: ", E1)
+```
+
+#### Probabilidad de E2
+
+```{r}
+cantProblemas = encuesta$Memoria + encuesta$Emocional +encuesta$Ansiedad + encuesta$Autismo +encuesta$Aprendizaje
+
+E2 = length(cantProblemas[cantProblemas >= 2])/length(cantProblemas)
+
+cat("Probabilidad del evento 2 es: ",E2)
+```
+
+#### Probabilidad de E1 y E2
+
+```{r}
+total = data.frame(evento1, cantProblemas)
+
+E1E2 = nrow(total[total$evento1 == TRUE & total$cantProblemas >= 2,])/nrow(total)
+
+cat("Prbabilidad del evento 1 y evento 2: ",E1E2)
+```
+
+#### Comprobando la independencia
+
+```{r}
+E2dadoE1 = E1E2/E1
+E1dadoE2 = E1E2/E2
+cat("P(E1|E2) =",E1dadoE2,"≈",E1,"= P(E1)")
+cat("\nP(E2|E1) =",E2dadoE1,"≈",E2,"= P(E2)")
+cat("\nP(E1yE2) =",E1E2,"≈",E1*E2,"= P(E1)*P(E2)")
+```
+
+#### Y graficando el mosaic plot
+
+```{r}
+total$cantProblemas <- total$cantProblemas >= 2
+
+mosaicplot(table(total$evento1, total$cantProblemas),
+	main = "Eventos independientes",
+	xlab = "Uno o más de los 5 lenguajes populares",
+	ylab = "2 o más problemas mentales")
+```
+
+Entonces podemos decir que los eventos son muy **APROXIMADAMENTE** independientes.
+
 ## Variables Discretas
 
 ### Distribución Binomial
 
-Sacamos probabilidad de que alguien programe en JavaScript
+`E1` Escoger una muestra de 100 programadores (con reemplazo) y contar el número de programadores que programen en JavaScript y que ganen mas del promedio.
+
+Éxito: Que el programador escogido domine en JS y gane mas que el promedio
+
+Calculamos la probabilidad de éxito asumiendo que nuestra muestra es representativa.
 
 ```{r}
-eJS <- sum(encuesta$JavaScript)
-probJS <- eJS/nrow(encuesta)
-probJS
+promedio <- mean(encuesta$Salary)
 ```
-
-Escoger una muestra de 100 programadores (con reemplazo) y contar el número de programadores que solo programen en JavaScript y que además ganen un salario mayor al promedio.
-
-**Evento 1: Programan en JS y ganan mas que el promedio**
 
 ```{r}
-p <- nrow(encuesta %>% filter(encuesta$JavaScript == TRUE & encuesta$Salary > promedio))/nrow(encuesta)
-p
+p <- round( nrow(encuesta %>% filter(encuesta$JavaScript == TRUE & encuesta$Salary > promedio))/nrow(encuesta) ,2)
 ```
-
-Asignamos el número de ensayos independientes a la variable n.
 
 ```{r}
 n <- 100
 ```
 
-Hicimos un gráfico y lo dividimos en un rango de 0 a 100, podemos observar que el pico se encuentra en 26-27 éxitos, lo cual coincide aproximadamente con nuestra probabilidad máxima, calculada anteriormente (0.268).
+$$
+\mathbb{X} = \text{Número de programadores que solo programen en JavaScript} \\ \text{y ganan mas que el promedio en una muestra de 100 programadores} \\
 
+\text{Rango(X) = 0 ,1 ,2 ,3 ,4 ,5 ,6 ,7 ........,100} \\
+
+\mathbb{X} \sim Bin(n,p) = Bin(100,0.27)
+$$
 ```{r}
 rango <- 0:100
-probabilidades <- dbinom(rango, n, p)
 
-plot(rango, probabilidades, type = 'h', xlab = "Valores", ylab = "Probabilidades", main = "Distribución Binomial")
+plot(rango, dbinom(rango, n, p), type = 'h', lwd = 2, xlab = "Número de éxitos", ylab = "Probabilidad", main = "Distribución Binomial")
 ```
 
 Comprobamos que la suma de la función de la distribución binomial da 1.
@@ -1445,43 +1469,148 @@ Comprobamos que la suma de la función de la distribución binomial da 1.
 sum(dbinom(rango,n,p))
 ```
 
-#### Calculamos el valor esperado:
+#### Valor Esperado
+
+$$ 
+\text{Para una binomial: } \mathbb{E}(\mathbb{X}) = np 
+$$
 
 ```{r}
-media <- n*p
+esperanza <- n*p
+esperanza
 ```
 
-Esto quiere decir que en promedio 27 programadores programan en JavaScript y además ganan más que el salario promedio.
-
+Ahora calculamos la esperanza con la sumatoria:
+$$
+\mathbb{E}(\mathbb{X}) = \sum xp(x)
+$$
 ```{r}
-Ex <- sum(rango*dbinom(rango,n,p))
-media
+Ex <-sum(0:100*dbinom(0:100 , n , p))
 Ex
 ```
 
-Notamos que los valores coinciden.
+Varianza:
 
-#### Varianza:
-
+$$
+Var(\mathbb{X}) = np(1-p)
+$$
 ```{r}
-var <- n*p*(1-p)
-var
+Varianza <- n*p*(1-p)
+Varianza
 ```
 
-#### Experimento:
+$$
+Var(\mathbb{X}) = \sum_{x \in Rang(\mathbb{X})}(x-E(\mathbb{X}))^{2}p(x)
+$$
+```{r}
+sum((0:100 - Ex)^{2}*dbinom(0:100 , n ,p))
+```
+
+Ejemplo:
+
+
+
+
+
+
 
 
 ### Distribución Hipergeométrica
 
-#### Esperanza
+### Hipergeometrica
 
-#### Varianza
+## Variable `TotalLenguajes`
+
+1)  Población
+
+```{r}
+nrow(encuesta)
+```
+
+2)  Número de éxitos
+
+```{r}
+nrow(encuesta %>% filter(TotalLenguages >= 6))
+```
+
+`E2`: De una población de `29204` programadores, donde `10492` dominan de 6 lenguajes a más . Se escogerá una muestra de `15000` programadores (sin reemplazo) y se contara el número de programadores que dominan de 6 lenguajes a más.
+
+```{r}
+N <- 29204 #población
+n <- 15000 #muestra
+k <- 10492 #éxitos
+```
+
+$$
+\mathbb{Y} : \text{Número de programadores que usan de 6 a más lenguajes de programación } \\
+\text{de una muestra de 15000 de una poblacion de 29204 donde 10492 cumplen la condicion} \\
+Rang(\mathbb{Y}) = 0,1,2,3,......,10492 \\
+\mathbb{Y} \sim H(N,n,k) = H(29204 , 15000 , 10492)
+$$
+
+```{r}
+rango <- 5000:5900
+
+plot(rango, dhyper(rango, k , N-k , n), type = 'h', lwd = 2, xlab = "Número de éxitos", ylab = "Probabilidad", main = "Distribución Hipergeometrica")
+```
+Comprobamos que la suma de la función de la distribución hipergeométrica da 1.
+
+```{r}
+sum(dhyper(0:10492, k , N-k , n))
+```
+
+1)  Esperanza
+
+$$
+   E(\mathbb{Y}) = n\frac{k}{N}
+$$
+
+```{r}
+esperanza <- (n*k)/N
+esperanza
+```
+
+Del mismo modo, calculamos la esperanza con sumatoria:
+
+$$\mathbb{E}(\mathbb{Y}) = \sum_{y \text{ } \in \text{} Rang(\mathbb{Y}) } yp(y) $$
+
+```{r}
+esperanza <- sum(0:10492*dhyper(0:10492 , k , N-k , n))
+esperanza
+```
+
+2)  Varianza
+
+$$ 
+\text{Var}(\mathbb{Y}) = \frac{n \cdot k \cdot (N - k) \cdot (N - n)}{N^2 \cdot (N - 1)}
+$$
+```{r}
+varianza <- (n*k*(N-k)*(N-n))/(N*N*(N-1))
+varianza
+```
+Del mismo modo, calculamos la esperanza con sumatoria:
+
+$$
+Var(\mathbb{Y}) = \sum_{y \text{ } \in \text{ } Rang(\mathbb{Y})}(y-E(y))^{2}p(y)
+$$
+
+```{r}
+varianza <-sum( ((0:10492 - esperanza)^2)*dhyper(0:10492,k,N-k , n))
+varianza
+```
+
+Ejemplo:
+
+
+
 
 ## Variables Continuas
 
 ### Variable Salario
 
-### Conclusiones Parciales
+
+
+### Conclusiones
 
 En síntesis, refiriéndose al análisis descriptivo, el estudio muestra correlaciones entre la popularidad, facilidad de uso y remuneración de un lenguaje de programación y la salud mental de los programadores. Sin embargo, no se puede establecer una relación directa y determinante entre dichos factores y el estado mental.
 
