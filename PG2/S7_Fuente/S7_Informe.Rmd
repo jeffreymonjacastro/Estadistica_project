@@ -158,7 +158,6 @@ En resumen, en esta sección se registran todas las variables que consideramos �
 
 #install.packages("tidyverse")
 
-library(readr)
 library(dplyr)
 library(readr)
 library(ggplot2)
@@ -1250,7 +1249,8 @@ $$
 \Omega_2 = [5] =\{ \text{ cantidad de problemas de salud mental } \} \\
 \mathcal{F_2} = 2^{|\Omega_2|} \\
 \mathbb{P_2}(n) = \{ \text{ probabilidad de que sufra n problemas de salud mental } \} 
-$$ + Cálculo de las probabilidades de los eventos atómicos:
+$$ 
++ Cálculo de las probabilidades de los eventos atómicos:
 
 ```{r}
 encuesta %>% group_by(TotalMentalHealth) %>% count() -> probTotalMentalHealth
@@ -1302,6 +1302,80 @@ plot(ecdf_datos,
      ylab = "Probabilidad acumulada",
      col = "blue",)
 ```
+
+### Variable edad
+
+Hallando la variable edad:
+```{r}
+hist(encuesta$ModifiedAge, 
+     breaks=6,
+     main = "Frecuencia de edades",
+     col="pink")
+```
+
+#### Definición del experimento aleatorio:
+
+`E3`: Selecciono un programador y observo la edad que posee
+
+-   Espacio de probabilidad de la variable: $(\Omega_3,\mathcal{F_3},\mathbb{P_3})$
+
+Donde:
+
+$$
+\Omega_3 = [7] - \{0\} =\{ \text{ Todas las edades del rango } \} \\
+\mathcal{F_3} = 2^{|\Omega_3|} \\
+\mathbb{P_3}(n) = \{ \text{ Probabilidad de que salga la edad n } \} 
+$$ 
++ Cálculo de las probabilidades de los eventos atómicos:
+
+```{r}
+encuesta %>% group_by(ModifiedAge) %>% count() -> probModifiedAge
+probModifiedAge %>% rename(Frecuencia = n) -> probModifiedAge
+
+probModifiedAge$ProbabilidadAtomica <- probModifiedAge$Frecuencia / nrow(encuesta)
+
+probModifiedAge
+```
+
+Para verificar que la suma de las probabilidades de los eventos atómicos utilizaremos la fórmula: $\sum_{x = \Omega_3} \mathbb{P}(x) = 1$
+
+```{r}
+sum(probModifiedAge$ProbabilidadAtomica)
+```
+
+
++ Función de masa de probabilidad
+
+```{r}
+plot(probModifiedAge$ModifiedAge, 
+     probModifiedAge$ProbabilidadAtomica,
+     type = "h",
+     col = "red",
+     lwd = 2
+)
+
+points(probModifiedAge$ModifiedAge, 
+     probModifiedAge$ProbabilidadAtomica,
+     pch = 20, 
+     col="red",
+)
+
+```
+
++ Función de masa de probabilidad acumulada
+
+```{r}
+probAcumulada <- ecdf(encuesta$ModifiedAge)
+
+ecdf_datos <- probAcumulada(1:7)
+
+plot(ecdf_datos, 
+     main = "Función de masa de probabilidad acumulada", 
+     xlab = "Valores", 
+     ylab = "Probabilidad acumulada",
+     col = "blue",)
+```
+
 
 ## Eventos Dependientes e Independientes
 
@@ -1472,7 +1546,7 @@ sum(dbinom(rango,n,p))
 #### Valor Esperado
 
 $$ 
-\text{Para una binomial: } \mathbb{E}(\mathbb{X}) = np 
+\mathbb{E}(\mathbb{X}) = np 
 $$
 
 ```{r}
@@ -1506,12 +1580,12 @@ $$
 sum((0:100 - Ex)^{2}*dbinom(0:100 , n ,p))
 ```
 
-Ejemplo:
+Experimento:
+¿Cuál es la probabilidad que al escoger aleatoriamente a 100 programadores encuestados el 2022 (con reemplazo) el número de personas que utilizan Javascript y ganan más que el salario promedio esté entre 20 y 27, sabiendo que la probabilidad de escoger a un programador con ese lenguaje y su salario es 0.27?
 
-
-
-
-
+```{r}
+pbinom(27,100,0.27) - pbinom(19, 100, 0.27)
+```
 
 
 
@@ -1599,8 +1673,13 @@ varianza <-sum( ((0:10492 - esperanza)^2)*dhyper(0:10492,k,N-k , n))
 varianza
 ```
 
-Ejemplo:
+Experimento:
 
+Se extraen 15000 programadores de una muestra de 29204, de los cuales 10492 saben programar en 6 o más lenguajes de programación. ¿Cuál es la probabilidad que el número de programadores que usan 6 o más lenguajes esté entre 5400 y 5600?
+
+```{r}
+phyper(5600, k, N-k , n) - phyper(5400 , k , N-k , n) 
+```
 
 
 
