@@ -1210,7 +1210,7 @@ Si escojo al azar un alumno de UTEC lo más probable es que tenga un nivel de es
 
 Usaremos el siguiente criterio
 
-$$|\mathbb{P}(AB) - \mathbb{P}(A)*\mathbb{P}(B)| < 0.01$$
+$$|\mathbb{P}(A \cap B) - \mathbb{P}(A)*\mathbb{P}(B)| < 0.01$$
 
 para determinar la independencia de dos Eventos.
 

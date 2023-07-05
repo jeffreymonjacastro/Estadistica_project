@@ -118,7 +118,7 @@ En resumen, en esta sección se registran todas las variables que consideramos �
 ### Encuestas de Stak Overflow
 
 | Nombre de la variable   | Tipo de variable   | Descripción                                                        | Restricciones                   |
-|----------------|----------------|-------------------------|----------------|
+|-----------------|-----------------|-----------------------|-----------------|
 | MainBranch              | Categórica nominal | Contiene información sobre el estado profesional del desarrollador | \-                              |
 | Employment              | Categórica nominal | El tipo de empleo que tiene le desarrollador                       | separado por punto y coma       |
 | RemoteWork              | Categórica nominal | De que forma ejercen el trabajo remoto                             | \-                              |
@@ -139,7 +139,7 @@ En resumen, en esta sección se registran todas las variables que consideramos �
 ### PLDB Lenguajes de Programación
 
 | Nombre de la variable | Tipo de variable   | Descripción                                                       | Restricciones                   |
-|----------------|----------------|-------------------------|----------------|
+|-----------------|-----------------|-----------------------|-----------------|
 | Title                 | Categórica Nominal | Nombre original del lenguaje de programación                      | \-                              |
 | Appeared              | Numérica discreta  | Año en donde apareció por primera vez el lenguaje de programación | \>= 1945                        |
 | Rank                  | Numérica discreta  | Un ranking hecho por PLDB                                         | \>=0                            |
@@ -323,7 +323,6 @@ q3 <- quantile(encuesta$Salary)[4]
 encuesta <- encuesta[encuesta$Salary < q3 + 1.5 * ric, ]
 ```
 
-
 En la encuesta se permite elegir géneros de varios tipos. Sin embargo, para fines de estudio nos limitaremos a hombre o mujeres, más obviaremos a los no binarios, entre otros.
 
 ```{r}
@@ -422,7 +421,6 @@ encuesta$Mac <- columna_booleana
 nrow(encuesta)
 ```
 
-
 En total tenemos `28679` observaciones para nuestro estudio.
 
 ## Variables de estudio Finales
@@ -432,7 +430,7 @@ Luego de la limpieza, decidimos mantenernos con `12` variables que se relacionan
 ### Encuestas de Stakoverflow
 
 | Nombre de la variable | Tipo de variable   | Descripción                                               | Restricciones                                        |
-|----------------|----------------|---------------------|-------------------|
+|-----------------|-----------------|--------------------|------------------|
 | Age                   | Categórica Ordinal | Edad                                                      | \-                                                   |
 | Gender                | Categórica Ordinal | Género                                                    | Man y Woman                                          |
 | Salary                | Numérica Contínua  | El salario anual en dólares del desarrollador             | [3600 - 249153]                                      |
@@ -443,7 +441,7 @@ Luego de la limpieza, decidimos mantenernos con `12` variables que se relacionan
 ### PLDB Lenguajes de Programación
 
 | Nombre de la variable | Tipo de variable   | Descripción                                                       | Restricciones                                                               |
-|----------------|----------------|------------------|----------------------|
+|-----------------|-----------------|-----------------|---------------------|
 | Nombre                | Categórica Nominal | Nombre original del lenguaje de programación                      | Deben estar los mismos lenguajes de la encuesta de StackOverflow            |
 | Type                  | Categórica Ordinal | El tipo de lenguaje del que se trata                              | Debe ser "*pl*", "*queryLanguage*", "*textMarkup*" y "*stylesheetLanguage*" |
 | N_Trabajos            | Numérica Discreta  | Número de trabajos relacionados al lenguaje de programación       | Debe ser mayor a 0                                                          |
@@ -517,7 +515,6 @@ encuesta %>%
   ) +
   theme_minimal()
 ```
-
 
 Se puede visualizar que el salario de los desarrolladores se concentra mayormente entre 50 000 y 60 000 dólares anuales. Además, existe un gran sesgo a la derecha, ya que el promedio es mucho mayor a la media. Esto se debe a que hay muchas personas que trabajan con varios lenguajes de programación.
 
@@ -1100,12 +1097,48 @@ En este gráfico podemos notar que no hay una relación clara entre la salud men
 
 ## Análisis Probabilístico
 
-### Probabilidad Empírica
+## Probabilidad Empírica
 
-#### Variable Cantidad de lenguajes de Programación
+### Variable Cantidad de lenguajes de Programación
 
-#### Variable Cantidad de problemas de Salud Mental
+(Parte de Jeff)
 
+
+### Variable Cantidad de problemas de Salud Mental
+
+(Parte de Edwid)
+
+## Eventos Dependientes e Independientes
+
+Usaremos el siguiente criterio:
+
+$|\mathbb{P}(A \cap B) - \mathbb{P}(A)*\mathbb{P}(B)| \leq 0.01$
+
+### Eventos Dependientes
+
+### Eventos Independientes
+
+## Variables Discretas
+
+### Distribución Binomial
+
+
+#### Esperanza
+
+#### Varianza
+
+
+### Distribución Hipergeométrica
+
+
+#### Esperanza
+
+#### Varianza
+
+
+## Variables Continuas
+
+### Variable Salario
 
 
 
@@ -1124,4 +1157,3 @@ En conclusión, el estudio destaca la importancia de considerar múltiples facto
 Stack Overflow (2022). *Stack Overflow Annual Developer Survey.* <https://insights.stackoverflow.com/survey>
 
 PLDB (2023). *Programming Language Data Base.* <https://github.com/breck7/pldb>
-

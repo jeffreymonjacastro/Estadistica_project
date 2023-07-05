@@ -110,24 +110,20 @@ Calculamos la probabilidad de éxito asumiendo que nuestra muestra es representa
 
 ```{r}
 p <- round( nrow(encuesta %>% filter(encuesta$JavaScript == TRUE & encuesta$Salary > promedio))/nrow(encuesta) ,2)
-p
+
 ```
+
 ```{r}
 n <- 100
 ```
 
-
-
-
-$$ 
-X : \text{Número de programadores que solo programen en JavaScript y ganan mas que el promedio en una muestra de 100 programadores} \\
+\$\$ X : \text{Número de programadores que solo programen en JavaScript y ganan mas que el promedio en una muestra de 100 programadores} \\
 
 \text{Rango(X) = 0 ,1 ,2 ,3 ,4 ,5 ,6 ,7 ........,100} \\
 
 X - Bin(n,p) = Bin(100,0.32)
 
-
-$$
+\$\$
 
 ```{r}
 plot(0:100, dbinom(0:100, n, p), type = 'h', lwd = 2, xlab = "Número de éxitos", ylab = "Probabilidad", main = "Distribución Binomial")
@@ -138,7 +134,6 @@ plot(0:100, dbinom(0:100, n, p), type = 'h', lwd = 2, xlab = "Número de éxitos
 $$ 
 \text{Para una binomial: }   \mathbb{E}(X) =  np 
 $$
-
 
 ```{r}
 media <- n*p
@@ -158,8 +153,6 @@ Ex <-sum(0:100*dbinom(0:100 , n , p))
 Ex
 ```
 
-
-
 Varianza:
 
 $$
@@ -171,7 +164,6 @@ varianza <- n*p*(1-p)
 varianza
 ```
 
-
 $$
 Var(X) = \sum_{x \text{ } \in Ran(X)}(x-E(X))^{2}p(x)
 $$
@@ -179,10 +171,8 @@ $$
 ```{r}
 sum((0:100 - Ex)^{2}*dbinom(0:100 , n ,p))
 ```
-Ejemplo: 
 
-
-
+Ejemplo:
 
 Hicimos un gráfico y lo dividimos en un rango de 0 a 100, podemos observar que el pico se encuentra en 32 éxitos, lo cual coincide aproximadamente con nuestra probabilidad máxima, calculada anteriormente (0.32).
 
@@ -227,24 +217,21 @@ var
 
 Explicar
 
-
-
 ### Hipergeometrica
 
-## Variable `TotalLenguajes` 
+## Variable `TotalLenguajes`
 
-
-1) Población
+1)  Población
 
 ```{r}
 nrow(encuesta)
 ```
 
-2) Número de éxitos
+2)  Número de éxitos
+
 ```{r}
 nrow(encuesta %>% filter(TotalLenguages >= 6))
 ```
-
 
 `E2`: De una población de `29204` programadores, donde `10492` dominan de 6 lenguajes a más . Se escogerá una muestra de `15000` programadores y se contara el número de programadores que dominan de 6 lenguajes a más.
 
@@ -253,8 +240,6 @@ N <- 29204 #población
 n <- 15000 #muestra
 k <- 10492 #éxitos
 ```
-
-
 
 $$
 Y : \text{Número de programadores que usan de 6 a más lenguajes de programación } \\
@@ -265,14 +250,17 @@ $$
 Y - H(N,n,k) = H(29204 , 15000 , 10492) \\
 Rang(Y) = 0,1,2,3,......,10492
 $$
+
 ```{r}
 plot(5000:5900, dhyper(5000:5900, k , N-k , n), type = 'h', lwd = 2, xlab = "Número de éxitos", ylab = "Probabilidad", main = "Distribución Hipergeometrica")
 ```
-1) Esperanza
+
+1)  Esperanza
 
 $$
    E(Y) = n\frac{k}{N}
 $$
+
 ```{r}
 media <- (n*k)/N
 media
@@ -280,18 +268,16 @@ media
 
 $$\text{Tambien se puede calcular : } \mathbb{E}(Y) = \sum_{y \text{ } \in \text{} Ran(Y) } yp(y) $$
 
-
 ```{r}
 Ex <- sum(0:10492*dhyper(0:10492 , k , N-k , n))
 Ex
 ```
-2) Varianza
 
-$$
-\text{Var}(Y) = \frac{n \cdot k \cdot (N - k) \cdot (N - n)}{N^2 \cdot (N - 1)}
+2)  Varianza
 
-$$
+\$\$ \text{Var}(Y) = \frac{n \cdot k \cdot (N - k) \cdot (N - n)}{N^2 \cdot (N - 1)}
 
+\$\$
 
 ```{r}
 varianza <- (n*k*(N-k)*(N-n))/(N*N*(N-1))
@@ -309,17 +295,4 @@ Varx
 
 Ejemplo
 
-
-
 ## Continuas
-
-
-
-
-
-
-
-
-
-
-
