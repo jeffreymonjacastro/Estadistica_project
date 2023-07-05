@@ -71,17 +71,17 @@ table(box$out)
 
 **Item 1: Análisis probabilístico de la variable "total de lenguajes de programación"**
 
-Espacio de probabilidad de la variable: $(\Omega,\mathcal{F},\mathbb{P})$
+Espacio de probabilidad de la variable: $(\Omega,\mathcal{F_1},\mathbb{P})$
 
 Donde:
 
 $$
-\Omega = [42] - \{0\} =\{ \text{ cantidad de lenguajes de programación que usa } \} \\
-\mathcal{F} = 2^\Omega \\
+\Omega_1 = [42] - \{0\} =\{ \text{ cantidad de lenguajes de programación que usa } \} \\
+\mathcal{F} = 2^{|\Omega_1|} \\
 \mathbb{P}(n) = \{ \text{ probabilidad de que use n lenguajes de programación } \} 
 $$
 
-Calculando las probabilidades empíricas de los eventos atómicos:
+-   Calculando las probabilidades empíricas de los eventos atómicos:
 
 ```{r}
 encuesta %>% group_by(TotalLenguages) %>% count() -> probTotalLenguajes

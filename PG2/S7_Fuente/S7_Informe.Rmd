@@ -1349,11 +1349,8 @@ Hicimos un gráfico y lo dividimos en un rango de 0 a 100, podemos observar que 
 
 ```{r}
 rango <- 0:100
-
-# Calcular las probabilidades para los valores del rango
 probabilidades <- dbinom(rango, n, p)
 
-# Graficar la distribución binomial
 plot(rango, probabilidades, type = 'h', xlab = "Valores", ylab = "Probabilidades", main = "Distribución Binomial")
 ```
 
@@ -1385,6 +1382,9 @@ Notamos que los valores coinciden.
 var <- n*p*(1-p)
 var
 ```
+
+#### Experimento:
+
 
 ### Distribución Hipergeométrica
 
