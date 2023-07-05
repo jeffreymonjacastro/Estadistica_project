@@ -91,9 +91,8 @@ hist(segmento$Salary)
 ```
 
 ```{r}
-encuesta$salariontSobrecaLenguajes = encuesta$Salary/encuesta$TotalLenguages
-FDL <- fitdist(encuesta$salarioSobrecantLenguajes, "logis")
-plot(FDL, pch = ".", col = "blue")
+
+FDG <- fitdist(encuesta$Salary, "gamma", start = list(shape = 1, scale = 2))
 ```
 
 ```{}

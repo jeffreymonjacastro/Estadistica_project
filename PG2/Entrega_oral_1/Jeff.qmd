@@ -136,7 +136,29 @@ plot(ecdf_datos,
 ```
 
 ```{r}
-encuesta$salarioSobrecantLenguajes <- encuesta$Salary/encuesta$TotalLenguages
-FDL <- fitdist(encuesta$salarioSobrecantLenguajes, "logis")
-plot(FDL, pch = ".", col = "blue")
+table(encuesta$Age)
+```
+
+```{r}
+
+encuesta$ModifiedAge <- encuesta$Age
+encuesta$ModifiedAge <- ifelse(encuesta$ModifiedAge == "Under 18 years old", 1, encuesta$ModifiedAge)
+encuesta$ModifiedAge <- ifelse(encuesta$ModifiedAge == "18-24 years old", 2, encuesta$ModifiedAge)
+encuesta$ModifiedAge <- ifelse(encuesta$ModifiedAge == "25-34 years old", 3, encuesta$ModifiedAge)
+encuesta$ModifiedAge <- ifelse(encuesta$ModifiedAge == "35-44 years old", 4, encuesta$ModifiedAge)
+encuesta$ModifiedAge <- ifelse(encuesta$ModifiedAge == "45-54 years old", 5, encuesta$ModifiedAge)
+encuesta$ModifiedAge <- ifelse(encuesta$ModifiedAge == "55-64 years old", 6, encuesta$ModifiedAge)
+encuesta$ModifiedAge <- ifelse(encuesta$ModifiedAge == "65 years or older",7, encuesta$ModifiedAge)
+encuesta$ModifiedAge <- as.numeric(encuesta$ModifiedAge)
+encuesta$salarioSobrecantLenguajes <- encuesta$Salary*encuesta$ModifiedAge/(1+encuesta$TotalMentalHealth)
+
+plot(density(encuesta$salarioSobrecantLenguajes , na.rm = T))descdist(encuesta$salarioSobrecantLenguajes)
+```
+
+```{r}
+FDG <- fitdist(encuesta$salarioSobrecantLenguajes, "gamma", start = list(shape = 1, scale = 1))
+```
+
+```{r}
+plot(FDG, pch = ".", col = "blue")
 ```

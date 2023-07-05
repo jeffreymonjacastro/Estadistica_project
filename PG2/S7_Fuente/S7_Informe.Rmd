@@ -1607,7 +1607,9 @@ Ejemplo:
 ## Variables Continuas
 
 
-### Variable Salario por cantidad de problemas mentales proporcional a la edad
+### Variable Salario 
+
+Escogimos la variable salario por cantidad de problemas mentales proporcional a la edad
 Para el analisis de variables continuas escogimos una variación del salario de modo que este sea proporcional al rango de edad dado por los usuarios y se divida entre la cantidad de problemas mentales que tiene cada uno.
 
 ```{r}
