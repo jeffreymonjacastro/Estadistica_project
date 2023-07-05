@@ -96,7 +96,6 @@ probTotalLenguajes$ProbabilidadAtomica <- probTotalLenguajes$Frecuencia / nrow(e
 probTotalLenguajes
 ```
 
-
 ```{r}
 sum(probTotalLenguajes$ProbabilidadAtomica)
 ```
@@ -134,4 +133,10 @@ plot(ecdf_datos,
      ylab = "Probabilidad acumulada",
      col = "blue",
 )
+```
+
+```{r}
+encuesta$salarioSobrecantLenguajes <- encuesta$Salary/encuesta$TotalLenguages
+FDL <- fitdist(encuesta$salarioSobrecantLenguajes, "logis")
+plot(FDL, pch = ".", col = "blue")
 ```
