@@ -1098,6 +1098,16 @@ ggplot(tabla_larga,
 
 En este gráfico podemos notar que no hay una relación clara entre la salud mental de los programadores y sus respectivos sistemas operativos, ya que podemos observar casi la misma proporción en cada uno. Los problemas más comunes son problemas de memoria, emocionales y de ansiedad. Pero, no podemos encontrar una relación directa entre ambas variables.
 
+## Análisis Probabilístico
+
+### Probabilidad Empírica
+
+#### Variable Cantidad de lenguajes de Programación
+
+#### Variable Cantidad de problemas de Salud Mental
+
+
+
 ### Conclusiones Parciales
 
 En síntesis, refiriéndose al análisis descriptivo, el estudio muestra correlaciones entre la popularidad, facilidad de uso y remuneración de un lenguaje de programación y la salud mental de los programadores. Sin embargo, no se puede establecer una relación directa y determinante entre dichos factores y el estado mental.
