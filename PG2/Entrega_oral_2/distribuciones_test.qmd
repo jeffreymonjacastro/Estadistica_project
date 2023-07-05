@@ -7,6 +7,10 @@ editor: visual
 ## Tests
 
 ```{r}
+library(fitdistrplus)
+```
+
+```{r}
 X <- rnorm(50, mean = 17, sd = 3)
 ```
 
@@ -41,19 +45,16 @@ library(fitdistrplus)
 ```
 
 ```{r}
-descdist(encuesta$Salary, boot = 5000)
+descdist(encuesta$Salary, boot = 10)
 ```
 
 ```{r}
 FDG <- fitdist(encuesta$Salary, "gamma", start = list(shape = 1, scale = 2))
 ```
 
-
 ```{r}
 plot(FDG, pch = ".", col = "blue")
 ```
-
-
 
 ```{r}
 hist(encuesta$Salary, prob = TRUE)
@@ -63,22 +64,28 @@ lines(Xs, dgamma(Xs, shape = 1.847037, scale = 41656.428380), col = "red")
 
 Con esta libreria vamos a evaluar que variables nossirve
 
-PASO 1) Definir que distribución utilizaremos
-#### *Distribución Binomial*
+PASO 1) Definir que distribución utilizaremos \#### *Distribución Binomial*
 
 paso2) Construir la variable aleatoria
 
-$X: Número\ de\ empresas\ que\ tienen\ 1\ registro$
-paso3) Identificar los parámetros
+$X: Número\ de\ empresas\ que\ tienen\ 1\ registro$ paso3) Identificar los parámetros
 
-P(E)= LA probabilidad de éxito 
-n= número de empresas elegidad al azar 
+P(E)= LA probabilidad de éxito n= número de empresas elegidad al azar
 
 ```{r}
 library()
 ```
 
-- Distribucion Bernoulli 
+-   Distribucion Bernoulli
 
+-   Ditribucion Binomial
 
-- Ditribucion Binomial
+```{r}
+segmento <- encuesta %>% filter( Salary >= 3600  & Salary <= 250000) 
+
+segmento
+```
+
+```{r}
+hist(segmento$Salary)
+```
