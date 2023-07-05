@@ -1145,7 +1145,7 @@ round(prop.table(table(DF$Nivel_Comp)), 2)
 Se verifica que la suma de las probabilidades de los eventos atómicos de 1.
 
 $$
-\sum\mathbb{P}(Ea) = 1
+\sum_{x = \Omega_1} \mathbb{P}(x) = 1
 $$
 
 ```{r}

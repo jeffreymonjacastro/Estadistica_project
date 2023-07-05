@@ -96,6 +96,11 @@ probTotalLenguajes$ProbabilidadAtomica <- probTotalLenguajes$Frecuencia / nrow(e
 probTotalLenguajes
 ```
 
+
+```{r}
+sum(probTotalLenguajes$ProbabilidadAtomica)
+```
+
 ### Función de masa de probabilidad
 
 ```{r}

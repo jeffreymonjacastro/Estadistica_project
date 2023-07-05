@@ -1101,28 +1101,113 @@ En este gráfico podemos notar que no hay una relación clara entre la salud men
 
 ### Variable Cantidad de lenguajes de Programación
 
-(Parte de Jeff)
+**Justificación:** Se escoge la variable `Total de lenguajes de programación` porque es nuestra variable principal de nuestro estudio. Además, determinar el espacio de probabilidad de algún evento relacionado a esta variable puede ser interesante para los objetivos.
+
+Hallando la variable "Total de lenguajes de programación"
+
+```{r}
+encuesta$TotalLenguages <- 0
+
+for (i in 1:nrow(encuesta)) {
+  cont <- 0
+  for (pl in language) {
+    if (encuesta[i, pl] == TRUE){
+      cont <- cont + 1
+    }
+  }
+  encuesta[i, 'TotalLenguages'] <- cont
+}
+```
+
+```{r}
+hist(encuesta$TotalLenguages,
+     col = "skyblue",
+     main = "Histograma del total de lenguajes de Programación",
+     xlab = "Cantidad de lenguajes", 
+     ylab = "Frecuencia",
+     breaks = 20
+)
+
+abline(v= mean(encuesta$TotalLenguages), col = "red", lty = 1)
+
+abline(v= median(encuesta$TotalLenguages), col = "blue", lty = 2)
+
+legend("topright", legend = c("Media", "Mediana"), col = c("red", "blue"), lty = c(1, 2))
+```
+
+Donde la media es: `r mean(encuesta$TotalLenguages)` y la mediana es: `r median(encuesta$TotalLenguages)`. Se aprecia que hay una mayor tendencia por trabajar con menos de 5 lenguajes de programación a diferencia con trabajar más de 5 lenguajes
+
+#### Definición del experimento aleatorio:
+`E1`: Selecciono un programador y observo la cantidad de lenguajes de programación que utiliza.
+
++ Espacio de probabilidad de la variable: $(\Omega_1,\mathcal{F_1},\mathbb{P_1})$
+
+Donde:
+
+$$
+\Omega_1 = [42] - \{0\} =\{ \text{ cantidad de lenguajes de programación que usa } \} \\
+\mathcal{F_1} = 2^{|\Omega_1|} \\
+\mathbb{P_1}(n) = \{ \text{ probabilidad de que use n lenguajes de programación } \} 
+$$
+
++ Cálculo de las probabilidades de los eventos atómicos:
+
+```{r}
+encuesta %>% group_by(TotalLenguages) %>% count() -> probTotalLenguajes
+probTotalLenguajes %>% rename(Frecuencia = n) -> probTotalLenguajes
+
+probTotalLenguajes$ProbabilidadAtomica <- probTotalLenguajes$Frecuencia / nrow(encuesta)
+
+probTotalLenguajes
+```
+
+Para verificar que la suma de las probabilidades de los eventos atómicos utilizaremos la fórmula: $\sum_{x = \Omega_1} \mathbb{P}(x) = 1$
+
+```{r}
+sum(probTotalLenguajes$ProbabilidadAtomica)
+```
+
+#### Función de masa de probabilidad
+```{r}
+plot(probTotalLenguajes$TotalLenguages, 
+     probTotalLenguajes$ProbabilidadAtomica, 
+     type = "h", 
+     col="red",
+     main = "Función de masa de probabilidad",
+     xlab = "Cantidad de lenguajes usados",
+     ylab = "Probabilidad",
+     ylim = c(0,0.2)
+)
+
+points(probTotalLenguajes$TotalLenguages, 
+     probTotalLenguajes$ProbabilidadAtomica,  
+     pch = 20, 
+     col="red",
+)
+```
+
+Evidentemente, hay una mayor probabilidad de que un desarrollador trabaje con entre 3 a 5 lenguajes de programación, debido a que tienden a profesionalizarse más en unos pocos.
+
+#### Función de densidad
+
+```{r}
+probAcumulada <- ecdf(encuesta$TotalLenguages)
+
+ecdf_datos <- probAcumulada(0:43)
+
+plot(ecdf_datos, 
+     main = "Función de masa de probabilidad acumulada", 
+     xlab = "Cantidad de lenguajes usados", 
+     ylab = "Probabilidad acumulada",
+     col = "blue",
+)
+```
 
 ### Variable Cantidad de problemas de Salud Mental
 
+
+
 #### Convertimos la variable categórica a numérica con Bernulli
-
-```{r}
-columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "concentration", "\\b"))
-encuesta$Memoria <- columna_booleana
-
-columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "mood", "\\b"))
-encuesta$Emocional <- columna_booleana
-
-columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "anxiety", "\\b"))
-encuesta$Ansiedad <- columna_booleana
-
-columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "autism", "\\b"))
-encuesta$Autismo <- columna_booleana
-
-columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "learning", "\\b"))
-encuesta$Aprendizaje <- columna_booleana
-```
 
 ```{r}
 DF1 <- nrow(encuesta[encuesta$Memoria == TRUE,])
