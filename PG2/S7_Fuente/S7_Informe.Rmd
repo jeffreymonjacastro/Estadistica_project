@@ -1606,7 +1606,38 @@ Ejemplo:
 
 ## Variables Continuas
 
-### Variable Salario
+
+### Variable Salario por cantidad de problemas mentales proporcional a la edad
+Para el analisis de variables continuas escogimos una variación del salario de modo que este sea proporcional al rango de edad dado por los usuarios y se divida entre la cantidad de problemas mentales que tiene cada uno.
+
+```{r}
+encuesta$ModifiedAge <- encuesta$Age
+encuesta$ModifiedAge <- ifelse(encuesta$ModifiedAge == "Under 18 years old", 1, encuesta$ModifiedAge)
+encuesta$ModifiedAge <- ifelse(encuesta$ModifiedAge == "18-24 years old", 2, encuesta$ModifiedAge)
+encuesta$ModifiedAge <- ifelse(encuesta$ModifiedAge == "25-34 years old", 3, encuesta$ModifiedAge)
+encuesta$ModifiedAge <- ifelse(encuesta$ModifiedAge == "35-44 years old", 4, encuesta$ModifiedAge)
+encuesta$ModifiedAge <- ifelse(encuesta$ModifiedAge == "45-54 years old", 5, encuesta$ModifiedAge)
+encuesta$ModifiedAge <- ifelse(encuesta$ModifiedAge == "55-64 years old", 6, encuesta$ModifiedAge)
+encuesta$ModifiedAge <- ifelse(encuesta$ModifiedAge == "65 years or older",7, encuesta$ModifiedAge)
+encuesta$ModifiedAge <- as.numeric(encuesta$ModifiedAge)
+encuesta$salarioSobrecantLenguajes <- encuesta$Salary*encuesta$ModifiedAge/(1+encuesta$TotalMentalHealth)
+
+plot(density(encuesta$salarioSobrecantLenguajes , na.rm = T), main="Densidad Salario*Edad/TotalProblemasMentales")
+```
+
+Y observaremos que la distribución gamma es la que más se le aproxima.
+```{r}
+descdist(encuesta$salarioSobrecantLenguajes)
+FDG <- fitdist(encuesta$salarioSobrecantLenguajes, "gamma", start = list(shape = 1, scale = 1))
+```
+```{r}
+plot(FDG, pch = ".", col = "blue")
+```
+
+Podemos decir entonces que nuestra variable sigue una distribución gamma. Lo que quiere decir lo siguiente:
+
+- La variable es asimétrica, es decir, no tiene forma de campana.
+- Podemos saber como decae la variable a medida que aumenta. Es decir a travez de la distribución gamma podemos comprender como se comporta la variable para valores grandes.
 
 
 
