@@ -118,7 +118,7 @@ En resumen, en esta sección se registran todas las variables que consideramos �
 ### Encuestas de Stak Overflow
 
 | Nombre de la variable   | Tipo de variable   | Descripción                                                        | Restricciones                   |
-|-----------------|-----------------|-----------------------|-----------------|
+|-----------------|-----------------|---------------------|-----------------|
 | MainBranch              | Categórica nominal | Contiene información sobre el estado profesional del desarrollador | \-                              |
 | Employment              | Categórica nominal | El tipo de empleo que tiene le desarrollador                       | separado por punto y coma       |
 | RemoteWork              | Categórica nominal | De que forma ejercen el trabajo remoto                             | \-                              |
@@ -139,7 +139,7 @@ En resumen, en esta sección se registran todas las variables que consideramos �
 ### PLDB Lenguajes de Programación
 
 | Nombre de la variable | Tipo de variable   | Descripción                                                       | Restricciones                   |
-|-----------------|-----------------|-----------------------|-----------------|
+|-----------------|-----------------|---------------------|-----------------|
 | Title                 | Categórica Nominal | Nombre original del lenguaje de programación                      | \-                              |
 | Appeared              | Numérica discreta  | Año en donde apareció por primera vez el lenguaje de programación | \>= 1945                        |
 | Rank                  | Numérica discreta  | Un ranking hecho por PLDB                                         | \>=0                            |
@@ -430,7 +430,7 @@ Luego de la limpieza, decidimos mantenernos con `12` variables que se relacionan
 ### Encuestas de Stakoverflow
 
 | Nombre de la variable | Tipo de variable   | Descripción                                               | Restricciones                                        |
-|-----------------|-----------------|--------------------|------------------|
+|------------------|------------------|--------------------|------------------|
 | Age                   | Categórica Ordinal | Edad                                                      | \-                                                   |
 | Gender                | Categórica Ordinal | Género                                                    | Man y Woman                                          |
 | Salary                | Numérica Contínua  | El salario anual en dólares del desarrollador             | [3600 - 249153]                                      |
@@ -441,7 +441,7 @@ Luego de la limpieza, decidimos mantenernos con `12` variables que se relacionan
 ### PLDB Lenguajes de Programación
 
 | Nombre de la variable | Tipo de variable   | Descripción                                                       | Restricciones                                                               |
-|-----------------|-----------------|-----------------|---------------------|
+|-----------------|-----------------|-----------------|--------------------|
 | Nombre                | Categórica Nominal | Nombre original del lenguaje de programación                      | Deben estar los mismos lenguajes de la encuesta de StackOverflow            |
 | Type                  | Categórica Ordinal | El tipo de lenguaje del que se trata                              | Debe ser "*pl*", "*queryLanguage*", "*textMarkup*" y "*stylesheetLanguage*" |
 | N_Trabajos            | Numérica Discreta  | Número de trabajos relacionados al lenguaje de programación       | Debe ser mayor a 0                                                          |
@@ -1103,7 +1103,6 @@ En este gráfico podemos notar que no hay una relación clara entre la salud men
 
 (Parte de Jeff)
 
-
 ### Variable Cantidad de problemas de Salud Mental
 
 (Parte de Edwid)
@@ -1116,31 +1115,85 @@ $|\mathbb{P}(A \cap B) - \mathbb{P}(A)*\mathbb{P}(B)| \leq 0.01$
 
 ### Eventos Dependientes
 
+Seleccionamos los lenguajes que causan más problemas mentales de acuerdo a nuestras gráficas, ya que consideramos que podrían tener una relación interesante.
+
+-   Autismo: Crystal Lua Rust
+
+-   Aprendizaje: APL Lua Assembly
+
+-   Emocionales: Erlang Lua LISP
+
+-   Memoria: Erlang Crystal Lua
+
+-   Ansiedad: SAS Ruby Lua
+
+    **Para nuestro primer evento E1, consideramos si un programador utiliza alguno de los lenguajes "problemáticos" y calculamos la probabilidad de este:**
+
+```{r}
+list <- c('Crystal', 'Lua', 'Rust', 'APL', 'Assembly', 'Erlang', 'LISP', 'SAS')
+
+e1 = encuesta$Crystal | encuesta$Lua | encuesta$Rust | encuesta$APL | encuesta$Assembly | encuesta$Erlang | encuesta$LISP | encuesta$SAS
+
+#Hallamos la probabilidad del evento 1 E1
+probE1 = sum(e1)/nrow(encuesta)
+probE1
+```
+
+**Para nuestro segundo evento E2, consideramos si un programador sufre de algún problema mental y calculamos la probabilidad de este:**
+
+```{r}
+encuesta$num_problemas_mentales <- rowSums(encuesta[, c("Memoria", "Aprendizaje", "Autismo", "Ansiedad", "Emocional")])
+probE2 <- sum(encuesta$num_problemas_mentales > 0) / nrow(encuesta)
+probE2
+```
+
+**Luego, hallamos la probabilidad de ambos eventos (E1 dado E2):**
+
+```{r}
+total = data.frame(e1, encuesta$num_problemas_mentales)
+probe1probE2 = nrow(total[total$e1 == TRUE & total$encuesta.num_problemas_mentales > 0,])/nrow(total)
+probe1probE2
+
+total$encuesta.num_problemas_mentales = total$encuesta.num_problemas_mentales > 0
+
+mosaicplot(table(total$e1, total$encuesta.num_problemas_mentales), main = "Problemas mentales y lenguajes problemáticos", xlab="Evento1", ylab="Evento2")
+```
+
+Luego de realizar el mosaicplot, notamos que ambos eventos son claramente dependientes, ya que se ven diferencias significativas en las proporciones de las categorías en las combinaciones de las variables. Pero, para comprobar esto de manera definitiva utilizamos algunas fórmulas.
+
+Comprobamos con las fórmulas de probabilidades:
+
+```{r}
+probE2dE1 <- probe1probE2/probE1
+cat("P(E2): ", probE2)
+cat("\nP(E2|E1): ", probE2dE1)
+cat("\nE1-E2",  probE2 - probE1)
+
+cat("\nP(E1 ∩ E2)", probe1probE2)
+cat("\nP(E2)*P(E1)",probE1 * probE2)
+```
+
+Notamos que la probabilidad del E1 y la probabilidad del E2 difieren en 0,11 aproximadamente. Lo suficiente como para afirmar que son eventos dependientes. Luego corroboramos nuevamente, ya que probabilidad de la intersección del E1 y E2 es distinta a la probabilidad del E1 multiplicado por la probabilidad del E2.
+
 ### Eventos Independientes
 
 ## Variables Discretas
 
 ### Distribución Binomial
 
-
 #### Esperanza
 
 #### Varianza
-
 
 ### Distribución Hipergeométrica
 
-
 #### Esperanza
 
 #### Varianza
-
 
 ## Variables Continuas
 
 ### Variable Salario
-
-
 
 ### Conclusiones Parciales
 
