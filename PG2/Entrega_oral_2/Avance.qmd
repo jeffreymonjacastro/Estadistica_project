@@ -1,0 +1,161 @@
+---
+title: "Jeff"
+format: html
+editor: visual
+---
+
+## Item 2
+
+Lenguajes que causan mas los problemas mentales:
+
+-   Autismo: Crystal Lua Rust
+
+-   Aprendizaje: APL Lua Assembly
+
+-   Emocionales: Erlang Lua LISP
+
+-   Memoria: Erlang Crystal Lua
+
+-   Ansiedad: SAS Ruby Lua
+
+    **E1: Usa uno o más de los lenguajes problemáticos**
+
+```{r}
+list <- c('Crystal', 'Lua', 'Rust', 'APL', 'Assembly', 'Erlang', 'LISP', 'SAS')
+
+e1 = encuesta$Crystal | encuesta$Lua | encuesta$Rust | encuesta$APL | encuesta$Assembly | encuesta$Erlang | encuesta$LISP | encuesta$SAS
+
+probE1 = sum(e1)/nrow(encuesta)
+probE1
+```
+
+**probE2: Sufren de problemas mentales**
+
+```{r}
+# Crear una columna en el dataframe 'encuesta' que cuente la cantidad de problemas mentales (valores TRUE)
+encuesta$num_problemas_mentales <- rowSums(encuesta[, c("Memoria", "Aprendizaje", "Autismo", "Ansiedad", "Emocional")])
+
+# Calcular la probabilidad de que alguien sufra de 3 o más problemas mentales
+probE2 <- sum(encuesta$num_problemas_mentales > 0) / nrow(encuesta)
+
+# Imprimir el resultado
+probE2
+```
+
+**E1 y probE2**
+
+```{r}
+total = data.frame(e1, encuesta$num_problemas_mentales)
+probe1probE2 = nrow(total[total$e1 == TRUE & total$encuesta.num_problemas_mentales > 0,])/nrow(total)
+probe1probE2
+
+total$encuesta.num_problemas_mentales = total$encuesta.num_problemas_mentales > 0
+
+mosaicplot(table(total$e1, total$encuesta.num_problemas_mentales), main = "Problemas mentales y lenguajes problemáticos")
+```
+
+**Comprobamos con las fórmulas de probabilidades**
+
+```{r}
+probE2dE1 <- probe1probE2/probE1
+cat("P(E2): ", probE2)
+cat("\nP(E2|E1): ", probE2dE1)
+cat("\nE1-E2",  probE2 - probE1)
+
+cat("\nP(E1 interseccion E2)", probe1probE2)
+cat("\nP(E2)*P(E1)",probE1 * probE2)
+```
+
+**Variables continuas**
+
+-   Elegir 10 programadores del mejor lenguaje (JavaScript)
+
+-   Elegir 10 programadores del peor lenguaje(APL)
+
+Sacamos Probabilidad JavaScript:
+
+```{r}
+eJS <- sum(encuesta$JavaScript)
+probJS <- eJS/nrow(encuesta)
+probJS
+```
+
+Sacamos Probabilidad APL:
+
+```{r}
+eAPL <- sum(encuesta$APL)
+probAPL <- eAPL/nrow(encuesta)
+probAPL
+```
+
+Función para ver cuantas personas programan en SOLO JS:\
+
+```{r}
+for (i in 1:nrow(encuesta)) {
+  cont <- 0
+  for (pl in language) {
+    if (encuesta[i, pl] == TRUE){
+      cont <- cont + 1
+    }
+  }
+  encuesta[i, 'TotalLenguages'] <- cont
+}
+```
+
+Escoger una muestra de 100 programadores (con reemplazo) y contar el número de programadores que solo programen en JavaScript / APL.
+
+Evento 1: Programan en JS y ganan mas que el promedio
+
+```{r}
+p <- nrow(encuesta %>% filter(encuesta$JavaScript == TRUE & encuesta$Salary > promedio))/nrow(encuesta)
+p
+```
+
+Asignamos el número de ensayos independientes a la variable n.
+
+```{r}
+n <- 100
+```
+
+Hicimos un gráfico y lo dividimos en un rango de 0 a 100, podemos observar que el pico se encuentra en 26-27 éxitos, lo cual coincide aproximadamente con nuestra probabilidad máxima, calculada anteriormente (0.268).
+
+```{r}
+rango <- 0:100
+
+# Calcular las probabilidades para los valores del rango
+probabilidades <- dbinom(rango, n, p)
+
+# Graficar la distribución binomial
+plot(rango, probabilidades, type = 'h', xlab = "Valores", ylab = "Probabilidades", main = "Distribución Binomial")
+```
+
+Comprobamos que la suma de la función de la distribución binomial da 1.
+
+```{r}
+sum(dbinom(rango,n,p))
+```
+
+Valor esperado:
+
+```{r}
+media <- n*p
+```
+
+Esto quiere decir que en promedio 27 programadores programan en JavaScript y además ganan más que el salario promedio.
+
+```{r}
+Ex <- sum(rango*dbinom(rango,n,p))
+media
+Ex
+```
+
+Notamos que los valores coinciden.
+
+Varianza:
+
+```{r}
+var <- n*p*(1-p)
+var
+```
+
+Explicar

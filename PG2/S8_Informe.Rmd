@@ -1379,7 +1379,7 @@ n <- 163
 $$
 X : \text{Número de alumnos con un Promedio de Inglés mayor o igual a 15 en una muestra de 163 alumnos de UTEC (con reposición) } \\
 
-X - Bin(n,p) = Bin(163 , 0.79) \\
+X ~ Bin(n,p) = Bin(163 , 0.79) \\
 
 Rango(X) = [163] \text{ } \cup \text{ } 0 
 
