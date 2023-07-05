@@ -1152,6 +1152,12 @@ $$
 
 -   Cálculo de las probabilidades de los eventos atómicos:
 
+A1: Seleccionar un programador del estudio que utiliza un lenguaje de programación
+A2: Seleccionar un programador del estudio que utiliza dos lenguajes de programación
+...
+A42: Seleccionar un programador del estudio que utiliza 42 lenguajes de programación
+
+
 ```{r}
 encuesta %>% group_by(TotalLenguajes) %>% count() -> probTotalLenguajes
 probTotalLenguajes %>% rename(Frecuencia = n) -> probTotalLenguajes
@@ -1328,6 +1334,11 @@ $$
 $$ 
 + Cálculo de las probabilidades de los eventos atómicos:
 
+B1: Seleccionar un programador que tenga menos de 18 años
+B2: Seleccionar un programador que tenga menos de 18 años
+B1: Seleccionar un programador que tenga menos de 18 años
+....
+
 ```{r}
 encuesta %>% group_by(ModifiedAge) %>% count() -> probModifiedAge
 probModifiedAge %>% rename(Frecuencia = n) -> probModifiedAge
@@ -1399,7 +1410,9 @@ Seleccionamos los lenguajes que causan más problemas mentales de acuerdo a nues
 
 -   Ansiedad: SAS Ruby Lua
 
-Entonces, identificamos 2 eventos: E1: Usa 1 o más de los lenguajes "problemáticos" E2: Sufre 1 o más problemas mentales
+Entonces, identificamos 2 eventos: 
+E1: Escoger un programador que usa 1 o más de los lenguajes "problemáticos"
+E2: Escoger un programador que sufre 1 o más problemas mentales
 
 ```{r}
 list <- c('Crystal', 'Lua', 'Rust', 'APL', 'Assembly', 'Erlang', 'LISP', 'SAS')
@@ -1430,6 +1443,7 @@ mosaicplot(table(total$E1, total$encuesta.TotalMentalHealth), main = "Problemas 
 Luego de realizar el mosaicplot, notamos que ambos eventos son claramente dependientes, ya que se ven diferencias significativas en las proporciones de las categorías en las combinaciones de las variables. Pero, para comprobar esto de manera definitiva utilizamos algunas fórmulas.
 
 Comprobamos con las fórmulas de probabilidades:
+[La inversa]
 
 ```{r}
 probE2dE1 <- E1E2/probE1
@@ -1445,7 +1459,9 @@ Notamos que la probabilidad del E1 y la probabilidad del E2 difieren en 0,11 apr
 
 ### Eventos Independientes
 
-Identificamos dos eventos. - E1: Usa un lenguaje que está entre los 5 más populares. - E2: Sufre de 2 o más problemas mentales.
+Identificamos dos eventos. - 
+E1: Usa un lenguaje que está entre los 5 más populares. - 
+E2: Sufre de 2 o más problemas mentales.
 
 Justificación: Se quiere demostrar que nuestra salud mental no depende de si usamos un lenguaje popular o no. Para esto demostraremos que los eventos son independientes: - P(E1\|E2) - P(E1) ≈ 0 - P(E2\|E1) - P(E2) ≈ 0 - P(E2 y E1) ≈ P(E2) \* P(E1)
 
@@ -1518,6 +1534,7 @@ promedio <- mean(encuesta$Salary)
 
 ```{r}
 p <- round( nrow(encuesta %>% filter(encuesta$JavaScript == TRUE & encuesta$Salary > promedio))/nrow(encuesta) ,2)
+p
 ```
 
 ```{r}
@@ -1525,7 +1542,7 @@ n <- 100
 ```
 
 $$
-\mathbb{X} = \text{Número de programadores que solo programen en JavaScript} \\ \text{y ganan mas que el promedio en una muestra de 100 programadores} \\
+\mathbb{X} = \text{Número de programadores que programen en JavaScript} \\ \text{y ganan mas que el promedio en una muestra de 100 programadores} \\
 
 \text{Rango(X) = 0 ,1 ,2 ,3 ,4 ,5 ,6 ,7 ........,100} \\
 
