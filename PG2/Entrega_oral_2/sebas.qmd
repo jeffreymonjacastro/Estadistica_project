@@ -1,0 +1,11 @@
+---
+title: "sebas"
+format: html
+editor: visual
+---
+
+## Xd
+
+```{r}
+cat("hello world")
+```
