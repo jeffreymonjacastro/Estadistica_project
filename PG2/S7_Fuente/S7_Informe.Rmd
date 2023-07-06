@@ -25,7 +25,8 @@ Consideramos que el proyecto es viable ya que usamos bases de datos de fuentes c
 
 Para entender el desarrollo del estudio hasta el momento, se muestra el siguiente **Diagrama de Gantt** con la planificación de las diferentes actividades y entregas del proyecto.
 
-```{r warning=FALSE, echo=FALSE}
+```{r}
+{r warning=FALSE, echo=FALSE}
 
 library(DiagrammeR)
 
@@ -118,7 +119,7 @@ En resumen, en esta sección se registran todas las variables que consideramos �
 ### Encuestas de Stak Overflow
 
 | Nombre de la variable   | Tipo de variable   | Descripción                                                        | Restricciones                   |
-|----------------|----------------|-------------------------|----------------|
+|------------------|------------------|-------------------|------------------|
 | MainBranch              | Categórica nominal | Contiene información sobre el estado profesional del desarrollador | \-                              |
 | Employment              | Categórica nominal | El tipo de empleo que tiene le desarrollador                       | separado por punto y coma       |
 | RemoteWork              | Categórica nominal | De que forma ejercen el trabajo remoto                             | \-                              |
@@ -139,7 +140,7 @@ En resumen, en esta sección se registran todas las variables que consideramos �
 ### PLDB Lenguajes de Programación
 
 | Nombre de la variable | Tipo de variable   | Descripción                                                       | Restricciones                   |
-|----------------|----------------|-------------------------|----------------|
+|------------------|------------------|-------------------|------------------|
 | Title                 | Categórica Nominal | Nombre original del lenguaje de programación                      | \-                              |
 | Appeared              | Numérica discreta  | Año en donde apareció por primera vez el lenguaje de programación | \>= 1945                        |
 | Rank                  | Numérica discreta  | Un ranking hecho por PLDB                                         | \>=0                            |
@@ -323,7 +324,6 @@ q3 <- quantile(encuesta$Salary)[4]
 encuesta <- encuesta[encuesta$Salary < q3 + 1.5 * ric, ]
 ```
 
-
 En la encuesta se permite elegir géneros de varios tipos. Sin embargo, para fines de estudio nos limitaremos a hombre o mujeres, más obviaremos a los no binarios, entre otros.
 
 ```{r}
@@ -422,7 +422,6 @@ encuesta$Mac <- columna_booleana
 nrow(encuesta)
 ```
 
-
 En total tenemos `28679` observaciones para nuestro estudio.
 
 ## Variables de estudio Finales
@@ -432,7 +431,7 @@ Luego de la limpieza, decidimos mantenernos con `12` variables que se relacionan
 ### Encuestas de Stakoverflow
 
 | Nombre de la variable | Tipo de variable   | Descripción                                               | Restricciones                                        |
-|----------------|----------------|---------------------|-------------------|
+|------------------|------------------|-------------------|------------------|
 | Age                   | Categórica Ordinal | Edad                                                      | \-                                                   |
 | Gender                | Categórica Ordinal | Género                                                    | Man y Woman                                          |
 | Salary                | Numérica Contínua  | El salario anual en dólares del desarrollador             | [3600 - 249153]                                      |
@@ -443,7 +442,7 @@ Luego de la limpieza, decidimos mantenernos con `12` variables que se relacionan
 ### PLDB Lenguajes de Programación
 
 | Nombre de la variable | Tipo de variable   | Descripción                                                       | Restricciones                                                               |
-|----------------|----------------|------------------|----------------------|
+|------------------|------------------|------------------|-------------------|
 | Nombre                | Categórica Nominal | Nombre original del lenguaje de programación                      | Deben estar los mismos lenguajes de la encuesta de StackOverflow            |
 | Type                  | Categórica Ordinal | El tipo de lenguaje del que se trata                              | Debe ser "*pl*", "*queryLanguage*", "*textMarkup*" y "*stylesheetLanguage*" |
 | N_Trabajos            | Numérica Discreta  | Número de trabajos relacionados al lenguaje de programación       | Debe ser mayor a 0                                                          |
@@ -517,7 +516,6 @@ encuesta %>%
   ) +
   theme_minimal()
 ```
-
 
 Se puede visualizar que el salario de los desarrolladores se concentra mayormente entre 50 000 y 60 000 dólares anuales. Además, existe un gran sesgo a la derecha, ya que el promedio es mucho mayor a la media. Esto se debe a que hay muchas personas que trabajan con varios lenguajes de programación.
 
@@ -1098,6 +1096,665 @@ ggplot(tabla_larga,
 
 En este gráfico podemos notar que no hay una relación clara entre la salud mental de los programadores y sus respectivos sistemas operativos, ya que podemos observar casi la misma proporción en cada uno. Los problemas más comunes son problemas de memoria, emocionales y de ansiedad. Pero, no podemos encontrar una relación directa entre ambas variables.
 
+## Análisis probabilístico
+
+## Probabilidad empírica
+
+### Variable Total de Lenguajes de programación usados
+
+Esta variable consta en la cantidad total de lenguajes de programación que los desarrolladores mencionaron usar. Se puede representar en un histograma:
+
+```{r}
+hist(encuesta$TotalLenguages,
+     col = "skyblue",
+     main = "Histograma del total de lenguajes de Programación",
+     xlab = "Cantidad de lenguajes", 
+     ylab = "Frecuencia",
+     ylim = c(0,10000),
+     breaks = 20
+)
+
+abline(v= mean(encuesta$TotalLenguages), col = "red", lty = 1)
+
+abline(v= median(encuesta$TotalLenguages), col = "blue", lty = 2)
+
+legend("topright", legend = c("Media", "Mediana"), col = c("red", "blue"), lty = c(1, 2))
+```
+
+Donde la media es: `r mean(encuesta$TotalLenguages)` y la mediana es: `r median(encuesta$TotalLenguages)`. Se aprecia que hay una mayor tendencia por trabajar con menos de 5 lenguajes de programación a diferencia con trabajar más de 5 lenguajes.
+
+------------------------------------------------------------------------
+
+Espacio de probabilidad de la variable: $(\Omega,\mathcal{F},\mathbb{P})$
+
+Donde:
+
+$$
+\Omega = [42] - \{0\} = \text{ Cantidad de lenguajes de programación que usa } \\
+\mathcal{F} = 2^\Omega = \text{ Subconjuntos de Omega }  \\
+\mathbb{P}(n) = \text{ Probabilidad de que use n lenguajes de programación }
+$$
+
+Calculando las probabilidades empíricas de los eventos atómicos:
+
+```{r}
+encuesta %>% group_by(TotalLenguages) %>% count() -> probTotalLenguajes
+probTotalLenguajes %>% rename(Frecuencia = n) -> probTotalLenguajes
+probTotalLenguajes$ProbabilidadAtomica <- probTotalLenguajes$Frecuencia / nrow(encuesta)
+probTotalLenguajes
+```
+
+Comprobamos que todos los eventos atómicos sumen 1:
+
+```{r}
+sum(probTotalLenguajes$ProbabilidadAtomica)
+```
+
+------------------------------------------------------------------------
+
+#### Función de masa de probabilidad
+
+```{r}
+plot(probTotalLenguajes$TotalLenguages, 
+     probTotalLenguajes$ProbabilidadAtomica, 
+     type = "h", 
+     col="red",
+     main = "Función de masa de probabilidad",
+     xlab = "Cantidad de lenguajes usados",
+     ylab = "Probabilidad",
+     ylim = c(0,0.2)
+)
+
+points(probTotalLenguajes$TotalLenguages, 
+     probTotalLenguajes$ProbabilidadAtomica,  
+     pch = 20, 
+     col="red",
+)
+```
+
+Introducción a la probabildad
+
+Evidentemente, hay una mayor probabilidad de que un desarrollador trabaje con entre 3 a 5 lenguajes de programación, debido a que tienden a profesionalizarse más en unos pocos.
+
+------------------------------------------------------------------------
+
+#### Función de masa de probabilidad acumulada
+
+```{r}
+probAcumulada <- ecdf(encuesta$TotalLenguages)
+
+ecdf_datos <- probAcumulada(0:43)
+
+plot(ecdf_datos, 
+     main = "Función de masa de probabilidad acumulada", 
+     xlab = "Cantidad de lenguajes usados", 
+     ylab = "Probabilidad acumulada",
+     col = "blue",
+)
+```
+
+------------------------------------------------------------------------
+
+### Variable cantidad de problemas de Salud Mental
+
+Esta variable muestra la cantidad total de problemas de salud mental que los desarrolladores sufren. Se puede representar la frecuencia en un barplot:
+
+```{r}
+BD <- data.frame("Memoria" = encuesta$Memoria, 
+                 "Ansiedad" = encuesta$Ansiedad, 
+                 "Aprendizaje" = encuesta$Aprendizaje, 
+                 "Autismo" = encuesta$Autismo, 
+                 "Emocional" = encuesta$Emocional)
+
+BD$TabProb2 <- rowSums(BD)
+
+TabProb2 <- data.frame(table(BD$TabProb2))
+TabProb2 %>% rename(TotalMentalHealth = Var1, Frecuencia = Freq) -> TabProb2
+
+barplot(TabProb2$Frecuencia,
+        names.arg = TabProb2$TotalMentalHealth,
+        main = "Total de problemas de salud mental que sufren",
+        xlab = "Núemro de problemas de salud mental",
+        ylab = "Frecuencia",
+        col = colorRampPalette(c("lightblue", "blue"))(5),
+        ylim = c(0,25000),
+        xlim = c(0,7)
+)
+```
+
+Donde claramente la moda es que no sufran ningún problema de salud mental.
+
+------------------------------------------------------------------------
+
+Espacio de probabilidad de la variable: $(\Omega,\mathcal{F},\mathbb{P})$
+
+Donde:
+
+$$
+\Omega = [5] = \text{ Cantidad de problemas de salud mental que sufre } \\
+\mathcal{F} = 2^\Omega = \text{ Subconjuntos de Omega }  \\
+\mathbb{P}(n) = \text{ Probabilidad de que sufra n problemas }
+$$
+
+Calculando las probabilidades empíricas de los eventos atómicos:
+
+```{r}
+TabProb2$ProbabilidadAtomica <- ((as.numeric(TabProb2$Frecuencia)/nrow(encuesta)))
+
+TabProb2
+```
+
+Comprobamos que todos los eventos atómicos sumen 1:
+
+```{r}
+
+```
+
+------------------------------------------------------------------------
+
+#### Función de masa de probabilidad
+
+```{r, include = FALSE}
+TabProb2$TotalMentalHealth <- as.numeric(as.character(TabProb2$TotalMentalHealth))
+str(TabProb2)
+```
+
+```{r}
+plot(TabProb2$TotalMentalHealth, 
+     TabProb2$ProbabilidadAtomica, 
+     type = "h", 
+     col = "red",
+     main = "Función de masa de probabilidad",
+     ylab = "Probabilidad",
+     xlab = "Cantidad de problemas mentales",
+     ylim = c(0,0.8),
+)
+
+points(TabProb2$TotalMentalHealth, 
+     TabProb2$ProbabilidadAtomica,  
+     pch = 20, 
+     col="red",
+)
+```
+
+Hay mayor probabilidad de que no sufra ningún problema de salud mental, pero existe la probabilidad de que sufra al menos 1 problema de salud mental
+
+------------------------------------------------------------------------
+
+#### Función de masa de probabilidad acumulada
+
+```{r}
+probAcumulada <- ecdf(BD$TabProb2)
+
+ecdf_datos <- probAcumulada(0:5)
+
+plot(ecdf_datos, 
+     main = "Función de masa de probabilidad acumulada", 
+     xlab = "Valores", 
+     ylab = "Probabilidad acumulada",
+     col = "blue"
+)
+```
+
+## Probabilidad condicional (1)
+
+### Eventos dependientes
+
+-   **Evento 1:** Las personas que trabajan con JavaScript y que tenga menos salario que el quartil del 15%
+
+-   **Evento 2:** Las personas que sufren de ansiedad
+
+> Se espera que las personas que trabajan con JavaScript, al ser el lenguaje más usado entre los entrevistados, y que ganan cifras inferiores a la del quantil del 15% sufran de **ansiedad.** Esto debido a que sería frustrante para el programador usar un lenguaje famoso y no tener las ganancias esperadas.
+
+------------------------------------------------------------------------
+
+### Quantil y probabilidades.
+
+-   Quantil del 15%:
+
+```{r}
+quantil <- quantile(encuesta$Salary, c(0.15), type = 6)
+cat("El quantil del 15% del salario de los programadores es de:", quantil)
+```
+
+-   Ganar menos que el quantil del 15% y trabajar en JS
+
+```{r}
+cantidad <- sum(encuesta$JavaScript == TRUE & encuesta$Salary < quantil, na.rm = TRUE)
+cat("Probabilidad de trabajar en JS y ganar menos que el quantil", 
+    round(100*cantidad/nrow(encuesta),2), "%")
+```
+
+-   Sufrir de ansiedad
+
+```{r}
+cantAnsiedad <- sum(encuesta$Ansiedad[encuesta$Ansiedad == TRUE])
+probabilidadAnsiedad <- cantAnsiedad/nrow(encuesta)
+cat("La probabilidad de que alguien sufra de ansiedad es: ",
+    round(100*probabilidadAnsiedad,2), "%")
+```
+
+------------------------------------------------------------------------
+
+### Mosaic Plot
+
+En el siguiente gráfico de mosaico se evidencia claramente que ambos eventos son dependientes ya que las probabilidades de sufrir ansiedad cuando usas JS y tienes un sueldo menor al quantil del 15% son mayores que cuando no.
+
+```{r echo=FALSE}
+# Contar la cantidad de personas que trabajan en JavaScript y ganan menos que el quantil con ansiedad
+JS_Ansiedad <- sum((encuesta$JavaScript == TRUE & encuesta$Salary < quantil) & encuesta$Ansiedad == TRUE)
+
+# Contar la cantidad de personas que trabajan en JavaScript y ganan menos que el quantil sin ansiedad
+JS_NoAnsiedad <- sum((encuesta$JavaScript == TRUE & encuesta$Salary < quantil) & encuesta$Ansiedad == FALSE)
+
+# Contar la cantidad de personas que no trabajan en JavaScript y ganan mas que el quantil con ansiedad
+NoJS_Ansiedad <- sum((encuesta$JavaScript == FALSE & encuesta$Salary > quantil) & encuesta$Ansiedad == TRUE)
+
+# Contar la cantidad de personas que no trabajan en JavaScript y ganan mas que el quantil sin ansiedad
+NoJS_NoAnsiedad <- sum((encuesta$JavaScript == FALSE & encuesta$Salary > quantil) & encuesta$Ansiedad == FALSE)
+
+# Crear la tabla de contingencia
+tabla_contingencia <- matrix(c(JS_Ansiedad, JS_NoAnsiedad,
+                               NoJS_Ansiedad, NoJS_NoAnsiedad),
+                             nrow = 2, ncol = 2, byrow = TRUE,
+                             dimnames = list(c("JavaScript", "No JavaScript"),
+                                             c("Ansiedad", "No Ansiedad")))
+
+
+# Crear el gráfico de mosaico
+mosaicplot(tabla_contingencia, main = "Gráfico de Mosaico")
+```
+
+## Probabilidad Condicional (2)
+
+### Eventos independientes
+
+-   **Evento 1:** Usa un lenguaje que está entre los 5 más populares.
+
+-   **Evento 2:** Sufre de 2 a más problemas mentales.
+
+### Relación:
+
+Queremos demostrar que nuestra salud mental no depende de si usamos un lenguaje **popular** o no. Para esto debemos demostrar que los eventos son **independientes:**
+
+-   P(E2\|E1) = P(E2)
+-   P(E1\|E2) = P(E1)
+
+------------------------------------------------------------------------
+
+### Probabilidades de los eventos:
+
+-   Usa un lenguaje entre los 5 más populares
+
+```{r}
+#seleccionar los 5 más populares (Java, Javascript, C, Python y SQL)
+
+java = encuesta$Java
+javascirpt = encuesta$JavaScript
+c = encuesta$C
+python = encuesta$Python
+sql = encuesta$SQL
+
+evento1 = java | javascirpt | c | python | sql
+
+#ahora calcularemos la probabilidad de que E1 sea verdadero
+	
+E1 = sum(evento1)/length(evento1)
+rm(java, javascirpt, c, python, sql)
+
+cat("la probabilidad del evento 1 es: ",E1, "%")
+
+```
+
+-   Sufre de 2 o más problemas de salud mental
+
+```{r}
+#de la misma forma contaremos los problemas mentales que tiene cada persona
+cantProblemas = encuesta$Memoria + encuesta$Emocional +encuesta$Ansiedad + encuesta$Autismo +encuesta$Aprendizaje
+
+#ahora la probabilidad de tener 2 a más
+E2 = length(cantProblemas[cantProblemas >= 2])/length(cantProblemas)
+
+cat("Probabilidad del evento 2 es: ",E2, "%")
+```
+
+-   Usa alguno de los 5 lenguajes más populares y sufre de 2 o más problemas de salud mental
+
+```{r}
+#uniremos ambas columnas y contaremos las que cumplen con E1 y E2
+total = data.frame(evento1, cantProblemas)
+
+#ahora contamos los que cumplen con ambas
+E1E2 = nrow(total[total$evento1 == TRUE & total$cantProblemas >= 2,])/nrow(total)
+
+cat("Prbabilidad del evento 1 y evento 2: ",E1E2, "%")
+```
+
+#### ¿Son independientes?
+
+```{r}
+E2dadoE1 = E1E2/E1
+
+cat("P(E2): ", round(E2, 4), "\n")
+cat("P(E2|E1): ", round(E2dadoE1, 4), "\n")
+
+cat("diferencia entre lo esperado y lo obtenido:", round(abs(E2 - E2dadoE1),3))
+```
+
+Y como la diferencia entre lo esperado y lo obtenido es **APROXIMADAMENTE** nula, podemos decir que son eventos independientes.
+
+------------------------------------------------------------------------
+
+### Mosaic Plot
+
+```{r echo=FALSE}
+java = encuesta$Java
+javascirpt = encuesta$JavaScript
+c = encuesta$C
+python = encuesta$Python
+sql = encuesta$SQL
+
+#las columnas son de verdadero y falso, por lo que hay que unirlas como si de ORs se trataran
+
+evento1 = java | javascirpt | c | python | sql       
+#ahora calcularemos la probabilidad de que E1 sea verdadero
+	
+E1 = sum(evento1)/length(evento1)
+
+cantProblemas = encuesta$Memoria + encuesta$Emocional +encuesta$Ansiedad + encuesta$Autismo +encuesta$Aprendizaje
+
+#ahora la probabilidad de tener 2 a más
+E2 = length(cantProblemas[cantProblemas >= 2])/length(cantProblemas)
+
+#uniremos ambas columnas y contaremos las que cumplen con E1 y E2
+total = data.frame(evento1, cantProblemas)
+
+#ahora contamos los que cumplen con ambas
+E1E2 = nrow(total[total$evento1 == TRUE & total$cantProblemas >= 2,])/nrow(total)
+
+# mayor o igual a 2 vector
+total$cantProblemas = total$cantProblemas >= 2
+
+#mosaic plot con labels
+mosaicplot(table(total$evento1, total$cantProblemas),
+	main = "Eventos independientes",
+	xlab = "Uno o más de los 5 lenguajes populares",
+	ylab = "2 o más problemas mentales")
+```
+
+Se puede evidenciar en el **Mosaic Plot** que los eventos son **INDEPENDIENTES.**
+
+# Eventos dependientes
+
+Las personas que trabajan en el lenguaje mas usado y que tenga menos salario que el quantil / tenga ansiedad
+
+```{r}
+suma_APL <- sum(encuesta$APL == TRUE)
+suma_Assembly <- sum(encuesta$Assembly == TRUE)
+suma_bash <- sum(encuesta$`Bash/Shell` == TRUE)
+sumaC <- sum(encuesta$C == TRUE)
+sumaCsharp <- sum(encuesta$`C#` == TRUE)
+sumaCmasmas <- sum(encuesta$`C++`==TRUE)
+sumaCobol <- sum(encuesta$COBOL == TRUE)
+sumaClojure <- sum(encuesta$Clojure == TRUE)
+sumaCrystal <- sum(encuesta$Crystal == TRUE)
+sumaDart <- sum(encuesta$Dart == TRUE)
+sumaDelphi <- sum(encuesta$Delphi == TRUE)
+sumaElixir <- sum(encuesta$Elixir == TRUE)
+sumaErlang <- sum(encuesta$Erlang == TRUE)
+sumaFsharp <- sum(encuesta$`F#` == TRUE)
+sumaFortran <- sum(encuesta$Fortran == TRUE)
+sumaGO <- sum(encuesta$Go == TRUE)
+sumaGroovy <- sum(encuesta$Groovy == TRUE)
+sumaHTML <- sum(encuesta$`HTML/CSS` == TRUE)
+sumaHaskell <- sum(encuesta$Haskell == TRUE)
+sumaJava <- sum(encuesta$Java == TRUE)
+sumaJavaScript <- sum(encuesta$JavaScript == TRUE)
+sumaJulia <- sum(encuesta$Julia == TRUE)
+sumaKotlin <- sum(encuesta$Kotlin == TRUE)
+sumaLISP <- sum(encuesta$LISP == TRUE)
+sumaLua <- sum(encuesta$Lua == TRUE)
+sumaMatlab <- sum(encuesta$MATLAB == TRUE)
+sumaOcaml <- sum(encuesta$OCaml == TRUE)
+sumaOC <- sum(encuesta$`Objective-C` == TRUE)
+sumaPhp <- sum(encuesta$PHP == TRUE)
+sumaPerl <- sum(encuesta$Perl == TRUE)
+sumaPowerShell <- sum(encuesta$PowerShell == TRUE)
+sumaPython <- sum(encuesta$Python == TRUE)
+sumaR <- sum(encuesta$R == TRUE)
+sumaRuby <- sum(encuesta$Ruby == TRUE)
+sumaRust <- sum(encuesta$Rust == TRUE)
+sumaSas <- sum(encuesta$SAS == TRUE)
+sumaSql <- sum(encuesta$SQL == TRUE)
+sumaScala <- sum(encuesta$Scala == TRUE)
+sumaSolidity <- sum(encuesta$Solidity == TRUE)
+sumaSwift <- sum(encuesta$Swift == TRUE)
+sumaTS <- sum(encuesta$TypeScript == TRUE)
+sumaVBA <- sum(encuesta$VBA == TRUE)
+sumas <- c(suma_APL,suma_Assembly, suma_bash, sumaC, sumaCsharp, sumaCmasmas, sumaCobol, sumaClojure, sumaCrystal, sumaDart,sumaDelphi, sumaElixir, sumaErlang,sumaFsharp, sumaFortran, sumaGO,sumaGroovy, sumaHTML,  sumaHaskell,sumaJava, sumaJavaScript, sumaJulia,sumaKotlin,sumaLISP,sumaLua,sumaMatlab,sumaOcaml,sumaOC,sumaPhp,sumaPerl,sumaPowerShell, sumaPython,sumaR ,sumaRuby,sumaRust,sumaSas,sumaSql,sumaScala,sumaSolidity,sumaSwift,sumaTS,sumaVBA )
+
+nombres <- c('suma_APL','suma_Assembly', 'suma_bash', 'sumaC', 'sumaCsharp', 'sumaCmasmas', 'sumaCobol', 'sumaClojure', 'sumaCrystal', 'sumaDart','sumaDelphi', 'sumaElixir', 'sumaErlang','sumaFsharp', 'sumaFortran', 'sumaGO','sumaGroovy', 'sumaHTML',  'sumaHaskell','sumaJava', 'JavaScript', 'sumaJulia','sumaKotlin','sumaLISP','sumaLua','sumaMatlab','sumaOcaml','sumaOC','sumaPhp','sumaPerl','sumaPowerShell', 'sumaPython','sumaR' ,'sumaRuby','sumaRust','sumaSas','sumaSql','sumaScala','sumaSolidity','sumaSwift','sumaTS','sumaVBA' )
+
+indice_max <- which.max(sumas)
+variable_max <- nombres[indice_max]
+cat("El lenguaje de programacion mas usado es:", variable_max)
+```
+
+```{r}
+quantil <- quantile(encuesta$Salary, c(0.15), type = 6)
+cat("El quantil del 15% del salario de los programadores es de:", quantil)
+```
+
+Las personas que trabajan en JavaScript con salario \< 76153.59 / tenga ansiedad
+
+```{r}
+cantidad <- sum(encuesta$Erlang == TRUE & encuesta$Salary < quantil, na.rm = TRUE)
+cat("La cantidad de personas que trabajan en JavaScript con salario inferior al quantil del 15% son:", cantidad, "\n")
+cat("La probabilidad de estas mismas es: ", round(100*cantidad/nrow(encuesta),2), "%")
+```
+
+```{r}
+cantAnsiedad <- sum(encuesta$Memoria[encuesta$Memoria == TRUE])
+probabilidadAnsiedad <- cantAnsiedad/nrow(encuesta)
+cat("La probabilidad de que alguien sufra de ansiedad es: ", round(100*probabilidadAnsiedad,5), "%")
+```
+
+```{r}
+pruebita2 <- data.frame(probabilidadJavaScript = c(probabilidadJS, 1-probabilidadJS),
+                       probabilidad_ansiedad = c(probabilidadAnsiedad, 1- probabilidadAnsiedad),
+                       row.names = c("JavaScript", "No JavaScript"))
+pruebita2
+```
+
+```{r}
+sum(encuesta$JavaScript == TRUE & encuesta$Salary < quantil & encuesta$Ansiedad == TRUE)/nrow(encuesta)
+```
+
+```{r}
+10.88/100*11.71/100
+```
+
+```{r}
+# Contar la cantidad de personas que trabajan en JavaScript y ganan menos que el quantil con ansiedad
+JS_Ansiedad <- sum((encuesta$JavaScript == TRUE & encuesta$Salary < quantil) & encuesta$Ansiedad == TRUE)
+
+# Contar la cantidad de personas que trabajan en JavaScript y ganan menos que el quantil sin ansiedad
+
+
+
+
+JS_NoAnsiedad <- sum((encuesta$JavaScript == TRUE & encuesta$Salary < quantil) & encuesta$Ansiedad == FALSE)
+
+# Contar la cantidad de personas que no trabajan en JavaScript y ganan mas que el quantil con ansiedad
+NoJS_Ansiedad <- sum((encuesta$JavaScript == FALSE & encuesta$Salary > quantil) & encuesta$Ansiedad == TRUE)
+
+# Contar la cantidad de personas que no trabajan en JavaScript y ganan mas que el quantil sin ansiedad
+NoJS_NoAnsiedad <- sum((encuesta$JavaScript == FALSE & encuesta$Salary > quantil) & encuesta$Ansiedad == FALSE)
+
+# Crear la tabla de contingencia
+tabla_contingencia <- matrix(c(JS_Ansiedad, JS_NoAnsiedad,
+                               NoJS_Ansiedad, NoJS_NoAnsiedad),
+                             nrow = 2, ncol = 2, byrow = TRUE,
+                             dimnames = list(c("JavaScript", "No JavaScript"),
+                                             c("Ansiedad", "No Ansiedad")))
+tabla_contingencia
+
+# Crear el gráfico de mosaico
+mosaicplot(tabla_contingencia, main = "Gráfico de Mosaico")
+
+```
+
+```{r}
+P_JS <- sum(encuesta$JavaScript == TRUE) / nrow(encuesta)
+P_NoJS <- sum(encuesta$JavaScript == FALSE) / nrow(encuesta)
+P_Ansiedad <- sum(encuesta$Ansiedad == TRUE) / nrow(encuesta)
+P_NoAnsiedad <- sum(encuesta$Ansiedad == FALSE) / nrow(encuesta)
+
+P_A_given_JS <- JS_Ansiedad / sum(encuesta$JavaScript == TRUE & encuesta$Salary < quantil)
+P_B_given_JS <- JS_Ansiedad / sum((encuesta$JavaScript == TRUE & encuesta$Salary < quantil) & encuesta$Ansiedad == TRUE)
+P_A_given_NoJS <- NoJS_Ansiedad / sum(encuesta$JavaScript == FALSE & encuesta$Salary > quantil)
+P_B_given_NoJS <- NoJS_Ansiedad / sum((encuesta$JavaScript == FALSE & encuesta$Salary > quantil) & encuesta$Ansiedad == TRUE)
+
+if (P_A_given_JS == P_Ansiedad && P_B_given_JS == P_Ansiedad) {
+cat("El evento A (Ansiedad) y el evento B (JavaScript) son independientes.\n")
+} else {
+cat("El evento A (Ansiedad) y el evento B (JavaScript) son dependientes.\n")
+}
+
+if (P_A_given_NoJS == P_Ansiedad && P_B_given_NoJS == P_Ansiedad) {
+cat("El evento A (Ansiedad) y el evento B (No JavaScript) son independientes.\n")
+} else {
+cat("El evento A (Ansiedad) y el evento B (No JavaScript) son dependientes.\n")
+}
+
+```
+
+```{r}
+P_JS <- sum(encuesta$JavaScript == TRUE) / nrow(encuesta)
+P_NoJS <- sum(encuesta$JavaScript == FALSE) / nrow(encuesta)
+P_Ansiedad <- sum(encuesta$Ansiedad == TRUE) / nrow(encuesta)
+P_NoAnsiedad <- sum(encuesta$Ansiedad == FALSE) / nrow(encuesta)
+
+
+P_A_given_JS <- JS_Ansiedad / sum(encuesta$JavaScript == TRUE & encuesta$Salary < quantil)
+  P_B_given_JS <- JS_Ansiedad / sum((encuesta$JavaScript == TRUE & encuesta$Salary < quantil) & encuesta$Ansiedad == TRUE)
+
+P_A_given_NoJS <- NoJS_Ansiedad / sum(encuesta$JavaScript == FALSE & encuesta$Salary > quantil)
+P_B_given_NoJS <- NoJS_Ansiedad / sum((encuesta$JavaScript == FALSE & encuesta$Salary > quantil) & encuesta$Ansiedad == TRUE)
+
+
+if (P_A_given_JS == P_Ansiedad && P_B_given_JS == P_Ansiedad) {
+cat("\nEl evento A (Ansiedad) y el evento B (JavaScript) son independientes.\n")
+} else {
+cat("\nEl evento A (Ansiedad) y el evento B (JavaScript) son dependientes.\n")
+}
+
+if (P_A_given_NoJS == P_Ansiedad && P_B_given_NoJS == P_Ansiedad) {
+cat("El evento A (Ansiedad) y el evento B (No JavaScript) son independientes.\n")
+} else {
+cat("El evento A (Ansiedad) y el evento B (No JavaScript) son dependientes.\n")
+}
+```
+
+# Eventos independientes
+
+------------------------------------------------------------------------
+
+## ¿Usar un lenguaje popular influirá en mi salud mental?
+
+Para comprobar este punto seleccionaremos dos eventos:
+
+-   E1: Usa un lenguaje que está entre los 5 más populares.
+
+-   E2: Sufre de 2 a más problemas mentales.
+
+### Relación:
+
+Queremos demostrar que nuestra salud mental no depende de si usamos un lenguaje **popular** o no. Para esto debemos demostrar que los eventos son **independientes:**
+
+Entonces debemos pensar que:
+
+-   P(E2\|E1) = P(E2). Es decir que las probabilidades de sufrir de 2 problemas mentales a más son las mismas sin importar si usamos o no uno de los 5 lenguajes más populares.
+
+### Probabilidad E1:
+
+```{r}
+#seleccionar los 5 más populares (Java, Javascript, C, Python y SQL)
+
+java = encuesta$Java
+javascirpt = encuesta$JavaScript
+c = encuesta$C
+python = encuesta$Python
+sql = encuesta$SQL
+
+#las columnas son de verdadero y falso, por lo que hay que unirlas como si de ORs se trataran
+
+evento1 = java | javascirpt | c | python | sql
+
+#ahora calcularemos la probabilidad de que E1 sea verdadero
+	
+E1 = sum(evento1)/length(evento1)
+
+rm(java, javascirpt, c, python, sql)
+
+E1
+
+```
+
+### Probabilidad E2:
+
+```{r}
+#de la misma forma contaremos los problemas mentales que tiene cada persona
+cantProblemas = encuesta$Memoria + encuesta$Emocional +encuesta$Ansiedad + encuesta$Autismo +encuesta$Aprendizaje
+
+#ahora la probabilidad de tener 2 a más
+E2 = length(cantProblemas[cantProblemas >= 2])/length(cantProblemas)
+
+E2
+
+```
+
+### Probabilidad de E2 y E1:
+
+```{r}
+
+#uniremos ambas columnas y contaremos las que cumplen con E1 y E2
+total = data.frame(evento1, cantProblemas)
+
+#ahora contamos los que cumplen con ambas
+E1E2 = nrow(total[total$evento1 == TRUE & total$cantProblemas >= 2,])/nrow(total)
+
+E1E2
+
+```
+
+## ¿Son independientes?
+
+Para comprobar que son independientes calcularemos P(E2\|E1).
+
+```{r}
+
+E2dadoE1 = E1E2/E1
+
+cat("P(E2): ", round(E2, 2), "\n")
+cat("P(E2|E1): ", round(E2dadoE1, 2), "\n")
+
+cat("diferencia entre lo esperado y lo obtenido:", round(abs(E2 - E2dadoE1),2))
+```
+
+Con esta relación demostramos que no existe una relación entre si usamos un lenguaje "popular" y nuestra salud mental ya que ambos eventos son independientes.
+
+```{r}
+# mayor o igual a 2 vector
+total$cantProblemas = total$cantProblemas >= 2
+
+#mosaic plot con labels
+mosaicplot(table(total$evento1, total$cantProblemas),
+	main = "Eventos independientes",
+	xlab = "Uno o más de los 5 lenguajes populares",
+	ylab = "2 o más problemas mentales")
+```
+
 ### Conclusiones Parciales
 
 En síntesis, refiriéndose al análisis descriptivo, el estudio muestra correlaciones entre la popularidad, facilidad de uso y remuneración de un lenguaje de programación y la salud mental de los programadores. Sin embargo, no se puede establecer una relación directa y determinante entre dichos factores y el estado mental.
@@ -1113,4 +1770,3 @@ En conclusión, el estudio destaca la importancia de considerar múltiples facto
 Stack Overflow (2022). *Stack Overflow Annual Developer Survey.* <https://insights.stackoverflow.com/survey>
 
 PLDB (2023). *Programming Language Data Base.* <https://github.com/breck7/pldb>
-
