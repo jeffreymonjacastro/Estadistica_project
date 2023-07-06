@@ -89,8 +89,6 @@ lambda <- fit$estimate
 x <- 0:6
 densidad <- dpois(x, lambda)
 
-lines(x, densidad, type= "l", lty = 2, col = "blue")
-
 # plot(x, densidad, type = "h", lwd = 2, col = "blue",
 #     xlab = "Valores de x", ylab = "Densidad de probabilidad",
 #     main = "Distribución Poisson")

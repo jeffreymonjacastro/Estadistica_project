@@ -7,6 +7,10 @@ editor: visual
 ## Tests
 
 ```{r}
+library(fitdistrplus)
+```
+
+```{r}
 X <- rnorm(50, mean = 17, sd = 3)
 ```
 
@@ -41,11 +45,12 @@ library(fitdistrplus)
 ```
 
 ```{r}
-descdist(encuesta$Salary, boot = 5000)
+descdist(encuesta$Salary)
 ```
 
 ```{r}
 FDG <- fitdist(encuesta$Salary, "gamma", start = list(shape = 1, scale = 2))
+FDG
 ```
 
 ```{r}
@@ -53,10 +58,72 @@ plot(FDG, pch = ".", col = "blue")
 ```
 
 ```{r}
-hist(encuesta$Salary, prob = TRUE)
+hist(encuesta$Salary, prob = TRUE, breaks = 20)
 Xs <- seq(0, 280000, by = 10)
 lines(Xs, dgamma(Xs, shape = 1.847037, scale = 41656.428380), col = "red")
 ```
+
+```{r}
+median(encuesta$Salary)
+mean(encuesta$Salary)
+```
+
+```{r}
+boxplot(encuesta$Salary, horizontal = T)
+```
+
+Densidad Condicional (Uniforme)
+
+Cuando se vizualiza entre 40000 y 60000 se ve uniforme
+
+```{r}
+hist(encuesta$Salary, prob = TRUE, xlim = c(60000,300000))
+
+pruebaSalary <- encuesta %>% filter(Salary > 30000 & Salary < 70000)
+hist(pruebaSalary$Salary, breaks = 10)
+```
+
+```{r}
+number <- encuesta %>% filter(Salary > 30000 & Salary < 70000) %>% count()/nrow(encuesta)
+number
+```
+
+```{r}
+descdist(pruebaSalary$Salary)
+```
+
+```{r}
+FDUnif <- fitdist(pruebaSalary$Salary, "unif")
+FDUnif
+```
+
+```{r}
+plot(FDUnif, pch = ".", col = "blue")
+```
+
+```{r}
+hist(pruebaSalary$Salary, prob = TRUE, breaks = 10)
+Xs <- seq(0, 280000, by = 10)
+lines(Xs, dunif(Xs,FDUnif$estimate[1],FDUnif$estimate[2]), col = "red", lwd = 2)
+```
+
+**Demostrar con las fórmulas de esperanza y la media**
+
+```{r}
+Ex <- (30000 + 70000)/2
+Ex
+mean(pruebaSalary$Salary)
+```
+
+```{r}
+sd(pruebaSalary$Salary)
+
+
+varx <- (70000 - 30000)^2/12
+sqrt(varx)
+```
+
+Parece ser Uniforme
 
 Con esta libreria vamos a evaluar que variables nossirve
 
@@ -75,3 +142,21 @@ library()
 -   Distribucion Bernoulli
 
 -   Ditribucion Binomial
+
+```{r}
+segmento <- encuesta %>% filter( Salary >= 3600  & Salary <= 250000) 
+
+segmento
+```
+
+```{r}
+hist(segmento$Salary)
+```
+
+```{r}
+
+FDG <- fitdist(encuesta$Salary, "gamma", start = list(shape = 1, scale = 2))
+```
+
+```         
+```
