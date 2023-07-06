@@ -71,17 +71,17 @@ table(box$out)
 
 **Item 1: Análisis probabilístico de la variable "total de lenguajes de programación"**
 
-Espacio de probabilidad de la variable: $(\Omega,\mathcal{F},\mathbb{P})$
+Espacio de probabilidad de la variable: $(\Omega,\mathcal{F_1},\mathbb{P})$
 
 Donde:
 
 $$
-\Omega = [42] - \{0\} =\{ \text{ cantidad de lenguajes de programación que usa } \} \\
-\mathcal{F} = 2^\Omega \\
+\Omega_1 = [42] - \{0\} =\{ \text{ cantidad de lenguajes de programación que usa } \} \\
+\mathcal{F} = 2^{|\Omega_1|} \\
 \mathbb{P}(n) = \{ \text{ probabilidad de que use n lenguajes de programación } \} 
 $$
 
-Calculando las probabilidades empíricas de los eventos atómicos:
+-   Calculando las probabilidades empíricas de los eventos atómicos:
 
 ```{r}
 encuesta %>% group_by(TotalLenguages) %>% count() -> probTotalLenguajes
@@ -94,6 +94,10 @@ probTotalLenguajes$ProbabilidadAtomica <- probTotalLenguajes$Frecuencia / nrow(e
 
 ```{r}
 probTotalLenguajes
+```
+
+```{r}
+sum(probTotalLenguajes$ProbabilidadAtomica)
 ```
 
 ### Función de masa de probabilidad
@@ -129,4 +133,32 @@ plot(ecdf_datos,
      ylab = "Probabilidad acumulada",
      col = "blue",
 )
+```
+
+```{r}
+table(encuesta$Age)
+```
+
+```{r}
+
+encuesta$ModifiedAge <- encuesta$Age
+encuesta$ModifiedAge <- ifelse(encuesta$ModifiedAge == "Under 18 years old", 1, encuesta$ModifiedAge)
+encuesta$ModifiedAge <- ifelse(encuesta$ModifiedAge == "18-24 years old", 2, encuesta$ModifiedAge)
+encuesta$ModifiedAge <- ifelse(encuesta$ModifiedAge == "25-34 years old", 3, encuesta$ModifiedAge)
+encuesta$ModifiedAge <- ifelse(encuesta$ModifiedAge == "35-44 years old", 4, encuesta$ModifiedAge)
+encuesta$ModifiedAge <- ifelse(encuesta$ModifiedAge == "45-54 years old", 5, encuesta$ModifiedAge)
+encuesta$ModifiedAge <- ifelse(encuesta$ModifiedAge == "55-64 years old", 6, encuesta$ModifiedAge)
+encuesta$ModifiedAge <- ifelse(encuesta$ModifiedAge == "65 years or older",7, encuesta$ModifiedAge)
+encuesta$ModifiedAge <- as.numeric(encuesta$ModifiedAge)
+encuesta$salarioSobrecantLenguajes <- encuesta$Salary*encuesta$ModifiedAge/(1+encuesta$TotalMentalHealth)
+
+plot(density(encuesta$salarioSobrecantLenguajes , na.rm = T))descdist(encuesta$salarioSobrecantLenguajes)
+```
+
+```{r}
+FDG <- fitdist(encuesta$salarioSobrecantLenguajes, "gamma", start = list(shape = 1, scale = 1))
+```
+
+```{r}
+plot(FDG, pch = ".", col = "blue")
 ```
