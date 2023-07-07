@@ -75,7 +75,7 @@ boxplot(encuesta$Salary, horizontal = T)
 
 Densidad Condicional (Uniforme)
 
-Cuando se vizualiza entre 40000 y 60000 se ve uniforme
+Cuando se visualiza entre 40000 y 60000 se ve uniforme
 
 ```{r}
 hist(encuesta$Salary, prob = TRUE, xlim = c(60000,300000))

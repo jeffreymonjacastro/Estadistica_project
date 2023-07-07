@@ -172,10 +172,6 @@ planguages <- read_csv("Programming_languages.csv")
 encuesta <- read_csv("upload_survey_results.csv")
 ```
 
-```{r}
-write.csv(planguages, "programming_languages_limpia.csv", row.names = FALSE)
-```
-
 
 ## Limpieza de Datos
 
