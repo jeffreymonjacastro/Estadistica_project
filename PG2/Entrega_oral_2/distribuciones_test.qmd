@@ -85,8 +85,8 @@ hist(pruebaSalary$Salary, breaks = 10)
 ```
 
 ```{r}
-number <- encuesta %>% filter(Salary > 30000 & Salary < 70000) %>% count()/nrow(encuesta)
-number
+encuesta %>% filter(Salary > 30000 & Salary < 70000) %>% count()/nrow(encuesta)
+
 ```
 
 ```{r}

@@ -19,7 +19,7 @@ plot(probTotalLenguajes$TotalLenguajes,
      probTotalLenguajes$ProbabilidadAtomica, 
      type = "h", 
      col="red",
-     main = "Función de masa de probabilidad",
+     main = "Comparación de la variable 'Total de lenguajes' y Poisson",
      xlab = "Cantidad de lenguajes usados",
      ylab = "Probabilidad",
      ylim = c(0,0.2)
@@ -33,6 +33,12 @@ points(probTotalLenguajes$TotalLenguajes,
 
 lines(dpois(1:50, mean(encuesta$TotalLenguajes)), col="blue", type="l", lwd = 2, lty = 2)
 
+legend("topright", 
+       legend = c("Función de probabilidad", "Distribución de Poisson"), 
+       col = c("red", "blue"), 
+       lwd = 2,
+       lty = c(1,2)
+)
 ```
 
 Media
