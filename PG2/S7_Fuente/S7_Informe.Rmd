@@ -129,7 +129,7 @@ Luego de la limpieza, decidimos mantenernos con `12` variables que se relacionan
 ### Encuestas de Stakoverflow
 
 | Nombre de la variable | Tipo de variable   | Descripción                                               | Restricciones                                        |
-|-----------------------|--------------------|-----------------------------------------------------------|------------------------------------------------------|
+|------------------|------------------|-------------------|------------------|
 | Age                   | Categórica Ordinal | Edad                                                      | \-                                                   |
 | Gender                | Categórica Ordinal | Género                                                    | Man y Woman                                          |
 | Salary                | Numérica Contínua  | El salario anual en dólares del desarrollador             | [3600 - 249153]                                      |
@@ -140,7 +140,7 @@ Luego de la limpieza, decidimos mantenernos con `12` variables que se relacionan
 ### PLDB Lenguajes de Programación
 
 | Nombre de la variable | Tipo de variable   | Descripción                                                       | Restricciones                                                               |
-|-----------------------|--------------------|-------------------------------------------------------------------|-----------------------------------------------------------------------------|
+|------------------|------------------|------------------|-------------------|
 | Nombre                | Categórica Nominal | Nombre original del lenguaje de programación                      | Deben estar los mismos lenguajes de la encuesta de StackOverflow            |
 | Type                  | Categórica Ordinal | El tipo de lenguaje del que se trata                              | Debe ser "*pl*", "*queryLanguage*", "*textMarkup*" y "*stylesheetLanguage*" |
 | N_Trabajos            | Numérica Discreta  | Número de trabajos relacionados al lenguaje de programación       | Debe ser mayor a 0                                                          |
@@ -269,6 +269,101 @@ barplot(OrdenUsuarios$N_Usuarios,
         las = 2
         )
 ```
+
+#### Total de lenguajes de programación
+
+```{r}
+encuesta$TotalLenguajes <- 0
+```
+
+```{r}
+for (i in 1:nrow(encuesta)) {
+  cont <- 0
+  for (pl in language) {
+    if (encuesta[i, pl] == TRUE){
+      cont <- cont + 1
+    }
+  }
+  encuesta[i, 'TotalLenguajes'] <- cont
+}
+```
+
+```{r}
+encuesta %>% group_by(TotalLenguages) %>% count()
+```
+
+```{r}
+hist(encuesta$TotalLenguajes,
+     col = "skyblue",
+     main = "Histograma del total de lenguajes de Programación",
+     xlab = "Cantidad de lenguajes", 
+     ylab = "Frecuencia",
+     breaks = 20
+)
+
+abline(v= mean(encuesta$TotalLenguajes), col = "red", lty = 1)
+
+abline(v= median(encuesta$TotalLenguajes), col = "blue", lty = 2)
+
+legend("topright", legend = c("Media", "Mediana"), col = c("red", "blue"), lty = c(1, 2))
+```
+
+Donde la media es: `r mean(encuesta$TotalLenguages)` y la mediana es: `r median(encuesta$TotalLenguages)`. Se aprecia que hay una mayor tendencia por trabajar con menos de 5 lenguajes de programación a diferencia con trabajar más de 5 lenguajes
+
+#### Total de problemas de Salud Mental
+
+```{r}
+MentalHealth <- c("Memoria", "Ansiedad", "Aprendizaje", "Autismo", "Emocional")
+```
+
+```{r}
+encuesta$TotalMentalHealth <- 0
+
+for (i in 1:nrow(encuesta)) {
+  cont <- 0
+  for (problem in MentalHealth) {
+    if (encuesta[i, problem] == TRUE){
+      cont <- cont + 1
+    }
+  }
+  encuesta[i, 'TotalMentalHealth'] <- cont
+}
+```
+
+```{r}
+barplot(table(encuesta$TotalMentalHealth),
+     col = colorRampPalette(c("lightblue", "blue"))(6),
+     main = "Total de problemas de salud mental",
+     xlab = "Cantidad de problemass de salud mental", 
+     ylab = "Frecuencia",
+)
+```
+
+#### Variable Edad
+
+```{r}
+ages <- c("Under 18 years old", "18-24 years old", "25-34 years old", "45-54 years old", "55-64 years old", "65 years or older")
+
+encuesta$ModifiedAge <- 0
+
+encuesta$ModifiedAge <- ifelse(
+  encuesta$Age == "Under 18 years old", 0, 
+  ifelse(encuesta$Age == "18-24 years old", 1, 
+    ifelse(encuesta$Age == "25-34 years old", 2, 
+      ifelse(encuesta$Age == "35-44 years old", 3,
+        ifelse(encuesta$Age == "45-54 years old", 4,
+          ifelse(encuesta$Age == "55-64 years old", 5, 
+            ifelse(encuesta$Age == "65 years or older", 6, encuesta$ModifiedAge)))))))
+```
+
+```{r}
+barplot(table(encuesta$ModifiedAge), 
+     main = "Frecuencia de edades",
+     xlab = "Rango de edades",
+     ylab = "Frecuencia",
+     col="pink")
+```
+
 
 ### ¿Existe una relación entre el lenguaje de programación utilizado por un desarrollador y su salud mental?
 
@@ -615,55 +710,6 @@ Si analizamos el número de trabajos por lenguaje notaremos la misma **tendencia
 
 Aún es demasiado temprano para sacar conclusiones sobre si existe una relación clara entre la popularidad del lenguaje y su efecto en la salud mental, faltarían analizar otros factores que veremos ahora mismo.
 
-### ¿Existe una relación entre el acceso a información relevante sobre un lenguaje de programación y la salud mental de los programadores que lo utilizan?
-
-El acceso a la información, o la cantidad de documentación que existe sobre cierto lenguaje podría influir significativamente en la popularidad y la salud mental de un programador.
-
-Analizaremos el siguiente gráfico:
-
-```{r}
-planguages %>% arrange(desc(Github_repos)) -> OrdenGithubrep
-
-barplot(OrdenGithubrep$Github_repos, 
-        names.arg = OrdenGithubrep$Nombre,
-        col = "red",
-        main = "Cantidad de repositorios en Github por Lenguaje",
-        xlab = "Lenguajes de programación",
-        ylab = "N° Repositorios en Github",
-        cex.names = 0.6,
-        cex.axis = 0.7,
-        ylim = c(0,20000000),
-        las = 2
-        )
-```
-
-```{r}
-planguages %>% arrange(desc(BigQuery_repos)) -> OrdenBigQueryrep
-
-barplot(OrdenBigQueryrep$BigQuery_repos, 
-        names.arg = OrdenBigQueryrep$Nombre,
-        col = "green",
-        main = "Cantidad de repositorios en BigQuery por Lenguaje",
-        xlab = "Lenguajes de programación",
-        ylab = "N° Repositorios en BigQuery",
-        cex.names = 0.6,
-        cex.axis = 0.7,
-        ylim = c(0,1200000),
-        las = 2
-        )
-
-```
-
-Analizando los gráficos notaremos que son los lenguajes a los que clasificamos como **"poco problemáticos"** son los que presentan mayor número de repositorios disponibles.
-
-Por otro lado, notaremos que son justo los lenguajes **"problematicos"** los que presentan muchisimo menos número de repositorios.
-
-Con este análisis la visión es distinta. Si lo vemos en conjunto con el de popularidad podríamos decir que es natural que los lenguajes más populares tengan mayor cantidad de contenido disponible en la web. Entonces notaremos una transitividad:
-
-> Mayor popularidad del lenguaje -\> Mayor cantidad de repositorios -\> Menos "problemáticos"
->
-> Menor popularidad del lenguaje -\> Menor cantidad de repositorios -\> Más "problemáticos"
-
 ### ¿Hay una relación entre el salario asociado a un lenguaje de programación y la salud mental de los programadores que lo utilizan?
 
 Pero no solo es la popularidad o la cantidad de información acerca del lenguaje los que pueden ser factores que afecten a la salud mental del desarrollador. También podemos analizar el salario medio de cada lenguaje y ver como este afecta a la salud mental del desarrollador.
@@ -741,59 +787,6 @@ encuesta %>%
 
 Las personas con problemas mentales tienen salarios más altos, lo que sugiere que el salario no garantiza una buena salud mental. Esto podría ser debido a una mayor carga laboral que conlleva a un mayor ingreso, pero también a una falta de estabilidad mental.
 
-### ¿Existe una relación entre el sistema operativo utilizado en el trabajo y la salud mental de los individuos?
-
-#### Tablas Necesarias
-
-```{r}
-OP <- function(SisOp){
-  SisOp <- substitute(SisOp)
-  data.frame(ProfessionalOS = deparse(SisOp),
-             TotalMemoria = sum(encuesta[[SisOp]] == TRUE & encuesta$Memoria == TRUE)/nrow(encuesta[encuesta[[SisOp]] == TRUE,]),
-             TotalEmocional = sum(encuesta[[SisOp]] == TRUE & encuesta$Emocional == TRUE)/nrow(encuesta[encuesta[[SisOp]] == TRUE,]),
-             TotalAnsiedad = sum(encuesta[[SisOp]] == TRUE & encuesta$Ansiedad == TRUE)/nrow(encuesta[encuesta[[SisOp]] == TRUE,]),
-             TotalAutismo = sum(encuesta[[SisOp]] == TRUE & encuesta$Autismo == TRUE)/nrow(encuesta[encuesta[[SisOp]] == TRUE,]),
-             TotalAprendizaje = sum(encuesta[[SisOp]] == TRUE & encuesta$Aprendizaje == TRUE)/nrow(encuesta[encuesta[[SisOp]] == TRUE,]),
-             
-             Total = sum(encuesta[[SisOp]] == TRUE)
-             )
-}
-```
-
-```{r}
-tablaBSD <- OP(BSD)
-tablaLinuxB <- OP(Linux_Based)
-tablaWindows <- OP(Windows)
-tablaWindowsLinux <- OP(Windows_for_Linux)
-tablaMac <- OP(Mac)
-```
-
-```{r}
-tabla_final <- rbind(tablaBSD, tablaLinuxB, tablaWindows, tablaWindowsLinux, tablaMac)
-```
-
-```{r}
-tabla_larga <- tidyr::gather(tabla_final, 
-                             key = "MentalHealth", 
-                             value = "Cantidad Total", 
-                             -ProfessionalOS)
-
-tabla_larga <- tabla_larga[tabla_larga$MentalHealth != "Total", ]
-
-ggplot(tabla_larga, 
-       aes(x = ProfessionalOS, 
-           y = `Cantidad Total`, 
-           fill = ifelse(MentalHealth != "Total", MentalHealth, ""))) +
-  geom_bar(stat = "identity", position = "dodge") + 
-  labs(x = "Sistema Operativo para uso profesional", 
-       y = "Cantidad Total de Personas", 
-       fill = "MentalHealth") +
-  ggtitle("Salud Mental vs. Sistemas Operativos") +
-  theme_minimal()
-```
-
-No se observa una relación clara entre la salud mental de los programadores y los sistemas operativos que utilizan. Aunque se presentan problemas comunes como la memoria, emocionales y de ansiedad, no se puede establecer una conexión directa entre estas variables.
-
 ## Análisis Probabilístico
 
 ## Probabilidad Empírica
@@ -801,24 +794,6 @@ No se observa una relación clara entre la salud mental de los programadores y l
 ### Variable Total de lenguajes de Programación
 
 **Justificación:** Se escoge la variable `Total de lenguajes de programación` porque es nuestra variable principal de nuestro estudio. Además, determinar el espacio de probabilidad de algún evento relacionado a esta variable puede ser interesante para los objetivos.
-
-```{r}
-hist(encuesta$TotalLenguajes,
-     col = "skyblue",
-     main = "Histograma del total de lenguajes de Programación",
-     xlab = "Cantidad de lenguajes", 
-     ylab = "Frecuencia",
-     breaks = 20
-)
-
-abline(v= mean(encuesta$TotalLenguajes), col = "red", lty = 1)
-
-abline(v= median(encuesta$TotalLenguajes), col = "blue", lty = 2)
-
-legend("topright", legend = c("Media", "Mediana"), col = c("red", "blue"), lty = c(1, 2))
-```
-
-Donde la media es: `r mean(encuesta$TotalLenguages)` y la mediana es: `r median(encuesta$TotalLenguages)`. Se aprecia que hay una mayor tendencia por trabajar con menos de 5 lenguajes de programación a diferencia con trabajar más de 5 lenguajes
 
 #### Definición del experimento aleatorio:
 
@@ -895,15 +870,6 @@ plot(ecdf_datos,
 
 **Justificación:** La variable `Total de problemas de Salud Mental` está relacionada con todos los objetivos. Asimismo, el espacio de probabilidad de la variable nos ayudará para analizar diferentes eventos.
 
-```{r}
-barplot(table(encuesta$TotalMentalHealth),
-     col = colorRampPalette(c("lightblue", "blue"))(6),
-     main = "Total de problemas de salud mental",
-     xlab = "Cantidad de problemass de salud mental", 
-     ylab = "Frecuencia",
-)
-```
-
 #### Definición del experimento aleatorio:
 
 `E2`: Selecciono un programador y observo la cantidad de problemas de salud mental que posee
@@ -977,14 +943,6 @@ plot(ecdf_datos,
 ### Variable edad
 
 **Justificación:** La variable `Edad` es interesante en nuestro estudio, ya que evidencia la probabilidad de extraer un programador según su edad.
-
-```{r}
-barplot(table(encuesta$ModifiedAge), 
-     main = "Histograma de frecuencia de edades",
-     xlab = "Rango de edades",
-     ylab = "Frecuencia",
-     col="pink")
-```
 
 #### Definición del experimento aleatorio:
 
@@ -1199,9 +1157,11 @@ $$
 \mathbb{X} = \text{Número de lenguajes mensuales que usa un desarrollador en un mes} \\
 Rango(\mathbb{X}) = \mathbb{N} - \{0\} \\
 \mathbb{X} \sim \mathcal{Poisson}(\lambda) = \mathcal{Poisson}(5)
-$$
+$$ 
 
-Ya que cumple con las siguientes condiciones: \\ + Los eventos deben ser independientes entre sí.\\ + La tasa media de eventos debe ser constante en cualquier intervalo de tiempo.
+Ya que cumple con las siguientes condiciones: \\
++ Los eventos deben ser independientes entre sí.\\
++ La tasa media de eventos debe ser constante en cualquier intervalo de tiempo.
 
 Entonces:
 
@@ -1211,7 +1171,7 @@ $$
   \frac{\mathrm{e^{-5}5^x}}{x!}, & \forall~x > 0; \\
   0, & \text{en caso contrario}
 \end{cases}
-$$
+$$ 
 
 Consideramos que la distribución de `Poisson` tome valores a partir de 1, ya que en la variable `Total de Lenguajes` no existe desarrollador que utilice 0 lenguajes.
 
@@ -1301,16 +1261,21 @@ p
 n <- 1000
 ```
 
-\$\$ \mathbb{Y} = \text{Número de desarrolladores que programen en JavaScript} \\ \text{y ganan mas que el promedio en una muestra de 1000 programadores} \\
+$$
+\mathbb{Y} = \text{Número de desarrolladores que programen en JavaScript} \\ \text{y ganan mas que el promedio en una muestra de 1000 programadores} \\
 
 Rango(\mathbb{Y}) = [1000] \\
 
-\mathbb{Y} \sim \mathcal{Bin}(n,p) = \mathcal{Bin}(1000,0.27) \$\$ Entonces:
+\mathbb{Y} \sim \mathcal{Bin}(n,p) = \mathcal{Bin}(1000,0.27)
+$$
+Entonces:
 
 $$
 \mathbb{P}(\mathbb{Y} = x) = \mathcal{Bin}(1000, 0.27) = 
 \binom{1000}{x} \cdot 0.27^x \cdot (1-0.27)^{1000-x}
-$$ Modelamos la variable `Usa JavaScript y gana más que el promedio` y la distribución Binomial:
+$$ 
+
+Modelamos la variable `Usa JavaScript y gana más que el promedio` y la distribución Binomial:
 
 ```{r}
 list <- data.frame(
@@ -1385,7 +1350,6 @@ Ey
 Se aprecia que el promedio de los datos se aproxima a la esperanza de la variable aleatoria. No obstante, sigue habiendo irregularidades.
 
 #### Varianza
-
 $$
 Var(\mathbb{X}) = n \cdot p \cdot (1 - p)
 $$
@@ -1397,28 +1361,45 @@ vary
 var(listexitos)
 ```
 
-La varianza se aleja sustancialmente de la varianza de la variable aleatoria
+La varianza se aleja sustancialmente de la varianza de la variable aleatoria, por lo que concluímos que a pesar de aproximarse, no logra ajustarse correctamente a la distribución Binomial.
 
 ## Variables Aleatorias Continuas
 
 ### Variable Salario
 
-`E3`: Los desarrolladores de software de Stack Overflow ganan generalmente entre 30 mil y 70 mil dólares anuales ejerciendo su trabajo. Si un junior developer quisiera integrarse a la comunidad de Stack Overflow, ¿Cuál es la probabilidad de que lo exploten laboralmente y gane menos de 60 mil?
+`E3`: Los desarrolladores de software de Stack Overflow ganan generalmente entre 30 mil y 70 mil dólares anuales ejerciendo su trabajo. Si un junior developer quisiera integrarse a la comunidad de Stack Overflow, ¿Cuál es la probabilidad de gane menos de 60 mil?
 
 Consideramos que nuestra variable aleatoria sigue una distribución `Uniforme`
 
 $$
-\mathbb{Z} = \text{ Salario que ganan } \\
-Rango(\mathbb{X}) = \mathbb{N} - \{0\} \\
-\mathbb{X} \sim \mathcal{Poisson}(\lambda) = \mathcal{Poisson}(5)
+\mathbb{Z} = \text{ Salario que gana un desarrollador } \\
+Rango(\mathbb{Z}) = [30000, 70000] \\
+\mathbb{Z} \sim \mathcal{Unif}(a,b) = \mathcal{Unif}(30000,70000)
+$$ 
+
+Escogimos el rango de 30 - 70 mil puesto que gran parte de nuestras observaciones se encuentran en ese rango:
+
+```{r}
+encuesta %>% filter(Salary > 30000 & Salary < 70000) %>% count()/nrow(encuesta) -> SalaryUnif
+SalaryUnif$n
+```
+
+Exactamente, el 34% de las observaciones se encuentran en el rango. Además, la mediana de la variable también pertenece a ese rango, por lo que es significativo analizarla.
+
+```{r}
+median(encuesta$Salary)
+```
+
+Entonces:
+
 $$
+\mathbb{P}(\mathbb{Z} \leq x) = \frac{x - 30000}{70000 - 30000} = \frac{x - 30000}{40000}
+$$ 
+
+Modelamos la variable `Salary` acotada condicionalmente y la distribución Uniforme:
 
 ```{r}
 pruebaSalary <- encuesta %>% filter(Salary > 30000 & Salary < 70000)
-```
-
-```{r}
-encuesta %>% filter(Salary > 30000 & Salary < 70000) %>% count()/nrow(encuesta)
 ```
 
 ```{r}
@@ -1434,9 +1415,45 @@ Xs <- seq(0, 280000, by = 10)
 lines(Xs, dunif(Xs,30000,70000), col = "red", lwd = 2)
 ```
 
+Como se puede apreciar, la variable `Salary` se aproxima significativamente a una distribución Uniforme. Veamos las medidas de la variable aleatoria.
+
 #### Esperanza
+$$
+E(\mathbb{Z}) = \frac{b + a}{2}
+$$
+```{r}
+Ez <- (70000 + 30000) / 2
+Ez
+
+mean(pruebaSalary$Salary)
+```
+
+Como se puede apreciar, la media de la variable `Salary` se aproxima mucho a la esperanza de la variable aleatoria.
 
 #### Varianza
+
+$$
+Var(\mathbb{Z}) = \frac{(b - a)^2}{12}
+$$
+```{r}
+varz <- (70000 - 30000)^2/12
+varz
+
+var(pruebaSalary$Salary)
+```
+
+Como son valores muy grandes, veamos si la desviación puede ayudarnos a verificar si se asemejan:
+
+```{r}
+sqrt(varz)
+
+sd(pruebaSalary$Salary)
+```
+
+Se aprecia que los datos varian similarmente tanto para la varable `Salary` como para la variable aleatoria.
+
+Por lo tanto, a pesar de no ajustarse perfectamente a la distribución, consideramos que se aproxima en gran medida a comparación del resto de nuestras variables. Esto sugiere, que la probabilidad de que un junior developer gane menos de 60 mil dólares anuales es `3/4`
+
 
 ### Conclusiones
 
@@ -1444,7 +1461,7 @@ En síntesis, refiriéndose al análisis descriptivo, el estudio muestra correla
 
 Aunque los lenguajes populares y bien documentados pueden proporcionar más recursos y apoyo a los desarrolladores, no son los únicos factores que influyen en el equilibrio emocional de una persona. Otros factores externos, como el ambiente laboral, el salario y el mercado, también desempeñan un papel importante en la salud mental de los programadores, independientemente del lenguaje de programación que utilicen.
 
-Además, el estudio no encontró una relación directa entre los sistemas operativos utilizados y la salud mental de los desarrolladores. Esto sugiere que la elección del sistema operativo no es un factor determinante en la salud mental de los programadores.
+Refiriéndose al análisis probabilístico, 
 
 En conclusión, el estudio destaca la importancia de considerar múltiples factores externos en lugar de atribuir el estado de salud mental de los programadores únicamente al lenguaje de programación utilizado. Los resultados muestran que los factores externos tienen un impacto significativo en el bienestar general de los desarrolladores, y es fundamental abordar estos factores para promover un entorno de trabajo saludable y apoyar la salud mental de los profesionales de la programación.
 
