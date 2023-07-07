@@ -47,7 +47,6 @@ library(readr)
 library(ggplot2)
 library(tidyverse)
 library(stringr)
-library(fitdistrplus) 
 ```
 
 ```{r warning = FALSE, include=FALSE}
@@ -737,18 +736,6 @@ legend("topright",
 </div>
 ```{r echo=FALSE}
 cat("mediana:", median(encuesta$TotalLenguajes), "|", "media:", mean(encuesta$TotalLenguajes))
-```
-
-## Variable Salario (Continua)
-
-```{r}
-encuesta$salarioSobrecantLenguajes <- encuesta$Salary*encuesta$ModifiedAge/(1+encuesta$TotalMentalHealth)
-
-plot(density(encuesta$salarioSobrecantLenguajes , na.rm = T), main="Densidad Salario*Edad/TotalProblemasMentales")
-```
-```{r}
-descdist(encuesta$salarioSobrecantLenguajes)
-FDG <- fitdist(encuesta$salarioSobrecantLenguajes, "gamma", start = list(shape = 1, scale = 1))
 ```
 
 
