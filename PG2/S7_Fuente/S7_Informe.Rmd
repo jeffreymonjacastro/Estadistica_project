@@ -97,7 +97,6 @@ Nuestros datos se basarán en dos bases de datos:
 -   Survey_results 2022 (Stack Overflow):
     -   Contiene información de una encuesta realizada a desarrolladores de todo el mundo relacionados a la experiencia de programación. Incluyen demografía, educación, puesto de trabajo, lenguaje de programación, salud mental, entre otros.
 
-
 ## Librerías
 
 ### Carga de librerías
@@ -835,12 +834,9 @@ $$
 \mathbb{P_1}(n) = \{ \text{ probabilidad de que use n lenguajes de programación } \} 
 $$
 
-+ Cálculo de las probabilidades de los eventos atómicos:
+-   Cálculo de las probabilidades de los eventos atómicos:
 
-A1: Seleccionar un programador del estudio que utiliza 1 lenguaje de programación \\
-A2: Seleccionar un programador del estudio que utiliza 2 lenguajes de programación \\
-...\\
-A42: Seleccionar un programador del estudio que utiliza 42 lenguajes de programación \\
+A1: Seleccionar un programador del estudio que utiliza 1 lenguaje de programación \\ A2: Seleccionar un programador del estudio que utiliza 2 lenguajes de programación \\ ...\\ A42: Seleccionar un programador del estudio que utiliza 42 lenguajes de programación \\
 
 ```{r}
 encuesta %>% group_by(TotalLenguajes) %>% count() -> probTotalLenguajes
@@ -920,14 +916,11 @@ $$
 \Omega_2 = [5] =\{ \text{ cantidad de problemas de salud mental } \} \\
 \mathcal{F_2} = 2^{|\Omega_2|} \\
 \mathbb{P_2}(n) = \{ \text{ probabilidad de que sufra n problemas de salud mental } \} 
-$$ 
+$$
 
-+ Cálculo de las probabilidades de los eventos atómicos:
+-   Cálculo de las probabilidades de los eventos atómicos:
 
-B1: Seleccionar un programador que sufra 0 problemas de salud mental \\
-B2: Seleccionar un programador que sufra 1 problema de salud mental \\
-... \\
-B6: Seleccionar un programador que sufra 5 problemas de salud mental \\
+B1: Seleccionar un programador que sufra 0 problemas de salud mental \\ B2: Seleccionar un programador que sufra 1 problema de salud mental \\ ... \\ B6: Seleccionar un programador que sufra 5 problemas de salud mental \\
 
 ```{r}
 encuesta %>% group_by(TotalMentalHealth) %>% count() -> probTotalMentalHealth
@@ -1005,16 +998,9 @@ $$
 \Omega_3 = [6] =\{ \text{ Todas las edades del rango } \} \\
 \mathcal{F_3} = 2^{|\Omega_3|} \\
 \mathbb{P_3}(n) = \{ \text{ Probabilidad de que salga la edad n } \} 
-$$
-+ Cálculo de las probabilidades de los eventos atómicos:
+$$ + Cálculo de las probabilidades de los eventos atómicos:
 
-C1: Seleccionar un programador que tenga la edad 0 (menos de 18 años) \\
-C2: Seleccionar un programador que tenga la edad 1 (entre 18 y 24 años) \\
-C3: Seleccionar un programador que tenga la edad 2 (entre 25 y 34 años) \\
-C4: Seleccionar un programador que tenga la edad 3 (entre 35 y 44 años) \\
-C5: Seleccionar un programador que tenga la edad 4 (entre 45 y 54 años) \\
-C6: Seleccionar un programador que tenga la edad 5 (entre 55 y 64 años) \\
-C7: Seleccionar un programador que tenga la edad 5 (65 o más años) \\
+C1: Seleccionar un programador que tenga la edad 0 (menos de 18 años) \\ C2: Seleccionar un programador que tenga la edad 1 (entre 18 y 24 años) \\ C3: Seleccionar un programador que tenga la edad 2 (entre 25 y 34 años) \\ C4: Seleccionar un programador que tenga la edad 3 (entre 35 y 44 años) \\ C5: Seleccionar un programador que tenga la edad 4 (entre 45 y 54 años) \\ C6: Seleccionar un programador que tenga la edad 5 (entre 55 y 64 años) \\ C7: Seleccionar un programador que tenga la edad 5 (65 o más años) \\
 
 ```{r}
 encuesta %>% group_by(ModifiedAge) %>% count() -> probModifiedAge
@@ -1053,7 +1039,6 @@ points(probModifiedAge$ModifiedAge,
 ```
 
 Este gráfico muestra que hay mayor probabilidad que el programador escogido tenga entre 24 y 35 años.
-
 
 -   Función de masa de probabilidad acumulada
 
@@ -1206,38 +1191,262 @@ Entonces podemos decir que los eventos son muy **APROXIMADAMENTE** independiente
 
 ### Variable Cantidad de Lenguajes
 
+`E1`: Los desarrolladores de software de Stack Overflow utilizan en promedio 5 lenguajes de programación todos los meses del 2022. Asumiendo que el promedio del total de lenguajes de programación que utiliza un programador se mantiene a lo largo de todos los meses de 2022. ¿Cuál es un buen modelo para el número de lenguajes si sabemos que mensualmente es 5?
+
+Consideramos que nuestra variable aleatoria sigue una distribución de `Poisson`
+
+$$
+\mathbb{X} = \text{Número de lenguajes mensuales que usa un desarrollador en un mes} \\
+Rango(\mathbb{X}) = \mathbb{N} - \{0\} \\
+\mathbb{X} \sim \mathcal{Poisson}(\lambda) = \mathcal{Poisson}(5)
+$$ 
+
+Ya que cumple con las siguientes condiciones: \\
++ Los eventos deben ser independientes entre sí.\\
++ La tasa media de eventos debe ser constante en cualquier intervalo de tiempo.
+
+Entonces:
+
+$$
+\mathbb{P}(\mathbb{X} = x) = \mathcal{Poisson}(5) =   
+\begin{cases} 
+  \frac{\mathrm{e^{-5}5^x}}{x!}, & \forall~x > 0; \\
+  0, & \text{en caso contrario}
+\end{cases}
+$$ 
+
+Consideramos que la distribución de `Poisson` tome valores a partir de 1, ya que en la variable `Total de Lenguajes` no existe desarrollador que utilice 0 lenguajes.
+
+Modelamos la variable `Total de lenguajes` y la distribución de Poisson:
+
+```{r}
+plot(probTotalLenguajes$TotalLenguajes, 
+     probTotalLenguajes$ProbabilidadAtomica, 
+     type = "h", 
+     col="red",
+     main = "Comparación de la variable 'Total de lenguajes' y Poisson",
+     xlab = "Cantidad de lenguajes usados",
+     ylab = "Probabilidad",
+     ylim = c(0,0.2)
+)
+
+points(probTotalLenguajes$TotalLenguajes, 
+     probTotalLenguajes$ProbabilidadAtomica,  
+     pch = 20, 
+     col="red",
+)
+
+lines(dpois(1:50, mean(encuesta$TotalLenguajes)), col="blue", type="l", lwd = 2, lty = 2)
+
+legend("topright", 
+       legend = c("Función de probabilidad", "Distribución de Poisson"), 
+       col = c("red", "blue"), 
+       lwd = 2,
+       lty = c(1,2)
+)
+```
+
+Visualmente, se aprecia que se aproxima a la distribución de Poisson.Vamos a confirmar con los descriptores de la variable:
+
 #### Esperanza
 
+$$
+E(\mathbb{X}) = \lambda
+$$
+
+```{r}
+lambda <- 5
+
+media <- mean(encuesta$TotalLenguajes)
+
+lambda
+media
+```
+
+Se puede ver que la media de la variable `Total de lenguajes` se aproxima a la esperanza de la variable aleatoria.
+
 #### Varianza
+
+$$
+Var(\mathbb{X}) = \lambda
+$$
+
+```{r}
+lambda
+var(encuesta$TotalLenguajes)
+```
+
+La varianza de `Total de lenguajes` se aleja parcialmente de la varianza de la variable aleatoria.
+
+Por lo tanto, a pesar de aproximarse en cierta medida a la distribución de Poisson, no logra modelarse mayormente con esta variable aleatoria.
 
 ### Variable JavaScript y Salario
 
+`E2`: Escoger una muestra de 1000 programadores (con reemplazo) y contar el número de programadores que programen en JavaScript y que ganen mas del promedio.
+
+Éxito: Que el programador escogido domine en JS y gane mas que el promedio.
+
+Consideramos que nuestra variable aleatoria sigue una distribución `Binomial`.
+
+Calculamos la probabilidad de éxito asumiendo que nuestra muestra es representativa:
+
+```{r}
+promedio <- mean(encuesta$Salary)
+```
+
+```{r}
+p <- round( nrow(encuesta %>% filter(encuesta$JavaScript == TRUE & encuesta$Salary > promedio))/nrow(encuesta) ,2)
+p
+```
+
+```{r}
+n <- 1000
+```
+
+$$
+\mathbb{Y} = \text{Número de desarrolladores que programen en JavaScript} \\ \text{y ganan mas que el promedio en una muestra de 1000 programadores} \\
+
+Rango(\mathbb{Y}) = [1000] \\
+
+\mathbb{Y} \sim \mathcal{Bin}(n,p) = \mathcal{Bin}(1000,0.27)
+$$
+Entonces:
+
+$$
+\mathbb{P}(\mathbb{Y} = x) = \mathcal{Bin}(1000, 0.27) = 
+\binom{1000}{x} \cdot 0.27^x \cdot (1-0.27)^{1000-x}
+$$ 
+Modelamos la variable `Usa JavaScript y gana más que el promedio` y la distribución Binomial:
+
+```{r}
+list <- data.frame(
+  exitos = 1:1000,
+  probabilidad = 0
+)
+
+for (i in 1:1000) {
+  count <- 0
+  
+  indices <- sample(1:nrow(encuesta), 1000)
+  
+  for (index in indices) {
+    if (encuesta$JavaScript[index] == TRUE & encuesta$Salary[index] > promedio){
+      count = count + 1
+    }
+  }
+  
+  list$probabilidad[count] = list$probabilidad[count] + 1
+}
+
+list$probabilidad <- list$probabilidad/1000
+```
+
+```{r}
+plot(list$exitos[200:350], list$probabilidad[200:350],
+     type = "h", 
+     col="red",
+     main = "Función de masa de probabilidad",
+     xlab = "Cantidad de lenguajes usados",
+     ylab = "Probabilidad",
+)
+
+lines(dbinom(0:1000, n, p), type = 'h', lwd = 1, lty = 2, col = "blue")
+
+legend("topright",
+       legend = c("Variable", "Distribución Binomial"), 
+       col = c("red", "blue"), 
+       lwd = 2,
+       lty = c(1,2)
+)
+```
+
+Visualmente se aproxima a una distribución binomial. Se redujo la escala del eje x ya que entre 200 y 350 se concentran la mayoría de los resultados.
+
 #### Esperanza
 
+$$
+E(\mathbb{X}) = n \cdot p
+$$
+
+```{r}
+count <- 0
+listexitos <- c()
+for (i in 1:nrow(list)) {
+  if (list$probabilidad[i] != 0){
+    count = count + 1
+    
+    listexitos = c(listexitos, list$exitos[i])
+  }
+}
+
+media <- mean(listexitos)
+media
+```
+
+```{r}
+Ey <- n*p
+Ey
+```
+
+Se aprecia que el promedio de los datos se aproxima a la esperanza de la variable aleatoria. No obstante, sigue habiendo irregularidades.
+
 #### Varianza
+$$
+Var(\mathbb{X}) = n \cdot p \cdot (1 - p)
+$$
+
+```{r}
+vary <- n*p*(1-p)
+vary
+
+var(listexitos)
+```
+
+La varianza se aleja sustancialmente de la varianza de la variable aleatoria 
 
 ## Variables Aleatorias Continuas
 
 ### Variable Salario
 
+`E3`: Los desarrolladores de software de Stack Overflow ganan generalmente entre 30 mil y 70 mil dólares anuales ejerciendo su trabajo. Si un junior developer quisiera integrarse a la comunidad de Stack Overflow, ¿Cuál es la probabilidad de que lo exploten laboralmente y gane menos de 60 mil?
+
+Consideramos que nuestra variable aleatoria sigue una distribución `Uniforme`
+
+$$
+\mathbb{Z} = \text{ Salario que ganan } \\
+Rango(\mathbb{X}) = \mathbb{N} - \{0\} \\
+\mathbb{X} \sim \mathcal{Poisson}(\lambda) = \mathcal{Poisson}(5)
+$$ 
+
 ```{r}
 pruebaSalary <- encuesta %>% filter(Salary > 30000 & Salary < 70000)
 ```
-
 
 ```{r}
 encuesta %>% filter(Salary > 30000 & Salary < 70000) %>% count()/nrow(encuesta)
 ```
 
 ```{r}
-hist(pruebaSalary$Salary, prob = TRUE, breaks = 10)
+hist(pruebaSalary$Salary, 
+     prob = TRUE, 
+     breaks = 10,
+     main = "Histograma del Salario",
+     xlab = "salario anual en dólares",
+     ylab = "Frecuencia",
+     col = "skyblue"
+)
 Xs <- seq(0, 280000, by = 10)
 lines(Xs, dunif(Xs,30000,70000), col = "red", lwd = 2)
 ```
 
 #### Esperanza
 
+
+
+
+
 #### Varianza
+
 
 
 ### Conclusiones
