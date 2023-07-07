@@ -734,9 +734,74 @@ legend("topright",
 )
 ```
 </div>
+
 ```{r echo=FALSE}
 cat("mediana:", median(encuesta$TotalLenguajes), "|", "media:", mean(encuesta$TotalLenguajes))
+cat("varianza:", var(encuesta$TotalLenguajes))
+
+    
 ```
 
 
 
+## Variable Salario
+
+```{r echo=FALSE}
+encuesta %>% filter(Salary > 30000 & Salary < 70000) %>% count()/nrow(encuesta) -> SalaryUnif
+
+cat("mediana:",median(encuesta$Salary))
+pruebaSalary <- encuesta %>% filter(Salary > 30000 & Salary < 70000)
+
+```
+<div class="two-column" id="thirdGraph">
+```{r echo=FALSE}
+hist(pruebaSalary$Salary, 
+     prob = TRUE, 
+     breaks = 10,
+     main = "Histograma del Salario",
+     xlab = "salario anual en dólares",
+     ylab = "Frecuencia",
+     col = "skyblue"
+)
+Xs <- seq(0, 280000, by = 10)
+lines(Xs, dunif(Xs,30000,70000), col = "red", lwd = 2)
+```
+</div>
+
+
+<div>
+
+Es razonable que la mayor cantidad de datos esté concentrada alrededor de la mediana. Por lo que escogimos este rango en el cual "Salary" se aproxima significativamente a una distribución uniforme.
+
+Aproximación de la Esperanza:
+```{r echo=FALSE}
+Ez <- (70000 + 30000) / 2
+
+men = mean(pruebaSalary$Salary)
+
+cat("Media =", men, "≈", Ez, " = Esperanza")
+
+varz <- (70000 - 30000)^2/12
+
+realVar <- var(pruebaSalary$Salary)
+
+cat("Varianza Teórica =", varz, "≈", realVar, "= Varianza Real")
+
+
+cat("Desviación Estandar Teórica =", sqrt(varz), "≈", sd(pruebaSalary$Salary), "= Desviación Estándar Real")
+```
+
+</diV>
+
+
+## Conclusiones
+
+<div id="conclu">
+- El estudio muestra correlaciones entre la popularidad, facilidad de uso y remuneración de un lenguaje de programación y la salud mental de los programadores, pero sin una relación directa y determinante.
+
+- Los lenguajes populares y bien documentados no son los únicos factores que influyen en el equilibrio emocional de los programadores, también importan el ambiente laboral, salario y mercado.
+
+- Aunque las variables no se ajustan a distribuciones ideales, la distribución Uniforme puede aproximar el salario.
+
+- La salud mental de los programadores no debe atribuirse únicamente al lenguaje de programación, ya que otros factores externos son significativos y deben abordarse para promover un entorno de trabajo saludable.
+</div>
