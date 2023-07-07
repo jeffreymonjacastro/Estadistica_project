@@ -172,6 +172,11 @@ planguages <- read_csv("Programming_languages.csv")
 encuesta <- read_csv("upload_survey_results.csv")
 ```
 
+```{r}
+write.csv(encuesta, "survey_results_limpia.csv", row.names = FALSE)
+```
+
+
 ## Limpieza de Datos
 
 ### Limpieza de "Programming Languages Data Base"
@@ -420,7 +425,7 @@ encuesta$Mac <- columna_booleana
 nrow(encuesta)
 ```
 
-En total tenemos `28679` observaciones para nuestro estudio.
+En total tenemos `29204` observaciones para nuestro estudio.
 
 ## Variables de estudio Finales
 
