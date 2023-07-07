@@ -42,7 +42,12 @@ Entrega PG02:first_4,2023-05-01, 2d
 Preparar PG03:first_5,2023-05-03, 21d
 Entrega PG03:first_6,2023-05-24, 2d
 Informe PG1:first_7,2023-05-26, 9d
-Entrega Informe:first_8, 2023-06-04,1d
+Entrega Informe 1:first_8, 2023-06-04,1d
+Preparar PG1.1: first_9, 2023-06-05,10d
+Entregar PG1.1: first_10, 2023-06-16,1d
+Preparar PG1.2: first_11, 2023-06-18,10d
+Entregar PG1.2: first_12, 2023-07-05, 2d
+Informe PG2: first_13, 2023-07-07, 1d
 
 section PG01
 Diagrama de Gantt:first_1, 2023-04-15, 12h
@@ -67,6 +72,13 @@ Correcciones:first_13, 2023-05-26, 3d
 Union de PG0x:first_14, after first_13, 2d
 Verificar ortografía:first_15, after first_14, 2d
 Informe prolijo:first_16, after first_15, 2d
+
+section Informe PG2
+Correcciones:first_17, 2023-06-04, 10d
+Probabilidades: first_18, after first_17, 10d
+Informe prolijo: first_19, 2023-06-24, 10d
+
+
 ")
 ```
 
@@ -119,7 +131,7 @@ for (lib in libraries) {
 
 ```{r warning=FALSE}
 planguages <- read_csv("programming_languages_limpia.csv")
-encuesta <- read_csv("survey_results_limpia.csv")
+encuesta <- read_csv("limpia_survey_results.csv")
 ```
 
 ## Variables de estudio Finales
@@ -289,7 +301,7 @@ for (i in 1:nrow(encuesta)) {
 ```
 
 ```{r}
-encuesta %>% group_by(TotalLenguages) %>% count()
+encuesta %>% group_by(TotalLenguajes) %>% count()
 ```
 
 ```{r}
