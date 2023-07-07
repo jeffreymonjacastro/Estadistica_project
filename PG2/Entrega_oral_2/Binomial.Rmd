@@ -65,6 +65,8 @@ for (i in 1:1000) {
 list$probabilidad <- list$probabilidad/1000
 ```
 
+
+
 ```{r}
 plot(list$exitos[200:350], list$probabilidad[200:350],
      type = "h", 
@@ -86,7 +88,19 @@ sum(dbinom(rango,n,p))
 
 Esperanza
 ```{r}
+count <- 0
+listexitos <- c()
+for (i in 1:nrow(list)) {
+  if (list$probabilidad[i] != 0){
+    count = count + 1
+    
+    listexitos = c(listexitos, list$exitos[i])
+  }
+}
 
+mean(listexitos)
+
+list$exitos[list$probabilidad == max(list$probabilidad)]
 ```
 
 ```{r}
