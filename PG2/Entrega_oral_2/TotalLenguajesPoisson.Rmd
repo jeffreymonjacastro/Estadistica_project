@@ -1,0 +1,77 @@
+---
+title: "VAD"
+author: "Jeff"
+date: "`r Sys.Date()`"
+output: html_document
+---
+```{r}
+probTotalLenguajes
+```
+
+```{r}
+plot(probTotalLenguajes$TotalLenguages, 
+     probTotalLenguajes$ProbabilidadAtomica, 
+     type = "h", 
+     col="red",
+     main = "Función de masa de probabilidad",
+     xlab = "Cantidad de lenguajes usados",
+     ylab = "Probabilidad",
+     ylim = c(0,0.2)
+)
+
+points(probTotalLenguajes$TotalLenguages, 
+     probTotalLenguajes$ProbabilidadAtomica,  
+     pch = 20, 
+     col="red",
+)
+
+lines(dpois(1:50, mean(encuesta$TotalLenguajes)), col="blue", type="l", lwd = 2, lty = 2)
+
+```
+
+
+
+Media 
+```{r}
+mean(encuesta$TotalLenguajes)
+median(encuesta$TotalLenguajes)
+```
+
+
+
+
+
+Geometrica
+```{r}
+plot(probTotalLenguajes$TotalLenguages[6:28], 
+     probTotalLenguajes$ProbabilidadAtomica[6:28], 
+     type = "h", 
+     col="red",
+     main = "Función de masa de probabilidad",
+     xlab = "Cantidad de lenguajes usados",
+     ylab = "Probabilidad",
+     ylim = c(0,0.2)
+)
+
+points(probTotalLenguajes$TotalLenguages, 
+     probTotalLenguajes$ProbabilidadAtomica,  
+     pch = 20, 
+     col="red",
+)
+
+lines(dgeom(5:50, lambda2), col="blue", type="l")
+```
+
+
+```{r}
+fit2 <- fitdistr(encuesta$TotalLenguajes[encuesta$TotalLenguajes >= 6], "geometric")
+```
+
+```{r}
+lambda2 <- fit2$estimate
+lambda2
+```
+
+## Biniomial Negativa
+
+

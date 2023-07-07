@@ -1,0 +1,96 @@
+---
+title: "Binomial"
+author: "Jeff"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+## BINOMIAL
+
+`E1` Escoger una muestra de 100 programadores (con reemplazo) y contar el número de programadores que programen en JavaScript y que ganen mas del promedio.
+
+Éxito: Que el programador escogido domine en JS y gane mas que el promedio
+
+Calculamos la probabilidad de éxito asumiendo que nuestra muestra es representativa.
+
+```{r}
+promedio <- mean(encuesta$Salary)
+```
+
+```{r}
+p <- round( nrow(encuesta %>% filter(encuesta$JavaScript == TRUE & encuesta$Salary > promedio))/nrow(encuesta) ,2)
+p
+```
+
+```{r}
+n <- 1000
+```
+
+$$
+\mathbb{X} = \text{Número de programadores que programen en JavaScript} \\ \text{y ganan mas que el promedio en una muestra de 100 programadores} \\
+
+\text{Rango(X) = 0 ,1 ,2 ,3 ,4 ,5 ,6 ,7 ........,100} \\
+
+\mathbb{X} \sim Bin(n,p) = Bin(100,0.27)
+$$
+
+```{r}
+rango <- 0:1000
+
+plot(rango, dbinom(rango, n, p), type = 'h', lwd = 2, xlab = "Número de éxitos", ylab = "Probabilidad", main = "Distribución Binomial")
+```
+
+### Comprobando con una experimentación:
+
+```{r}
+list <- data.frame(
+  exitos = 1:1000,
+  probabilidad = 0
+)
+
+for (i in 1:1000) {
+  count <- 0
+  
+  indices <- sample(1:nrow(encuesta), 1000)
+  
+  for (index in indices) {
+    if (encuesta$JavaScript[index] == TRUE & encuesta$Salary[index] > promedio){
+      count = count + 1
+    }
+  }
+  
+  list$probabilidad[count] = list$probabilidad[count] + 1
+}
+
+list$probabilidad <- list$probabilidad/1000
+```
+
+```{r}
+plot(list$exitos[200:350], list$probabilidad[200:350],
+     type = "h", 
+     col="red",
+     main = "Función de masa de probabilidad",
+     xlab = "Cantidad de lenguajes usados",
+     ylab = "Probabilidad",
+)
+
+lines(dbinom(rango, n, p), type = 'h', lwd = 1, lty = 2, col = "blue")
+```
+
+
+Comprobamos que la suma de la función de la distribución binomial da 1.
+
+```{r}
+sum(dbinom(rango,n,p))
+```
+
+Esperanza
+```{r}
+
+```
+
+```{r}
+Ex <- n*p
+Ex
+```
+

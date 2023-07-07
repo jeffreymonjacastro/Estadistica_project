@@ -1206,6 +1206,7 @@ plot(ecdf_datos,
      main = "Función de masa de probabilidad acumulada", 
      xlab = "Cantidad de lenguajes usados", 
      ylab = "Probabilidad acumulada",
+     type = "s",
      col = "blue",
 )
 ```
@@ -1306,6 +1307,7 @@ plot(ecdf_datos,
      main = "Función de masa de probabilidad acumulada", 
      xlab = "Valores", 
      ylab = "Probabilidad acumulada",
+     type = "s",
      col = "blue",)
 ```
 
@@ -1313,8 +1315,7 @@ plot(ecdf_datos,
 
 Hallando la variable edad:
 ```{r}
-hist(encuesta$ModifiedAge, 
-     breaks=6,
+barplot(table(encuesta$ModifiedAge), 
      main = "Frecuencia de edades",
      col="pink")
 ```
@@ -1518,7 +1519,7 @@ mosaicplot(table(total$evento1, total$cantProblemas),
 
 Entonces podemos decir que los eventos son muy **APROXIMADAMENTE** independientes.
 
-## Variables Discretas
+x## Variables Discretas
 
 ### Distribución Binomial
 
@@ -1603,7 +1604,6 @@ Experimento:
 ```{r}
 pbinom(27,100,0.27) - pbinom(19, 100, 0.27)
 ```
-
 
 
 ### Distribución Hipergeométrica
