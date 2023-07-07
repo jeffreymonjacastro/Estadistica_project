@@ -23,7 +23,7 @@ Consideramos que el proyecto es viable ya que usamos bases de datos de fuentes c
 
 #### Planificación (Diagrama de Gantt)
 
-Para entender el desarrollo del estudio hasta el momento, se muestra el siguiente **Diagrama de Gantt** con la planificación de las diferentes actividades y entregas del proyecto.
+**Diagrama de Gantt** con la planificación de las diferentes actividades y entregas del proyecto.
 
 ```{r warning=FALSE, echo=FALSE}
 
@@ -367,7 +367,7 @@ barplot(table(encuesta$ModifiedAge),
 
 ### ¿Existe una relación entre el lenguaje de programación utilizado por un desarrollador y su salud mental?
 
-Para responder a esta pregunta utilizaremos los siguientes descriptores gráficos:
+Utilizaremos los siguientes descriptores gráficos:
 
 #### Salud mental vs. Tecnologías de desarrollo
 
@@ -1461,7 +1461,7 @@ En síntesis, refiriéndose al análisis descriptivo, el estudio muestra correla
 
 Aunque los lenguajes populares y bien documentados pueden proporcionar más recursos y apoyo a los desarrolladores, no son los únicos factores que influyen en el equilibrio emocional de una persona. Otros factores externos, como el ambiente laboral, el salario y el mercado, también desempeñan un papel importante en la salud mental de los programadores, independientemente del lenguaje de programación que utilicen.
 
-Refiriéndose al análisis probabilístico, 
+Refiriéndose al análisis probabilístico, podemos concluir que nuestras variables, a pesar de aproximarse a ciertas distribuciones como la de Poisson y la Binomial, no son modelos ideales para nuestras variables, ya que nuestras observaciones se desvían de estos. No obstante, consideramos que la distribución Uniforme sí logra modelar en cierta medida nuestra variable continua `Salario`. Con este análisis, podemos ayudar a futuros programadores a tener una idea del campo laboral existente, los lenguajes de programación que necesitan saber, el salario que pueden ganar y los problemas de salud mental que están probables a sufrir.
 
 En conclusión, el estudio destaca la importancia de considerar múltiples factores externos en lugar de atribuir el estado de salud mental de los programadores únicamente al lenguaje de programación utilizado. Los resultados muestran que los factores externos tienen un impacto significativo en el bienestar general de los desarrolladores, y es fundamental abordar estos factores para promover un entorno de trabajo saludable y apoyar la salud mental de los profesionales de la programación.
 
