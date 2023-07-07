@@ -1408,14 +1408,19 @@ La varianza se aleja sustancialmente de la varianza de la variable aleatoria
 
 ### Variable Salario
 
-`E3`: Los desarrolladores de software de Stack Overflow ganan generalmente entre 30 mil y 70 mil dólares anuales ejerciendo su trabajo. Si un junior developer quisiera integrarse a la comunidad de Stack Overflow, ¿Cuál es la probabilidad de que lo exploten laboralmente y gane menos de 60 mil?
+`E3`: Los desarrolladores de software de Stack Overflow ganan generalmente entre 30 mil y 70 mil dólares anuales ejerciendo su trabajo. Si un junior developer quisiera integrarse a la comunidad de Stack Overflow, ¿Cuál es la probabilidad de gane menos de 60 mil?
 
 Consideramos que nuestra variable aleatoria sigue una distribución `Uniforme`
 
 $$
-\mathbb{Z} = \text{ Salario que ganan } \\
-Rango(\mathbb{X}) = \mathbb{N} - \{0\} \\
-\mathbb{X} \sim \mathcal{Poisson}(\lambda) = \mathcal{Poisson}(5)
+\mathbb{Z} = \text{ Salario que gana un desarrollador } \\
+Rango(\mathbb{Z}) = [30000, 70000] \\
+\mathbb{Z} \sim \mathcal{Unif}(a,b) = \mathcal{Unif}(30000,70000)
+$$ 
+Entonces:
+
+$$
+\mathbb{P}(\mathbb{Z} \leq 60000) = \frac{60000 - 30000}{70000 - 30000} = \frac{30000}{40000} = \frac{3}{4}
 $$ 
 
 ```{r}
