@@ -118,7 +118,7 @@ En resumen, en esta sección se registran todas las variables que consideramos �
 ### Encuestas de Stak Overflow
 
 | Nombre de la variable   | Tipo de variable   | Descripción                                                        | Restricciones                   |
-|------------------|------------------|--------------------|------------------|
+|-------------------------|--------------------|--------------------------------------------------------------------|---------------------------------|
 | MainBranch              | Categórica nominal | Contiene información sobre el estado profesional del desarrollador | \-                              |
 | Employment              | Categórica nominal | El tipo de empleo que tiene le desarrollador                       | separado por punto y coma       |
 | RemoteWork              | Categórica nominal | De que forma ejercen el trabajo remoto                             | \-                              |
@@ -139,7 +139,7 @@ En resumen, en esta sección se registran todas las variables que consideramos �
 ### PLDB Lenguajes de Programación
 
 | Nombre de la variable | Tipo de variable   | Descripción                                                       | Restricciones                   |
-|------------------|------------------|--------------------|------------------|
+|-----------------------|--------------------|-------------------------------------------------------------------|---------------------------------|
 | Title                 | Categórica Nominal | Nombre original del lenguaje de programación                      | \-                              |
 | Appeared              | Numérica discreta  | Año en donde apareció por primera vez el lenguaje de programación | \>= 1945                        |
 | Rank                  | Numérica discreta  | Un ranking hecho por PLDB                                         | \>=0                            |
@@ -175,7 +175,6 @@ encuesta <- read_csv("upload_survey_results.csv")
 ```{r}
 write.csv(encuesta, "survey_results_limpia.csv", row.names = FALSE)
 ```
-
 
 ## Limpieza de Datos
 
@@ -434,7 +433,7 @@ Luego de la limpieza, decidimos mantenernos con `12` variables que se relacionan
 ### Encuestas de Stakoverflow
 
 | Nombre de la variable | Tipo de variable   | Descripción                                               | Restricciones                                        |
-|------------------|------------------|-------------------|------------------|
+|-----------------------|--------------------|-----------------------------------------------------------|------------------------------------------------------|
 | Age                   | Categórica Ordinal | Edad                                                      | \-                                                   |
 | Gender                | Categórica Ordinal | Género                                                    | Man y Woman                                          |
 | Salary                | Numérica Contínua  | El salario anual en dólares del desarrollador             | [3600 - 249153]                                      |
@@ -445,7 +444,7 @@ Luego de la limpieza, decidimos mantenernos con `12` variables que se relacionan
 ### PLDB Lenguajes de Programación
 
 | Nombre de la variable | Tipo de variable   | Descripción                                                       | Restricciones                                                               |
-|------------------|------------------|------------------|-------------------|
+|-----------------------|--------------------|-------------------------------------------------------------------|-----------------------------------------------------------------------------|
 | Nombre                | Categórica Nominal | Nombre original del lenguaje de programación                      | Deben estar los mismos lenguajes de la encuesta de StackOverflow            |
 | Type                  | Categórica Ordinal | El tipo de lenguaje del que se trata                              | Debe ser "*pl*", "*queryLanguage*", "*textMarkup*" y "*stylesheetLanguage*" |
 | N_Trabajos            | Numérica Discreta  | Número de trabajos relacionados al lenguaje de programación       | Debe ser mayor a 0                                                          |
@@ -1157,11 +1156,7 @@ $$
 
 -   Cálculo de las probabilidades de los eventos atómicos:
 
-A1: Seleccionar un programador del estudio que utiliza un lenguaje de programación
-A2: Seleccionar un programador del estudio que utiliza dos lenguajes de programación
-...
-A42: Seleccionar un programador del estudio que utiliza 42 lenguajes de programación
-
+A1: Seleccionar un programador del estudio que utiliza un lenguaje de programación A2: Seleccionar un programador del estudio que utiliza dos lenguajes de programación ... A42: Seleccionar un programador del estudio que utiliza 42 lenguajes de programación
 
 ```{r}
 encuesta %>% group_by(TotalLenguajes) %>% count() -> probTotalLenguajes
@@ -1261,8 +1256,7 @@ $$
 \Omega_2 = [5] =\{ \text{ cantidad de problemas de salud mental } \} \\
 \mathcal{F_2} = 2^{|\Omega_2|} \\
 \mathbb{P_2}(n) = \{ \text{ probabilidad de que sufra n problemas de salud mental } \} 
-$$ 
-+ Cálculo de las probabilidades de los eventos atómicos:
+$$ + Cálculo de las probabilidades de los eventos atómicos:
 
 ```{r}
 encuesta %>% group_by(TotalMentalHealth) %>% count() -> probTotalMentalHealth
@@ -1319,6 +1313,7 @@ plot(ecdf_datos,
 ### Variable edad
 
 Hallando la variable edad:
+
 ```{r}
 barplot(table(encuesta$ModifiedAge), 
      main = "Frecuencia de edades",
@@ -1337,13 +1332,9 @@ $$
 \Omega_3 = [7] - \{0\} =\{ \text{ Todas las edades del rango } \} \\
 \mathcal{F_3} = 2^{|\Omega_3|} \\
 \mathbb{P_3}(n) = \{ \text{ Probabilidad de que salga la edad n } \} 
-$$ 
-+ Cálculo de las probabilidades de los eventos atómicos:
+$$ + Cálculo de las probabilidades de los eventos atómicos:
 
-B1: Seleccionar un programador que tenga menos de 18 años
-B2: Seleccionar un programador que tenga menos de 18 años
-B1: Seleccionar un programador que tenga menos de 18 años
-....
+B1: Seleccionar un programador que tenga menos de 18 años B2: Seleccionar un programador que tenga menos de 18 años B1: Seleccionar un programador que tenga menos de 18 años ....
 
 ```{r}
 encuesta %>% group_by(ModifiedAge) %>% count() -> probModifiedAge
@@ -1360,8 +1351,7 @@ Para verificar que la suma de las probabilidades de los eventos atómicos utiliz
 sum(probModifiedAge$ProbabilidadAtomica)
 ```
 
-
-+ Función de masa de probabilidad
+-   Función de masa de probabilidad
 
 ```{r}
 plot(probModifiedAge$ModifiedAge, 
@@ -1379,7 +1369,7 @@ points(probModifiedAge$ModifiedAge,
 
 ```
 
-+ Función de masa de probabilidad acumulada
+-   Función de masa de probabilidad acumulada
 
 ```{r}
 probAcumulada <- ecdf(encuesta$ModifiedAge)
@@ -1392,7 +1382,6 @@ plot(ecdf_datos,
      ylab = "Probabilidad acumulada",
      col = "blue",)
 ```
-
 
 ## Eventos Dependientes e Independientes
 
@@ -1416,9 +1405,7 @@ Seleccionamos los lenguajes que causan más problemas mentales de acuerdo a nues
 
 -   Ansiedad: SAS Ruby Lua
 
-Entonces, identificamos 2 eventos: 
-E1: Escoger un programador que usa 1 o más de los lenguajes "problemáticos"
-E2: Escoger un programador que sufre 1 o más problemas mentales
+Entonces, identificamos 2 eventos: E1: Escoger un programador que usa 1 o más de los lenguajes "problemáticos" E2: Escoger un programador que sufre 1 o más problemas mentales
 
 ```{r}
 list <- c('Crystal', 'Lua', 'Rust', 'APL', 'Assembly', 'Erlang', 'LISP', 'SAS')
@@ -1448,8 +1435,7 @@ mosaicplot(table(total$E1, total$encuesta.TotalMentalHealth), main = "Problemas 
 
 Luego de realizar el mosaicplot, notamos que ambos eventos son claramente dependientes, ya que se ven diferencias significativas en las proporciones de las categorías en las combinaciones de las variables. Pero, para comprobar esto de manera definitiva utilizamos algunas fórmulas.
 
-Comprobamos con las fórmulas de probabilidades:
-[La inversa]
+Comprobamos con las fórmulas de probabilidades: [La inversa]
 
 ```{r}
 probE2dE1 <- E1E2/probE1
@@ -1465,9 +1451,7 @@ Notamos que la probabilidad del E1 y la probabilidad del E2 difieren en 0,11 apr
 
 ### Eventos Independientes
 
-Identificamos dos eventos. - 
-E1: Usa un lenguaje que está entre los 5 más populares. - 
-E2: Sufre de 2 o más problemas mentales.
+Identificamos dos eventos. - E1: Usa un lenguaje que está entre los 5 más populares. - E2: Sufre de 2 o más problemas mentales.
 
 Justificación: Se quiere demostrar que nuestra salud mental no depende de si usamos un lenguaje popular o no. Para esto demostraremos que los eventos son independientes: - P(E1\|E2) - P(E1) ≈ 0 - P(E2\|E1) - P(E2) ≈ 0 - P(E2 y E1) ≈ P(E2) \* P(E1)
 
@@ -1547,13 +1531,12 @@ p
 n <- 100
 ```
 
-$$
-\mathbb{X} = \text{Número de programadores que programen en JavaScript} \\ \text{y ganan mas que el promedio en una muestra de 100 programadores} \\
+\$\$ \mathbb{X} = \text{Número de programadores que programen en JavaScript} \\ \text{y ganan mas que el promedio en una muestra de 100 programadores} \\
 
 \text{Rango(X) = 0 ,1 ,2 ,3 ,4 ,5 ,6 ,7 ........,100} \\
 
-\mathbb{X} \sim Bin(n,p) = Bin(100,0.27)
-$$
+\mathbb{X} \sim Bin(n,p) = Bin(100,0.27) \$\$
+
 ```{r}
 rango <- 0:100
 
@@ -1577,10 +1560,10 @@ esperanza <- n*p
 esperanza
 ```
 
-Ahora calculamos la esperanza con la sumatoria:
-$$
+Ahora calculamos la esperanza con la sumatoria: $$
 \mathbb{E}(\mathbb{X}) = \sum xp(x)
 $$
+
 ```{r}
 Ex <-sum(0:100*dbinom(0:100 , n , p))
 Ex
@@ -1591,6 +1574,7 @@ Varianza:
 $$
 Var(\mathbb{X}) = np(1-p)
 $$
+
 ```{r}
 Varianza <- n*p*(1-p)
 Varianza
@@ -1599,17 +1583,16 @@ Varianza
 $$
 Var(\mathbb{X}) = \sum_{x \in Rang(\mathbb{X})}(x-E(\mathbb{X}))^{2}p(x)
 $$
+
 ```{r}
 sum((0:100 - Ex)^{2}*dbinom(0:100 , n ,p))
 ```
 
-Experimento:
-¿Cuál es la probabilidad que al escoger aleatoriamente a 100 programadores encuestados el 2022 (con reemplazo) el número de personas que utilizan Javascript y ganan más que el salario promedio esté entre 20 y 27, sabiendo que la probabilidad de escoger a un programador con ese lenguaje y su salario es 0.27?
+Experimento: ¿Cuál es la probabilidad que al escoger aleatoriamente a 100 programadores encuestados el 2022 (con reemplazo) el número de personas que utilizan Javascript y ganan más que el salario promedio esté entre 20 y 27, sabiendo que la probabilidad de escoger a un programador con ese lenguaje y su salario es 0.27?
 
 ```{r}
 pbinom(27,100,0.27) - pbinom(19, 100, 0.27)
 ```
-
 
 ### Distribución Hipergeométrica
 
@@ -1649,6 +1632,7 @@ rango <- 5000:5900
 
 plot(rango, dhyper(rango, k , N-k , n), type = 'h', lwd = 2, xlab = "Número de éxitos", ylab = "Probabilidad", main = "Distribución Hipergeometrica")
 ```
+
 Comprobamos que la suma de la función de la distribución hipergeométrica da 1.
 
 ```{r}
@@ -1680,10 +1664,12 @@ esperanza
 $$ 
 \text{Var}(\mathbb{Y}) = \frac{n \cdot k \cdot (N - k) \cdot (N - n)}{N^2 \cdot (N - 1)}
 $$
+
 ```{r}
 varianza <- (n*k*(N-k)*(N-n))/(N*N*(N-1))
 varianza
 ```
+
 Del mismo modo, calculamos la esperanza con sumatoria:
 
 $$
@@ -1703,15 +1689,11 @@ Se extraen 15000 programadores de una muestra de 29204, de los cuales 10492 sabe
 phyper(5600, k, N-k , n) - phyper(5400 , k , N-k , n) 
 ```
 
-
-
 ## Variables Continuas
 
+### Variable Salario
 
-### Variable Salario 
-
-Escogimos la variable salario por cantidad de problemas mentales proporcional a la edad
-Para el analisis de variables continuas escogimos una variación del salario de modo que este sea proporcional al rango de edad dado por los usuarios y se divida entre la cantidad de problemas mentales que tiene cada uno.
+Escogimos la variable salario por cantidad de problemas mentales proporcional a la edad Para el analisis de variables continuas escogimos una variación del salario de modo que este sea proporcional al rango de edad dado por los usuarios y se divida entre la cantidad de problemas mentales que tiene cada uno.
 
 ```{r}
 encuesta$ModifiedAge <- encuesta$Age
@@ -1729,20 +1711,20 @@ plot(density(encuesta$salarioSobrecantLenguajes , na.rm = T), main="Densidad Sal
 ```
 
 Y observaremos que la distribución gamma es la que más se le aproxima.
+
 ```{r}
 descdist(encuesta$salarioSobrecantLenguajes)
 FDG <- fitdist(encuesta$salarioSobrecantLenguajes, "gamma", start = list(shape = 1, scale = 1))
 ```
+
 ```{r}
 plot(FDG, pch = ".", col = "blue")
 ```
 
 Podemos decir entonces que nuestra variable sigue una distribución gamma. Lo que quiere decir lo siguiente:
 
-- La variable es asimétrica, es decir, no tiene forma de campana.
-- Podemos saber como decae la variable a medida que aumenta. Es decir a travez de la distribución gamma podemos comprender como se comporta la variable para valores grandes.
-
-
+-   La variable es asimétrica, es decir, no tiene forma de campana.
+-   Podemos saber como decae la variable a medida que aumenta. Es decir a travez de la distribución gamma podemos comprender como se comporta la variable para valores grandes.
 
 ### Conclusiones
 

@@ -9,10 +9,53 @@ h3 {
 }
 
 p {
-  color: blue;
   font-size: 15px;
 }
 
 slides > slide > hgroup + article {
   margin-top: 0;
+}
+
+.two-column {
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+img {
+    width: 100%;
+}
+
+.column2 {
+    width: 33%;
+    display: inline-block;
+}
+
+blockquote {
+    font-size: 20px;
+    font-style: italic;
+    text-align: center;
+    margin: 0;
+    background: #eee;
+    color: black;
+}
+
+.title-slide hgroup h1 {
+    width: 87%;
+    font-size: 51px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid #b3b3b3;
+}
+
+.title-slide hgroup p {
+    width: 87%;
+}
+
+.column3 {
+    width: 39%;
+}
+
+.column4 {
+    width: 67%;
 }

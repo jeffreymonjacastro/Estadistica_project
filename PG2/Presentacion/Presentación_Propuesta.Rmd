@@ -58,54 +58,65 @@ encuesta = read_csv("survey_results_limpia.csv")
 
 ## Analisis Univariado.
 
--   Salario.
+<div class="two-column">
 
-    ```{r echo=FALSE}
-    encuesta %>%
-     ggplot() +
-      aes(x = Salary) +
-      geom_density(adjust = 1L, fill = "#B8FFB8") +
-      labs(
-        x = "Salario anual en dolares",
-        y = "Densidad",
-        title = "Densidad Salarial"
-      ) +
-      theme_minimal()
-    ```
+<div class="column">
 
--   Cantidad de usuarios por lenguaje.
+Salario.
 
-    ```{r echo=FALSE}
-    language <- encuesta %>%
-      separate_rows(ProgLanguages, sep = ";") %>%
-      group_by(ProgLanguages) %>%
-      summarize() %>%
-      pull()
+```{r echo=FALSE}
+encuesta %>%
+ ggplot() +
+  aes(x = Salary) +
+  geom_density(adjust = 1L, fill = "#B8FFB8") +
+  labs(
+    x = "Salario anual en dolares",
+    y = "Densidad",
+    title = "Densidad Salarial"
+  ) +
+  theme_minimal()
+```
 
-    CantUsers <- c()
+</div>
 
-    for (lang in language){
-      this <- encuesta[encuesta[lang] == TRUE,]
-    	cantidad <- nrow(this)
-    	CantUsers[lang] <- cantidad
-    }
+<div class="column">
 
-    CantUsers <- sort(CantUsers, decreasing = TRUE)
+Cantidad de usuarios por lenguaje.
 
-    df1 <- data.frame(CantUsers)
+```{r echo=FALSE}
+language <- encuesta %>%
+  separate_rows(ProgLanguages, sep = ";") %>%
+  group_by(ProgLanguages) %>%
+  summarize() %>%
+  pull()
 
-    barplot(df1$CantUsers, 
-      main="Cantidad de usuarios por lenguaje de programación", 
-      xlab="Lenguaje de programación", 
-      ylab="Cantidad de usuarios",
-      names.arg = row.names(df1),
-      col=colorRampPalette(c("darkred", "red"))(15),
-      xlim = c(0,50),
-      las=2,
-      cex.names=0.5,
-      cex.axis=0.5,
-      )
-    ```
+CantUsers <- c()
+
+for (lang in language){
+  this <- encuesta[encuesta[lang] == TRUE,]
+	cantidad <- nrow(this)
+	CantUsers[lang] <- cantidad
+}
+
+CantUsers <- sort(CantUsers, decreasing = TRUE)
+
+df1 <- data.frame(CantUsers)
+
+barplot(df1$CantUsers, 
+  main="Cantidad de usuarios por lenguaje de programación", 
+  xlab="Lenguaje de programación", 
+  ylab="Cantidad de usuarios",
+  names.arg = row.names(df1),
+  col=colorRampPalette(c("darkred", "red"))(15),
+  xlim = c(0,50),
+  las=2,
+  cex.names=0.5,
+  cex.axis=0.5,
+  )
+```
+</div>
+
+</div>
 
 ## Analisis bivariado (Salud mental, Lenguaje de programación)
 
@@ -117,7 +128,11 @@ autismo <- filter(encuesta, Autismo == TRUE)
 aprendizaje <- filter(encuesta, Aprendizaje == TRUE)
 ```
 
--   Memoria
+<div class="two-column">
+
+
+<div class="column2">
+Memoria
 
 ```{r echo=FALSE}
 porcentajes <- c()
@@ -130,29 +145,28 @@ for (current in language){
 
 porcentajes <- sort(porcentajes, decreasing = TRUE)
 
-porcentajes <- data.frame(porcentajes)
-
-
+porcentajes = data.frame(porcentajes)
 
 porcentajeshelper <- porcentajes$porcentajes[1:15]
 nombres <- rownames(porcentajes)[1:15]
 
 barplot(porcentajeshelper, 
-	main="% Personas que sufren de problemas de memoria", 
+	main="% Personas que sufren de problemas de Memoria", 
 	xlab="Porcentaje de personas", 
-	ylab = "Lenguaje de programación",
   col=colorRampPalette(c("darkblue", "blue"))(15),
-	xlim = c(0,0.25),
+	xlim = c(0,0.22),
 	horiz=TRUE,
 	las=1,
 	names.arg=nombres,
 	cex.names=0.5,
 	cex.axis=0.5,
 	)
-
 ```
+</div>
 
--   Ansiedad
+<div class="column2">
+
+Ansiedad
 
 ```{r echo=FALSE}
 porcentajes <- c()
@@ -183,7 +197,12 @@ barplot(porcentajeshelper,
 	)
 ```
 
--   Emocional
+</div>
+
+
+<div class="column2">
+
+Emocional
 
 ```{r echo=FALSE}
 porcentajes <- c()
@@ -214,7 +233,13 @@ barplot(porcentajeshelper,
 	)
 ```
 
--   Autismo
+
+</div>
+
+
+<div class="column2">
+
+Autismo
 
 ```{r echo=FALSE}
 porcentajes <- c()
@@ -245,7 +270,12 @@ barplot(porcentajeshelper,
 	)
 ```
 
--   Aprendizaje
+</div>
+
+
+<div class="column2">
+
+Aprendizaje
 
 ```{r echo=FALSE}
 porcentajes <- c()
@@ -277,21 +307,21 @@ barplot(porcentajeshelper,
 	)
 ```
 
-Lenguajes **"problemáticos"**(los tres con más frecuencia en cada problema):
+</div>
 
-1.  Lua, Crystal, Erlang
-2.  Lya, Ruby, SAS
-3.  LISP, Lua, Erlang
-4.  Rust, Lua, Crystal
-5.  Assembly, Lua, APL
+</div>
 
-Total de lenguajes **"problemáticos":**
+Lenguajes **"problemáticos"**(los tres con más frecuencia en cada problema): [Lua, Crystal, Erlang] U [Lya, Ruby, SAS] U [LISP, Lua, Erlang] U [Rust, Lua, Crystal] U [Assembly, Lua, APL]
 
 > Lua, Crystal, Erlang, Lya, Ruby, SAS, Lisp, Rust, Assembly, APL
 
 ## Analisis Bivariado (Salario asociado a un lenguaje, Estado mental)
 
--   Promedios
+<div class="two-column">
+
+<div class="column3">
+
+Promedios
 
 ```{r echo=FALSE}
 promedios <- c()
@@ -323,7 +353,12 @@ barplot(porcentajeshelper,
 	)
 ```
 
--   Medianas
+</div>
+
+
+<div class="column3">
+
+Medianas
 
 ```{r echo=FALSE}
 medianas <- c()
@@ -354,7 +389,11 @@ barplot(porcentajeshelper,
 	)
 ```
 
--   Boxplot (Problemas Mentales \| Salario \| Enfermedad Mental)
+</div>
+
+<div class="column3">
+
+Boxplot (Problemas Mentales \| Salario \| Enfermedad Mental)
 
 ```{r echo=FALSE}
 encuesta %>%
@@ -366,9 +405,19 @@ encuesta %>%
   theme_minimal()
 ```
 
+</div>
+
+</div>
+
 # Analisis Probabilistico
 
-## Variable aleatoria: Cantidad de lenguajes de programación usados por un usuario de Stack Overflow.
+## Variable aleatoria (Total Lenguajes de Programación)
+
+Variable aleatoria discreta: Cantidad de lenguajes de programación que usa un usuario de Stack Overflow.
+
+<div class="two-column">
+
+<div class="column4">
 
 ```{r echo=FALSE}
 hist(encuesta$TotalLenguajes,
@@ -385,3 +434,22 @@ abline(v= median(encuesta$TotalLenguajes), col = "blue", lty = 2)
 
 legend("topright", legend = c("Media", "Mediana"), col = c("red", "blue"), lty = c(1, 2))
 ```
+</div>
+
+<div class="column4">
+```{r}
+encuesta %>% group_by(TotalLenguajes) %>% count() -> probTotalLenguajes
+probTotalLenguajes %>% rename(Frecuencia = n) -> probTotalLenguajes
+
+probTotalLenguajes$ProbabilidadAtomica <- probTotalLenguajes$Frecuencia / nrow(encuesta)
+
+
+```
+
+</div>
+
+</div>
+
+> Media: 4.989317
+>
+> Mediana: 5
