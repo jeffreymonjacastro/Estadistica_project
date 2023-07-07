@@ -8,6 +8,7 @@ editor: visual
 
 ```{r}
 library(fitdistrplus)
+library(dplyr)
 ```
 
 ```{r}
@@ -121,6 +122,10 @@ sd(pruebaSalary$Salary)
 
 varx <- (70000 - 30000)^2/12
 sqrt(varx)
+```
+
+```{r}
+pnorm(23/7,lower.tail = FALSE)
 ```
 
 Parece ser Uniforme
