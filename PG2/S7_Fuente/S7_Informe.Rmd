@@ -118,7 +118,7 @@ En resumen, en esta sección se registran todas las variables que consideramos �
 ### Encuestas de Stak Overflow
 
 | Nombre de la variable   | Tipo de variable   | Descripción                                                        | Restricciones                   |
-|------------------|------------------|--------------------|------------------|
+|------------------|------------------|-------------------|------------------|
 | MainBranch              | Categórica nominal | Contiene información sobre el estado profesional del desarrollador | \-                              |
 | Employment              | Categórica nominal | El tipo de empleo que tiene le desarrollador                       | separado por punto y coma       |
 | RemoteWork              | Categórica nominal | De que forma ejercen el trabajo remoto                             | \-                              |
@@ -139,7 +139,7 @@ En resumen, en esta sección se registran todas las variables que consideramos �
 ### PLDB Lenguajes de Programación
 
 | Nombre de la variable | Tipo de variable   | Descripción                                                       | Restricciones                   |
-|------------------|------------------|--------------------|------------------|
+|------------------|------------------|-------------------|------------------|
 | Title                 | Categórica Nominal | Nombre original del lenguaje de programación                      | \-                              |
 | Appeared              | Numérica discreta  | Año en donde apareció por primera vez el lenguaje de programación | \>= 1945                        |
 | Rank                  | Numérica discreta  | Un ranking hecho por PLDB                                         | \>=0                            |
@@ -264,7 +264,7 @@ encuesta %>%
   theme_minimal()
 ```
 
-Se puede visualizar que el salario de los desarrolladores se concentra mayormente entre 50 000 y 60 000 dólares anuales. Además, existe un gran sesgo a la derecha, ya que el promedio es mucho mayor a la media. Esto se debe a que hay muchas personas que trabajan con varios lenguajes de programación.
+El salario de los desarrolladores se concentra entre 50,000 y 60,000 dólares anuales, con un sesgo hacia salarios más altos debido a la presencia de personas que trabajan con múltiples lenguajes de programación.
 
 #### Lenguajes de programación
 
@@ -301,7 +301,7 @@ barplot(df1$CantUsers,
   )
 ```
 
-Se visualiza que en nuestra muestra los lenguajes más conocidos son `JavaScript`, `HTML/CSS`, `SQL` entre otros. Exactamente estos lenguajes de programación son los más populares en Internet.
+Se visualiza que en nuestra muestra los lenguajes más conocidos son `JavaScript`, `HTML/CSS`, `SQL` entre otros.
 
 ```{r}
 planguages %>% arrange(desc(N_Usuarios)) -> OrdenUsuarios
@@ -318,8 +318,6 @@ barplot(OrdenUsuarios$N_Usuarios,
         las = 2
         )
 ```
-
-Comparando la anterior gráfica de los lenguajes más populares de Stack Overflow, hay lenguajes que se repiten también en la otra base de datos de PLDB, como `SQL`, `JavaScript`, `HTML` entre otros.
 
 ### ¿Existe una relación entre el lenguaje de programación utilizado por un desarrollador y su salud mental?
 
@@ -618,11 +616,7 @@ Tipos de problemas mentales:
 
     -   Finalmente, en cuanto a las personas con problemas de memoria, podemos identificar a los siguientes lenguajes: **Erlang, Crystal y Lua.**
 
-Resulta evidente la repetición de ciertos lenguajes en todos los tipos de problemas mentales, de los cuales destacan **SAS, Erlang, Crystal y Lua.** Dichos lenguajes parecen ser los más problemáticos. Mientras que los menos problemáticos parecen ser lenguajes como **Java, C++ o MATLAB**.
-
-Podemos pensar entonces que el lenguaje de programación si afecta de cierta forma al estado mental de una persona ya sea por su complejidad, falta de información u otros factores. La relación se hace presente puesto que podemos separar a lenguajes "**problemáticos" (que producen mayor cantidad de problemas mentales)** de lenguajes **"poco problemáticos" (que producen una cantidad baja de problemas mentales)**.
-
-Prontamente observaremos las causas por las que estos lenguajes son más "problemáticos".
+Algunos lenguajes de programación, como SAS, Erlang, Crystal y Lua, se asocian con más problemas mentales, mientras que lenguajes como Java, C++ o MATLAB parecen tener menos incidencia de problemas mentales. Existe una relación entre el lenguaje de programación y el estado mental, pero se necesita más investigación para comprender las causas exactas.
 
 ### ¿Hay alguna relación entre la popularidad de un lenguaje de programación y la satisfacción laboral de los programadores que lo utilizan?
 
@@ -647,7 +641,7 @@ barplot(OrdenUsuarios$N_Usuarios,
 
 Entonces busquemos nuestros lenguajes más "problemáticos" y los "poco problemáticos" en base a su popularidad.
 
-Rápidamente notaremos que son los lenguajes "poco problemáticos" (Java, C++, MATLAB) los que gozan de los primeros puestos en cuanto a popularidad se trata, por otro lado a los que calificamos como "problemáticos" se encuentran en puestos bajos (SAS, Lua, Erlang, Crystal).
+Rápidamente notaremos que son los lenguajes "poco problemáticos" los que gozan de los primeros puestos en cuanto a popularidad se trata, por otro lado a los que calificamos como "problemáticos" se encuentran en puestos bajos.
 
 Pero parémonos a analizar un momento y pensemos, ¿es la popularidad lo que está definiendo que un lenguaje sea "problemático", es decir, afecte negativamente en la salud mental de un desarrollador? O por otro lado, ¿es un lenguaje popular porque puede ser calificado como **"poco problemático"**?
 
@@ -709,9 +703,9 @@ barplot(OrdenBigQueryrep$BigQuery_repos,
 
 ```
 
-Analizando los gráficos notaremos que son los lenguajes a los que clasificamos como **"poco problemáticos"** son los que presentan mayor número de repositorios disponibles (C++ y Java).
+Analizando los gráficos notaremos que son los lenguajes a los que clasificamos como **"poco problemáticos"** son los que presentan mayor número de repositorios disponibles.
 
-Por otro lado, notaremos que son justo los lenguajes **"problematicos"** los que presentan muchisimo menos número (por no decir cero) de repositorios (Erlang, Lua, SAS, Crystal).
+Por otro lado, notaremos que son justo los lenguajes **"problematicos"** los que presentan muchisimo menos número de repositorios.
 
 Con este análisis la visión es distinta. Si lo vemos en conjunto con el de popularidad podríamos decir que es natural que los lenguajes más populares tengan mayor cantidad de contenido disponible en la web. Entonces notaremos una transitividad:
 
@@ -794,7 +788,7 @@ encuesta %>%
   theme_minimal()
 ```
 
-En este gráfico podemos visualizar que efectivamente las personas que sufren un problema mental curiosamente ganan más que las personas que declararon no sufrir. Por lo que se puede deducir que tener un buen salario no necesariamente significa tener un estado de salud mental estable. Tal vez esto sucede debido a que los que sufren un problema mental tienen mayor carga laboral, por lo que ganan más dinero pero no tienen estabilidad mental.
+Las personas con problemas mentales tienen salarios más altos, lo que sugiere que el salario no garantiza una buena salud mental. Esto podría ser debido a una mayor carga laboral que conlleva a un mayor ingreso, pero también a una falta de estabilidad mental.
 
 ### ¿Existe una relación entre el sistema operativo utilizado en el trabajo y la salud mental de los individuos?
 
@@ -847,7 +841,7 @@ ggplot(tabla_larga,
   theme_minimal()
 ```
 
-En este gráfico podemos notar que no hay una relación clara entre la salud mental de los programadores y sus respectivos sistemas operativos, ya que podemos observar casi la misma proporción en cada uno. Los problemas más comunes son problemas de memoria, emocionales y de ansiedad. Pero, no podemos encontrar una relación directa entre ambas variables.
+No se observa una relación clara entre la salud mental de los programadores y los sistemas operativos que utilizan. Aunque se presentan problemas comunes como la memoria, emocionales y de ansiedad, no se puede establecer una conexión directa entre estas variables.
 
 ## Análisis Probabilístico
 
@@ -891,11 +885,7 @@ $$
 
 -   Cálculo de las probabilidades de los eventos atómicos:
 
-A1: Seleccionar un programador del estudio que utiliza un lenguaje de programación
-A2: Seleccionar un programador del estudio que utiliza dos lenguajes de programación
-...
-A42: Seleccionar un programador del estudio que utiliza 42 lenguajes de programación
-
+A1: Seleccionar un programador del estudio que utiliza un lenguaje de programación A2: Seleccionar un programador del estudio que utiliza dos lenguajes de programación ... A42: Seleccionar un programador del estudio que utiliza 42 lenguajes de programación
 
 ```{r}
 encuesta %>% group_by(TotalLenguajes) %>% count() -> probTotalLenguajes
@@ -975,8 +965,7 @@ $$
 \Omega_2 = [5] =\{ \text{ cantidad de problemas de salud mental } \} \\
 \mathcal{F_2} = 2^{|\Omega_2|} \\
 \mathbb{P_2}(n) = \{ \text{ probabilidad de que sufra n problemas de salud mental } \} 
-$$ 
-+ Cálculo de las probabilidades de los eventos atómicos:
+$$ + Cálculo de las probabilidades de los eventos atómicos:
 
 ```{r}
 encuesta %>% group_by(TotalMentalHealth) %>% count() -> probTotalMentalHealth
@@ -1050,13 +1039,9 @@ $$
 \Omega_3 = [7] - \{0\} =\{ \text{ Todas las edades del rango } \} \\
 \mathcal{F_3} = 2^{|\Omega_3|} \\
 \mathbb{P_3}(n) = \{ \text{ Probabilidad de que salga la edad n } \} 
-$$ 
-+ Cálculo de las probabilidades de los eventos atómicos:
+$$ + Cálculo de las probabilidades de los eventos atómicos:
 
-B1: Seleccionar un programador que tenga menos de 18 años
-B2: Seleccionar un programador que tenga menos de 18 años
-B1: Seleccionar un programador que tenga menos de 18 años
-....
+B1: Seleccionar un programador que tenga menos de 18 años B2: Seleccionar un programador que tenga menos de 18 años B1: Seleccionar un programador que tenga menos de 18 años ....
 
 ```{r}
 encuesta %>% group_by(ModifiedAge) %>% count() -> probModifiedAge
@@ -1073,8 +1058,7 @@ Para verificar que la suma de las probabilidades de los eventos atómicos utiliz
 sum(probModifiedAge$ProbabilidadAtomica)
 ```
 
-
-+ Función de masa de probabilidad
+-   Función de masa de probabilidad
 
 ```{r}
 plot(probModifiedAge$ModifiedAge, 
@@ -1092,7 +1076,7 @@ points(probModifiedAge$ModifiedAge,
 
 ```
 
-+ Función de masa de probabilidad acumulada
+-   Función de masa de probabilidad acumulada
 
 ```{r}
 probAcumulada <- ecdf(encuesta$ModifiedAge)
@@ -1106,7 +1090,6 @@ plot(ecdf_datos,
      col = "blue",
      type = "s")
 ```
-
 
 ## Eventos Dependientes e Independientes
 
@@ -1130,9 +1113,7 @@ Seleccionamos los lenguajes que causan más problemas mentales de acuerdo a nues
 
 -   Ansiedad: SAS Ruby Lua
 
-Entonces, identificamos 2 eventos: 
-E1: Escoger un programador que usa 1 o más de los lenguajes "problemáticos"
-E2: Escoger un programador que sufre 1 o más problemas mentales
+Entonces, identificamos 2 eventos: E1: Escoger un programador que usa 1 o más de los lenguajes "problemáticos" E2: Escoger un programador que sufre 1 o más problemas mentales
 
 ```{r}
 list <- c('Crystal', 'Lua', 'Rust', 'APL', 'Assembly', 'Erlang', 'LISP', 'SAS')
@@ -1161,8 +1142,7 @@ mosaicplot(table(total$E1, total$encuesta.TotalMentalHealth), main = "Problemas 
 
 Luego de realizar el mosaicplot, notamos que ambos eventos son claramente dependientes, ya que se ven diferencias significativas en las proporciones de las categorías en las combinaciones de las variables. Pero, para comprobar esto de manera definitiva utilizamos algunas fórmulas.
 
-Comprobamos con las fórmulas de probabilidades:
-[La inversa]
+Comprobamos con las fórmulas de probabilidades: [La inversa]
 
 ```{r}
 probE2dE1 <- E1E2/probE1
@@ -1178,9 +1158,7 @@ Notamos que la probabilidad del E1 y la probabilidad del E2 difieren en 0,11 apr
 
 ### Eventos Independientes
 
-Identificamos dos eventos. - 
-E1: Usa un lenguaje que está entre los 5 más populares. - 
-E2: Sufre de 2 o más problemas mentales.
+Identificamos dos eventos. - E1: Usa un lenguaje que está entre los 5 más populares. - E2: Sufre de 2 o más problemas mentales.
 
 Justificación: Se quiere demostrar que nuestra salud mental no depende de si usamos un lenguaje popular o no. Para esto demostraremos que los eventos son independientes: - P(E1\|E2) - P(E1) ≈ 0 - P(E2\|E1) - P(E2) ≈ 0 - P(E2 y E1) ≈ P(E2) \* P(E1)
 
@@ -1243,7 +1221,7 @@ Entonces podemos decir que los eventos son muy **APROXIMADAMENTE** independiente
 
 `E1` Escoger una muestra de 100 programadores (con reemplazo) y contar el número de programadores que programen en JavaScript y que ganen mas del promedio.
 
-Éxito: Que el programador escogido domine en JS y gane mas que el promedio
+**Éxito:** Que el programador escogido domine en JS y gane mas que el promedio
 
 Calculamos la probabilidad de éxito asumiendo que nuestra muestra es representativa.
 
@@ -1260,11 +1238,11 @@ p
 n <- 100
 ```
 
-$$ \mathbb{X} = \text{Número de programadores que programen en JavaScript} \\ \text{y ganan mas que el promedio en una muestra de 100 programadores} \\
+\$\$ \mathbb{X} = \text{Número de programadores que programen en JavaScript} \\ \text{y ganan mas que el promedio en una muestra de 100 programadores} \\
 
 \text{Rango(X) = 0 ,1 ,2 ,3 ,4 ,5 ,6 ,7 ........,100} \\
 
-\mathbb{X} \sim Bin(n,p) = Bin(100,0.27) $$
+\mathbb{X} \sim Bin(n,p) = Bin(100,0.27) \$\$
 
 ```{r}
 rango <- 0:100
@@ -1289,10 +1267,10 @@ esperanza <- n*p
 esperanza
 ```
 
-Ahora calculamos la esperanza con la sumatoria:
-$$
+Ahora calculamos la esperanza con la sumatoria: $$
 \mathbb{E}(\mathbb{X}) = \sum xp(x)
 $$
+
 ```{r}
 Ex <-sum(0:100*dbinom(0:100 , n , p))
 Ex
@@ -1303,6 +1281,7 @@ Varianza:
 $$
 Var(\mathbb{X}) = np(1-p)
 $$
+
 ```{r}
 Varianza <- n*p*(1-p)
 Varianza
@@ -1312,18 +1291,15 @@ $$
 Var(\mathbb{X}) = \sum_{x \in Rang(\mathbb{X})}(x-E(\mathbb{X}))^{2}p(x)
 $$
 
-
 ```{r}
 sum((0:100 - Ex)^{2}*dbinom(0:100 , n ,p))
 ```
 
-Experimento:
-¿Cuál es la probabilidad que al escoger aleatoriamente a 100 programadores encuestados el 2022 (con reemplazo) el número de personas que utilizan Javascript y ganan más que el salario promedio esté entre 20 y 27, sabiendo que la probabilidad de escoger a un programador con ese lenguaje y su salario es 0.27?
+Experimento: ¿Cuál es la probabilidad que al escoger aleatoriamente a 100 programadores encuestados el 2022 (con reemplazo) el número de personas que utilizan Javascript y ganan más que el salario promedio esté entre 20 y 27, sabiendo que la probabilidad de escoger a un programador con ese lenguaje y su salario es 0.27?
 
 ```{r}
 pbinom(27,100,0.27) - pbinom(19, 100, 0.27)
 ```
-
 
 ### Distribución Hipergeométrica
 
@@ -1363,6 +1339,7 @@ rango <- 5000:5900
 
 plot(rango, dhyper(rango, k , N-k , n), type = 'h', lwd = 2, xlab = "Número de éxitos", ylab = "Probabilidad", main = "Distribución Hipergeometrica")
 ```
+
 Comprobamos que la suma de la función de la distribución hipergeométrica da 1.
 
 ```{r}
@@ -1399,6 +1376,7 @@ $$
 varianza <- (n*k*(N-k)*(N-n))/(N*N*(N-1))
 varianza
 ```
+
 Del mismo modo, calculamos la esperanza con sumatoria:
 
 $$
@@ -1418,16 +1396,9 @@ Se extraen 15000 programadores de una muestra de 29204, de los cuales 10492 sabe
 phyper(5600, k, N-k , n) - phyper(5400 , k , N-k , n) 
 ```
 
-
-
 ## Variables Continuas
 
-
-### Variable Salario 
-
-
-
-
+### Variable Salario
 
 ### Conclusiones
 
