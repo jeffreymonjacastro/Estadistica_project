@@ -54,8 +54,6 @@ languages = read_csv("Programming_languages.csv")
 encuesta = read_csv("survey_results_limpia.csv")
 ```
 
-# Analisis Descriptivo
-
 ## Analisis Univariado.
 
 <div class="two-column">
@@ -409,47 +407,219 @@ encuesta %>%
 
 </div>
 
-# Analisis Probabilistico
+## Variables empíricas
 
-## Variable aleatoria (Total Lenguajes de Programación)
 
-Variable aleatoria discreta: Cantidad de lenguajes de programación que usa un usuario de Stack Overflow.
+### Cantidad de lenguajes de programación que usa un usuario de Stack Overflow.
 
 <div class="two-column">
 
 <div class="column4">
-
 ```{r echo=FALSE}
-hist(encuesta$TotalLenguajes,
-     col = "skyblue",
-     main = "Histograma del total de lenguajes de Programación",
-     xlab = "Cantidad de lenguajes", 
-     ylab = "Frecuencia",
-     breaks = 20
-)
-
-abline(v= mean(encuesta$TotalLenguajes), col = "red", lty = 1)
-
-abline(v= median(encuesta$TotalLenguajes), col = "blue", lty = 2)
-
-legend("topright", legend = c("Media", "Mediana"), col = c("red", "blue"), lty = c(1, 2))
-```
-</div>
-
-<div class="column4">
-```{r}
 encuesta %>% group_by(TotalLenguajes) %>% count() -> probTotalLenguajes
 probTotalLenguajes %>% rename(Frecuencia = n) -> probTotalLenguajes
 
 probTotalLenguajes$ProbabilidadAtomica <- probTotalLenguajes$Frecuencia / nrow(encuesta)
 
+plot(probTotalLenguajes$TotalLenguajes, 
+     probTotalLenguajes$ProbabilidadAtomica, 
+     type = "h", 
+     col="red",
+     main = "Función de masa de probabilidad",
+     xlab = "Cantidad de lenguajes usados",
+     ylab = "Probabilidad",
+     ylim = c(0,0.2)
+)
 
+points(probTotalLenguajes$TotalLenguajes, 
+     probTotalLenguajes$ProbabilidadAtomica,  
+     pch = 20, 
+     col="red",
+)
+```
+</div>
+
+<div class="column4">
+```{r echo=FALSE}
+probAcumulada <- ecdf(encuesta$TotalLenguajes)
+
+ecdf_datos <- probAcumulada(0:43)
+
+plot(ecdf_datos, 
+     main = "Función de masa de probabilidad acumulada", 
+     xlab = "Cantidad de lenguajes usados", 
+     ylab = "Probabilidad acumulada",
+     type = "s",
+     col = "blue",
+)
+```
+</div>
+</div>
+
+> Media: 4.989317 | Mediana: 5 | $\sum_{x = \Omega_3} \mathbb{P}(x) = 1$
+
+### Rangos de edad de un usuario (1 - 6)
+
+<div class="two-column">
+
+<div class="column4">
+```{r echo=FALSE}
+encuesta %>% group_by(ModifiedAge) %>% count() -> probModifiedAge
+probModifiedAge %>% rename(Frecuencia = n) -> probModifiedAge
+
+probModifiedAge$ProbabilidadAtomica <- probModifiedAge$Frecuencia / nrow(encuesta)
+
+plot(probModifiedAge$ModifiedAge, 
+     probModifiedAge$ProbabilidadAtomica,
+     type = "h",
+     col = "red",
+     lwd = 2
+)
+
+points(probModifiedAge$ModifiedAge, 
+     probModifiedAge$ProbabilidadAtomica,
+     pch = 20, 
+     col="red",
+)
+```
+</div>
+
+<div class="column4">
+```{r echo=FALSE}
+probAcumulada <- ecdf(encuesta$ModifiedAge)
+
+ecdf_datos <- probAcumulada(1:7)
+
+plot(ecdf_datos, 
+     main = "Función de masa de probabilidad acumulada", 
+     xlab = "Valores", 
+     ylab = "Probabilidad acumulada",
+     col = "blue",)
+```
+</div>
+</div>
+
+> Media: 2.399192 | Mediana: 2 | $\sum_{x = \Omega_3} \mathbb{P}(x) = 1$
+
+
+## Eventos Dependientes
+
+Seleccionamos los lenguajes que causan más problemas mentales de acuerdo a nuestras gráficas, ya que consideramos que podrían tener una relación interesante. (Lua, Crystal, Erlang, Lya, Ruby, SAS, Lisp, Rust, Assembly, APL)
+
+> E1: Escoger un programador que usa 1 o más de los lenguajes "problemáticos"
+> E2: Escoger un programador que sufre 1 o más problemas mentales
+
+<div class="two-column three-column">
+```{r echo=FALSE}
+list <- c('Crystal', 'Lua', 'Rust', 'APL', 'Assembly', 'Erlang', 'LISP', 'SAS')
+
+E1 <- encuesta$Crystal | encuesta$Lua | encuesta$Rust | encuesta$APL | encuesta$Assembly | encuesta$Erlang | encuesta$LISP | encuesta$SAS
+
+probE1 <- sum(E1)/nrow(encuesta)
+cat("P(E1):", probE1*100, "%")
+```
+
+```{r echo=FALSE}
+probE2 <- sum(encuesta$TotalMentalHealth > 0) / nrow(encuesta)
+cat("P(E2):", probE2*100, "%")
+```
+
+```{r echo=FALSE}
+total = data.frame(E1, encuesta$TotalMentalHealth)
+E1E2 = nrow(total[total$E1 == TRUE & total$encuesta.TotalMentalHealth > 0,])/nrow(total)
+cat("P(E1 ∩ E2):", E1E2*100, "%")
+```
+</div>
+
+Se comprueban que las condiciones de independencia no se cumplen, por lo que es dependiente.
+
+<div class="two-column four-column">
+
+```{r echo=FALSE}
+probE2dE1 <- E1E2/probE1
+probE1dE2 <- E1E2/probE2
+cat("P(E2|E1):", probE2dE1, "!=", probE2)
+cat("P(E1|E2):", probE1dE2, "!=", probE1)
+cat("P(E2)*P(E1) =",probE1 * probE2, "!=", E1E2, "= P(E1 ∩ E2)")
+```
+</div>
+
+<div class="graph50">
+```{r echo=FALSE}
+total$encuesta.TotalMentalHealth <- total$encuesta.TotalMentalHealth > 0
+
+mosaicplot(table(total$E1, total$encuesta.TotalMentalHealth), main = "Problemas mentales y lenguajes problemáticos", xlab="Usa un lenguaje 'problematico'", ylab="Sufre 1 o más problemas mentales")
 ```
 
 </div>
 
+
+## Eventos Independientes
+
+Se quiere demostrar que nuestra salud mental no depende de si usamos un lenguaje popular o no. Para esto demostraremos que los eventos son independientes:
+
+> E1: Usa un lenguaje que está entre los 5 más populares.
+> E2: Sufre de 2 o más problemas mentales.
+
+<div class="two-column three-column">
+```{r echo=FALSE}
+evento1 = encuesta$Java | encuesta$JavaScript | encuesta$C | encuesta$Python | encuesta$SQL
+
+E1 = sum(evento1)/length(evento1)
+cat("P(E1):", E1*100, "%")
+```
+
+```{r echo=FALSE}
+cantProblemas = encuesta$Memoria + encuesta$Emocional +encuesta$Ansiedad + encuesta$Autismo +encuesta$Aprendizaje
+
+E2 = length(cantProblemas[cantProblemas >= 2])/length(cantProblemas)
+
+cat("P(E2):", E2*100, "%")
+```
+
+```{r echo=FALSE}
+total = data.frame(evento1, cantProblemas)
+
+E1E2 = nrow(total[total$evento1 == TRUE & total$cantProblemas >= 2,])/nrow(total)
+
+cat("P(E1 ∩ E2):", E1E2*100, "%")
+```
 </div>
 
-> Media: 4.989317
->
-> Mediana: 5
+Se comprueban que las condiciones de independencia se cumplen:
+
+<div class="two-column four-column">
+
+```{r echo=FALSE}
+E2dadoE1 = E1E2/E1
+E1dadoE2 = E1E2/E2
+cat("P(E1|E2) =",E1dadoE2,"≈",E1,"= P(E1)")
+cat("P(E2|E1) =",E2dadoE1,"≈",E2,"= P(E2)")
+cat("P(E1yE2) =",E1E2,"≈",E1*E2,"= P(E1)*P(E2)")
+```
+</div>
+
+<div class="graph50">
+```{r echo=FALSE}
+total$cantProblemas <- total$cantProblemas >= 2
+
+mosaicplot(table(total$evento1, total$cantProblemas),
+	main = "Eventos independientes",
+	xlab = "Uno o más de los 5 lenguajes populares",
+	ylab = "2 o más problemas mentales")
+```
+
+</div>
+
+
+## Distribución Binomial
+
+> Evento: Escoger una muestra de 100 programadores (con reemplazo) y contar el número de programadores que programen en JavaScript y que ganen mas del promedio.
+
+> Éxito: Que el programador escogido domine en JS y gane mas que el promedio
+
+La probabilidad de exito es del **27%** (p = 0.27, n = 100).
+
+
+
+

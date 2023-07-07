@@ -57,5 +57,31 @@ blockquote {
 }
 
 .column4 {
-    width: 67%;
+    width: 37%;
+}
+
+.column4 img {
+    margin: -9px;
+}
+
+.two-column.three-column {
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+.two-column.four-column pre {
+    width: 50%;
+    margin: -4px 0px;
+    text-align: center;
+    font-size: 18px;
+}
+
+.graph50 {
+    width: 45%;
+    margin: auto;
+    margin-top: 15px;
+}
+
+.graph50 img {
+    border: 1px solid #989898;
 }
