@@ -129,7 +129,7 @@ Luego de la limpieza, decidimos mantenernos con `12` variables que se relacionan
 ### Encuestas de Stakoverflow
 
 | Nombre de la variable | Tipo de variable   | Descripción                                               | Restricciones                                        |
-|------------------|------------------|-------------------|------------------|
+|-----------------------|--------------------|-----------------------------------------------------------|------------------------------------------------------|
 | Age                   | Categórica Ordinal | Edad                                                      | \-                                                   |
 | Gender                | Categórica Ordinal | Género                                                    | Man y Woman                                          |
 | Salary                | Numérica Contínua  | El salario anual en dólares del desarrollador             | [3600 - 249153]                                      |
@@ -140,7 +140,7 @@ Luego de la limpieza, decidimos mantenernos con `12` variables que se relacionan
 ### PLDB Lenguajes de Programación
 
 | Nombre de la variable | Tipo de variable   | Descripción                                                       | Restricciones                                                               |
-|------------------|------------------|------------------|-------------------|
+|-----------------------|--------------------|-------------------------------------------------------------------|-----------------------------------------------------------------------------|
 | Nombre                | Categórica Nominal | Nombre original del lenguaje de programación                      | Deben estar los mismos lenguajes de la encuesta de StackOverflow            |
 | Type                  | Categórica Ordinal | El tipo de lenguaje del que se trata                              | Debe ser "*pl*", "*queryLanguage*", "*textMarkup*" y "*stylesheetLanguage*" |
 | N_Trabajos            | Numérica Discreta  | Número de trabajos relacionados al lenguaje de programación       | Debe ser mayor a 0                                                          |
@@ -1199,11 +1199,9 @@ $$
 \mathbb{X} = \text{Número de lenguajes mensuales que usa un desarrollador en un mes} \\
 Rango(\mathbb{X}) = \mathbb{N} - \{0\} \\
 \mathbb{X} \sim \mathcal{Poisson}(\lambda) = \mathcal{Poisson}(5)
-$$ 
+$$
 
-Ya que cumple con las siguientes condiciones: \\
-+ Los eventos deben ser independientes entre sí.\\
-+ La tasa media de eventos debe ser constante en cualquier intervalo de tiempo.
+Ya que cumple con las siguientes condiciones: \\ + Los eventos deben ser independientes entre sí.\\ + La tasa media de eventos debe ser constante en cualquier intervalo de tiempo.
 
 Entonces:
 
@@ -1213,7 +1211,7 @@ $$
   \frac{\mathrm{e^{-5}5^x}}{x!}, & \forall~x > 0; \\
   0, & \text{en caso contrario}
 \end{cases}
-$$ 
+$$
 
 Consideramos que la distribución de `Poisson` tome valores a partir de 1, ya que en la variable `Total de Lenguajes` no existe desarrollador que utilice 0 lenguajes.
 
@@ -1303,20 +1301,16 @@ p
 n <- 1000
 ```
 
-$$
-\mathbb{Y} = \text{Número de desarrolladores que programen en JavaScript} \\ \text{y ganan mas que el promedio en una muestra de 1000 programadores} \\
+\$\$ \mathbb{Y} = \text{Número de desarrolladores que programen en JavaScript} \\ \text{y ganan mas que el promedio en una muestra de 1000 programadores} \\
 
 Rango(\mathbb{Y}) = [1000] \\
 
-\mathbb{Y} \sim \mathcal{Bin}(n,p) = \mathcal{Bin}(1000,0.27)
-$$
-Entonces:
+\mathbb{Y} \sim \mathcal{Bin}(n,p) = \mathcal{Bin}(1000,0.27) \$\$ Entonces:
 
 $$
 \mathbb{P}(\mathbb{Y} = x) = \mathcal{Bin}(1000, 0.27) = 
 \binom{1000}{x} \cdot 0.27^x \cdot (1-0.27)^{1000-x}
-$$ 
-Modelamos la variable `Usa JavaScript y gana más que el promedio` y la distribución Binomial:
+$$ Modelamos la variable `Usa JavaScript y gana más que el promedio` y la distribución Binomial:
 
 ```{r}
 list <- data.frame(
@@ -1391,6 +1385,7 @@ Ey
 Se aprecia que el promedio de los datos se aproxima a la esperanza de la variable aleatoria. No obstante, sigue habiendo irregularidades.
 
 #### Varianza
+
 $$
 Var(\mathbb{X}) = n \cdot p \cdot (1 - p)
 $$
@@ -1402,7 +1397,7 @@ vary
 var(listexitos)
 ```
 
-La varianza se aleja sustancialmente de la varianza de la variable aleatoria 
+La varianza se aleja sustancialmente de la varianza de la variable aleatoria
 
 ## Variables Aleatorias Continuas
 
@@ -1416,7 +1411,7 @@ $$
 \mathbb{Z} = \text{ Salario que ganan } \\
 Rango(\mathbb{X}) = \mathbb{N} - \{0\} \\
 \mathbb{X} \sim \mathcal{Poisson}(\lambda) = \mathcal{Poisson}(5)
-$$ 
+$$
 
 ```{r}
 pruebaSalary <- encuesta %>% filter(Salary > 30000 & Salary < 70000)
@@ -1441,13 +1436,7 @@ lines(Xs, dunif(Xs,30000,70000), col = "red", lwd = 2)
 
 #### Esperanza
 
-
-
-
-
 #### Varianza
-
-
 
 ### Conclusiones
 

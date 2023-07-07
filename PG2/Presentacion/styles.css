@@ -85,3 +85,20 @@ blockquote {
 .graph50 img {
     border: 1px solid #989898;
 }
+
+#grafico01{
+  position:absolute;
+  width: 60%;
+  bottom: -15px;
+  right: -21px;
+  position: absolute;
+}
+
+div#graph02 {
+    width: 50%;
+    margin: auto;
+}
+
+.MathJax_Display {
+    font-size: 19px;
+}

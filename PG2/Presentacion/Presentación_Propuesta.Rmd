@@ -47,6 +47,7 @@ library(readr)
 library(ggplot2)
 library(tidyverse)
 library(stringr)
+library(fitdistrplus) 
 ```
 
 ```{r warning = FALSE, include=FALSE}
@@ -614,12 +615,141 @@ mosaicplot(table(total$evento1, total$cantProblemas),
 
 ## Distribución Binomial
 
-> Evento: Escoger una muestra de 100 programadores (con reemplazo) y contar el número de programadores que programen en JavaScript y que ganen mas del promedio.
+> Evento: Escoger una muestra de 1000 programadores (con reemplazo) y contar el número de programadores que programen en JavaScript y que ganen mas del promedio.
 
 > Éxito: Que el programador escogido domine en JS y gane mas que el promedio
 
 La probabilidad de exito es del **27%** (p = 0.27, n = 100).
 
+Realizando el experimento obtenemos el siguiente gráfico:
+
+<div class="two-columns">
+
+<div class="column" id="grafico01">
+```{r echo=FALSE}
+
+p <- round( nrow(encuesta %>% filter(encuesta$JavaScript == TRUE & encuesta$Salary > promedio))/nrow(encuesta) ,2)
+
+n <- 1000
+
+list <- data.frame(
+  exitos = 1:1000,
+  probabilidad = 0
+)
+
+for (i in 1:1000) {
+  count <- 0
+  
+  indices <- sample(1:nrow(encuesta), 1000)
+  
+  for (index in indices) {
+    if (encuesta$JavaScript[index] == TRUE & encuesta$Salary[index] > promedio){
+      count = count + 1
+    }
+  }
+  
+  list$probabilidad[count] = list$probabilidad[count] + 1
+}
+
+list$probabilidad <- list$probabilidad/1000
+
+
+plot(list$exitos[100:400], list$probabilidad[100:400],
+     type = "h", 
+     col="red",
+     main = "",
+     xlab = "N° casos de éxito",
+     ylab = "Probabilidad",
+)
+lines(dbinom(1:1000, n, p), type = 'l', lwd = 1, lty = 2, col = "blue")
+legend("topright", 
+       legend = c("Experimento", "Distribución Binomial"), 
+       col = c("red", "blue"), 
+       lwd = 2,
+       lty = c(1,2)
+)
+```
+</div>
+</div>
+
+```{r echo=FALSE}
+count <- 0
+listexitos <- c()
+for (i in 1:nrow(list)) {
+  if (list$probabilidad[i] != 0){
+    count = count + 1
+    
+    listexitos = c(listexitos, list$exitos[i])
+  }
+}
+
+cat("media:",mean(listexitos),"|","moda:",list$exitos[list$probabilidad == max(list$probabilidad)], "|", "mediana:", median(listexitos))
+```
+
+Sabiendo que los eventos son independientes entre sí y que la mediana, la moda y la media están relativamente cerca. Podemos intuir el uso de un modelo de distribución binomial.
+
+Se puede comprobar el ajuste calculando la Esperanza.
+
+```{r echo=FALSE}
+cat("Esperanza =", n*p, "≈", mean(listexitos), "= Media")
+```
+
+## Distribución de Poisson
+
+$$
+\mathbb{X} = \text{Número de lenguajes mensuales que usa un desarrollador en un mes} \\
+Rango(\mathbb{X}) = \mathbb{N} - \{0\} \\
+\mathbb{X} \sim \mathcal{Poisson}(\lambda) = \mathcal{Poisson}(5)
+$$
+<div id="graph02">
+```{r echo=FALSE}
+encuesta %>% group_by(TotalLenguajes) %>% count() -> probTotalLenguajes
+probTotalLenguajes %>% rename(Frecuencia = n) -> probTotalLenguajes
+
+probTotalLenguajes$ProbabilidadAtomica <- probTotalLenguajes$Frecuencia / nrow(encuesta)
+
+
+plot(probTotalLenguajes$TotalLenguajes, 
+     probTotalLenguajes$ProbabilidadAtomica, 
+     type = "h", 
+     col="red",
+     main = "Comparación de la variable 'Total de lenguajes' y Poisson",
+     xlab = "Cantidad de lenguajes usados",
+     ylab = "Probabilidad",
+     ylim = c(0,0.2)
+)
+
+points(probTotalLenguajes$TotalLenguajes, 
+     probTotalLenguajes$ProbabilidadAtomica,  
+     pch = 20, 
+     col="red",
+)
+
+lines(dpois(1:50, mean(encuesta$TotalLenguajes)), col="blue", type="l", lwd = 2, lty = 2)
+
+legend("topright", 
+       legend = c("Función de probabilidad", "Distribución de Poisson"), 
+       col = c("red", "blue"), 
+       lwd = 2,
+       lty = c(1,2)
+)
+```
+</div>
+```{r echo=FALSE}
+cat("mediana:", median(encuesta$TotalLenguajes), "|", "media:", mean(encuesta$TotalLenguajes))
+```
+
+## Variable Salario (Continua)
+
+```{r}
+encuesta$salarioSobrecantLenguajes <- encuesta$Salary*encuesta$ModifiedAge/(1+encuesta$TotalMentalHealth)
+
+plot(density(encuesta$salarioSobrecantLenguajes , na.rm = T), main="Densidad Salario*Edad/TotalProblemasMentales")
+```
+```{r}
+descdist(encuesta$salarioSobrecantLenguajes)
+FDG <- fitdist(encuesta$salarioSobrecantLenguajes, "gamma", start = list(shape = 1, scale = 1))
+```
 
 
 
