@@ -156,6 +156,7 @@ En resumen, en esta sección se registran todas las variables que consideramos �
 
 ```{r warning=FALSE, echo = TRUE}
 
+#install.packages("tidyverse")
 
 library(dplyr)
 library(readr)
@@ -167,9 +168,264 @@ library(stringr)
 ### Carga de datos
 
 ```{r warning=FALSE}
-planguages <- read_csv("programming_languages_limpia.csv")
-encuesta <- read_csv("survey_results_limpia.csv")
+planguages <- read_csv("Programming_languages.csv")
+encuesta <- read_csv("upload_survey_results.csv")
 ```
+
+```{r}
+write.csv(planguages, "programming_languages_limpia.csv", row.names = FALSE)
+```
+
+
+## Limpieza de Datos
+
+### Limpieza de "Programming Languages Data Base"
+
+Se procederá a limpiar la base de datos `Programming_languages.csv`.
+
+### Borrado de columnas innecesarias
+
+Veamos cuántas filas y columnas tiene nuestro `planguages`:
+
+```{r}
+nrow(planguages)
+ncol(planguages)
+```
+
+Como se puede ver, hay muchas columnas (en total 353) que no utilizaremos.
+
+Por ello, procedemos a limpiar nuestro `planguages`, centrándonos en las variables que nos interesan, las cuales son: `Title`, `Appeared`, `Type`, `Rank`, `numberOfJobs`, `numberOfUsers`, `Country`, `githubLanguage.repos` y `githubBigQuery.repos`.
+
+Vamos a eliminar las columnas que no necesitemos:
+
+```{r}
+planguages <- select(planguages, title, appeared, type, rank, numberOfJobs, numberOfUsers, country, githubLanguage.repos, githubBigQuery.repos)
+```
+
+Renombraremos las variables para una mejor manipulación:
+
+```{r}
+planguages %>% rename(Nombre = title,
+                     Año = appeared,
+                     Tipo = type,
+                     Rank = rank,
+                     N_Trabajos = numberOfJobs,
+                     N_Usuarios = numberOfUsers,
+                     País = country,
+                     Github_repos = githubLanguage.repos,
+                     BigQuery_repos = githubBigQuery.repos) -> planguages
+```
+
+### Limpieza de Datos no útiles
+
+Consideraremos los lenguajes de programación que hayan sido creados posteriores e iguales al año 1945:
+
+```{r}
+planguages$Año[planguages$Año < 1945] <- NA
+```
+
+La variable `Tipo` debe corresponder a lenguajes de programación `pl`, `queryLanguage`, `textMarkup` o `stylesheetLanguage`\`.
+
+```{r}
+planguages <- planguages[planguages$Tipo == "pl" | planguages$Tipo == "queryLanguage" | planguages$Tipo == "textMarkup" | planguages$Tipo == "stylesheetLanguage" ,]
+```
+
+El ranking empieza en 0. Vamos a sumar 1 a cada fila de esta variable:
+
+```{r}
+planguages$Rank <- planguages$Rank + 1
+```
+
+Escogemos los lenguajes que tengan al menos 1 trabajador:
+
+```{r}
+planguages$N_Trabajos[planguages$N_Trabajos == 0] <- NA
+```
+
+Escogemos los lenguajes que tengan más de 10 usuarios:
+
+```{r}
+planguages <- planguages[planguages$N_Usuarios > 10,] 
+```
+
+Seleccionamos los lenguajes donde al menos exista un repositorio al buscar en Github
+
+```{r}
+planguages$Github_repos[planguages$Github_repos == 0] <- NA
+```
+
+Seleccionamos los lenguajes donde al menos exista un repositorio al buscar en BigQuery
+
+```{r}
+planguages$BigQuery_repos[planguages$BigQuery_repos == 0] <- NA
+```
+
+Usaremos algunos lenguajes de programación, para que coincida con los usados por los usuarios de Stackoverflow
+
+```{r}
+languages <- c('APL', 'Assembly', 'Bash', 'C', 'C#', 'C++', 'Clojure', 'COBOL', 'Crystal', 'Dart', 'Delphi', 'Elixir', 'Erlang', 'F#', 'Fortran', 'Go', 'Groovy', 'Haskell', 'HTML','CSS', 'Java', 'JavaScript', 'Julia', 'Kotlin', 'LISP', 'Lua', 'MATLAB', 'OCaml', 'Objective-C', 'Perl', 'PHP', 'PowerShell', 'Python', 'R', 'Ruby', 'Rust', 'SAS', 'Scala', 'Solidity', 'SQL', 'Swift', 'TypeScript', 'VBA')
+```
+
+```{r}
+df <- data.frame()
+
+agregar_fila <- function(fila) {
+  df <- rbind(df, fila)
+}
+
+for (i in 1:nrow(planguages)){
+  if (planguages$Nombre[i] %in% languages){
+    fila <- subset(planguages, Nombre == planguages$Nombre[i])
+    df <- rbind(df, fila)
+  }
+}
+
+planguages <- df
+```
+
+### Limpieza de "Survey Results"
+
+### Borrado de columnas innecesarias
+
+```{r}
+encuesta <- select(encuesta, MainBranch, Employment, RemoteWork, CodingActivities, DevType, Country, EdLevel, Currency, ConvertedCompYearly, MentalHealth, Ethnicity, Gender, Age, `OpSysPersonal use`, `OpSysProfessional use`, LanguageHaveWorkedWith)
+```
+
+Renombraremos las variables para una mejor manipulación:
+
+```{r}
+encuesta %>% rename(Salary = ConvertedCompYearly,
+                    PersonalOS = `OpSysPersonal use`,
+                    ProfessionalOS = `OpSysProfessional use`,
+                    ProgLanguages = LanguageHaveWorkedWith) -> encuesta
+```
+
+Casos completos:
+
+```{r}
+table(complete.cases(encuesta))
+```
+
+Solo 34672 casos están completos. Seleccionaremos justo estos.
+
+```{r}
+encuesta <- na.omit(encuesta)
+```
+
+### Limpieza de Datos no útiles
+
+Para la variable `salario`, buscamos desarrolladores que ganen mínimo 3600 dólares anuales. Y para el máximo, no consideraremos los valores atípicos que sobrepasen el tercer cuantil más 1.5 veces el Rango Intercuantil, es decir, menores a `249153`
+
+```{r}
+#encuesta <- encuesta[encuesta$Salary > 3600, ]
+
+ric <- IQR(encuesta$Salary)
+
+q1 <- quantile(encuesta$Salary)[2]
+q3 <- quantile(encuesta$Salary)[4]
+
+encuesta <- encuesta[encuesta$Salary < q3 + 1.5 * ric, ]
+```
+
+En la encuesta se permite elegir géneros de varios tipos. Sin embargo, para fines de estudio nos limitaremos a hombre o mujeres, más obviaremos a los no binarios, entre otros.
+
+```{r}
+encuesta <- encuesta[encuesta$Gender == "Man" | encuesta$Gender == "Woman",]
+```
+
+Con respecto a las edades, eliminaremos a los que no prefirieron responder.
+
+```{r}
+encuesta <- encuesta[encuesta$Age != "Prefer not to say",]
+```
+
+En la variable `MentalHealth`, eliminaremos los datos que contengan "*in your own words*" o "*prefer not to say*"
+
+```{r}
+encuesta <- encuesta[!str_detect(encuesta$MentalHealth, "in your own words"),]
+
+encuesta <- encuesta[!str_detect(encuesta$MentalHealth, "Prefer not to say"),]
+```
+
+### Creación de columnas
+
+#### Lenguajes de Programación
+
+Crearemos columnas para cada lenguaje de programación, esto con el fin de poder hacer un análisis más sencillo.
+
+```{r}
+language <- encuesta %>%
+  separate_rows(ProgLanguages, sep = ";") %>%
+  group_by(ProgLanguages) %>%
+  summarize() %>%
+  pull()
+
+for (name in language) {
+  encuesta[name] = FALSE
+}
+
+for (i in 1:nrow(encuesta)) {
+  for (elem in unlist(strsplit(encuesta$ProgLanguages[i],";"))){
+    encuesta[i, elem] <- TRUE
+  }
+}
+```
+
+#### Mental Health
+
+También crearemos columnas para cada problema mental.
+
+```{r}
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "concentration", "\\b"))
+encuesta$Memoria <- columna_booleana
+
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "mood", "\\b"))
+encuesta$Emocional <- columna_booleana
+
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "anxiety", "\\b"))
+encuesta$Ansiedad <- columna_booleana
+
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "autism", "\\b"))
+encuesta$Autismo <- columna_booleana
+
+columna_booleana <- str_detect(encuesta$MentalHealth, paste0("\\b", "learning", "\\b"))
+encuesta$Aprendizaje <- columna_booleana
+```
+
+#### Sistemas operativos
+
+Y también creamos columnas para cada sistema operativo
+
+```{r}
+encuesta$BSD <- logical(nrow(encuesta))
+encuesta$Linux_Based <- logical(nrow(encuesta))
+encuesta$Windows <- logical(nrow(encuesta))
+encuesta$Windows_for_Linux <- logical(nrow(encuesta))
+encuesta$Mac <- logical(nrow(encuesta))
+
+opciones_a_verificar <- c("BSD", "Linux-based", "Windows", "Windows Subsystem for Linux (WSL)", "macOS")
+
+columna_booleana <- str_detect(encuesta$ProfessionalOS, paste0("\\b", "BSD", "\\b"))
+encuesta$BSD <- columna_booleana
+
+columna_booleana <- str_detect(encuesta$ProfessionalOS, paste0("\\b", "based", "\\b"))
+encuesta$Linux_Based <- columna_booleana
+
+columna_booleana <- str_detect(encuesta$ProfessionalOS, paste0("\\b", "Windows", "\\b"))
+encuesta$Windows <- columna_booleana
+
+columna_booleana <- str_detect(encuesta$ProfessionalOS, paste0("\\b", "Subsystem", "\\b"))
+encuesta$Windows_for_Linux <- columna_booleana
+
+columna_booleana <- str_detect(encuesta$ProfessionalOS, paste0("\\b", "macOS", "\\b"))
+encuesta$Mac <- columna_booleana
+```
+
+```{r}
+nrow(encuesta)
+```
+
+En total tenemos `29204` observaciones para nuestro estudio.
 
 ## Variables de estudio Finales
 
@@ -269,12 +525,6 @@ Se puede visualizar que el salario de los desarrolladores se concentra mayorment
 #### Lenguajes de programación
 
 ```{r}
-language <- encuesta %>%
-  separate_rows(ProgLanguages, sep = ";") %>%
-  group_by(ProgLanguages) %>%
-  summarize() %>%
-  pull()
-
 CantUsers <- c()
 
 for (lang in language){
@@ -857,6 +1107,22 @@ En este gráfico podemos notar que no hay una relación clara entre la salud men
 
 **Justificación:** Se escoge la variable `Total de lenguajes de programación` porque es nuestra variable principal de nuestro estudio. Además, determinar el espacio de probabilidad de algún evento relacionado a esta variable puede ser interesante para los objetivos.
 
+Hallando la variable `Total de lenguajes de programación`
+
+```{r}
+encuesta$TotalLenguajes <- 0
+
+for (i in 1:nrow(encuesta)) {
+  cont <- 0
+  for (pl in language) {
+    if (encuesta[i, pl] == TRUE){
+      cont <- cont + 1
+    }
+  }
+  encuesta[i, 'TotalLenguajes'] <- cont
+}
+```
+
 ```{r}
 hist(encuesta$TotalLenguajes,
      col = "skyblue",
@@ -915,7 +1181,7 @@ sum(probTotalLenguajes$ProbabilidadAtomica)
 #### Función de masa de probabilidad
 
 ```{r}
-plot(probTotalLenguajes$TotalLenguajes, 
+plot(probTotalLenguajes$TotalLenguages, 
      probTotalLenguajes$ProbabilidadAtomica, 
      type = "h", 
      col="red",
@@ -925,7 +1191,7 @@ plot(probTotalLenguajes$TotalLenguajes,
      ylim = c(0,0.2)
 )
 
-points(probTotalLenguajes$TotalLenguajes, 
+points(probTotalLenguajes$TotalLenguages, 
      probTotalLenguajes$ProbabilidadAtomica,  
      pch = 20, 
      col="red",
@@ -937,7 +1203,7 @@ Al escoger al azar un programador es más probable que trabaje con 3 a 5 lenguaj
 #### Función de densidad
 
 ```{r}
-probAcumulada <- ecdf(encuesta$TotalLenguajes)
+probAcumulada <- ecdf(encuesta$TotalLenguages)
 
 ecdf_datos <- probAcumulada(0:43)
 
@@ -953,6 +1219,26 @@ plot(ecdf_datos,
 ### Variable Total de problemas de Salud Mental
 
 **Justificación:** La variable `Total de problemas de Salud Mental` está relacionada con todos los objetivos. Asimismo, el espacio de probabilidad de la variable nos ayudará para analizar diferentes eventos.
+
+Hallando la variable `Total de problemas de Salud Mental`
+
+```{r}
+MentalHealth <- c("Memoria", "Ansiedad", "Aprendizaje", "Autismo", "Emocional")
+```
+
+```{r}
+encuesta$TotalMentalHealth <- 0
+
+for (i in 1:nrow(encuesta)) {
+  cont <- 0
+  for (problem in MentalHealth) {
+    if (encuesta[i, problem] == TRUE){
+      cont <- cont + 1
+    }
+  }
+  encuesta[i, 'TotalMentalHealth'] <- cont
+}
+```
 
 ```{r}
 barplot(table(encuesta$TotalMentalHealth),
@@ -1032,6 +1318,7 @@ plot(ecdf_datos,
 
 ### Variable edad
 
+Hallando la variable edad:
 ```{r}
 barplot(table(encuesta$ModifiedAge), 
      main = "Frecuencia de edades",
@@ -1103,8 +1390,7 @@ plot(ecdf_datos,
      main = "Función de masa de probabilidad acumulada", 
      xlab = "Valores", 
      ylab = "Probabilidad acumulada",
-     col = "blue",
-     type = "s")
+     col = "blue",)
 ```
 
 
@@ -1153,6 +1439,7 @@ Luego, hallamos la probabilidad de ambos eventos (E1 dado E2):
 ```{r}
 total = data.frame(E1, encuesta$TotalMentalHealth)
 E1E2 = nrow(total[total$E1 == TRUE & total$encuesta.TotalMentalHealth > 0,])/nrow(total)
+E1E2
 
 total$encuesta.TotalMentalHealth <- total$encuesta.TotalMentalHealth > 0
 
@@ -1237,7 +1524,7 @@ mosaicplot(table(total$evento1, total$cantProblemas),
 
 Entonces podemos decir que los eventos son muy **APROXIMADAMENTE** independientes.
 
-## Variables Discretas
+x## Variables Discretas
 
 ### Distribución Binomial
 
@@ -1260,12 +1547,13 @@ p
 n <- 100
 ```
 
-$$ \mathbb{X} = \text{Número de programadores que programen en JavaScript} \\ \text{y ganan mas que el promedio en una muestra de 100 programadores} \\
+$$
+\mathbb{X} = \text{Número de programadores que programen en JavaScript} \\ \text{y ganan mas que el promedio en una muestra de 100 programadores} \\
 
 \text{Rango(X) = 0 ,1 ,2 ,3 ,4 ,5 ,6 ,7 ........,100} \\
 
-\mathbb{X} \sim Bin(n,p) = Bin(100,0.27) $$
-
+\mathbb{X} \sim Bin(n,p) = Bin(100,0.27)
+$$
 ```{r}
 rango <- 0:100
 
@@ -1311,8 +1599,6 @@ Varianza
 $$
 Var(\mathbb{X}) = \sum_{x \in Rang(\mathbb{X})}(x-E(\mathbb{X}))^{2}p(x)
 $$
-
-
 ```{r}
 sum((0:100 - Ex)^{2}*dbinom(0:100 , n ,p))
 ```
@@ -1340,7 +1626,7 @@ nrow(encuesta)
 2)  Número de éxitos
 
 ```{r}
-nrow(encuesta %>% filter(TotalLenguajes >= 6))
+nrow(encuesta %>% filter(TotalLenguages >= 6))
 ```
 
 `E2`: De una población de `29204` programadores, donde `10492` dominan de 6 lenguajes a más . Se escogerá una muestra de `15000` programadores (sin reemplazo) y se contara el número de programadores que dominan de 6 lenguajes a más.
@@ -1394,7 +1680,6 @@ esperanza
 $$ 
 \text{Var}(\mathbb{Y}) = \frac{n \cdot k \cdot (N - k) \cdot (N - n)}{N^2 \cdot (N - 1)}
 $$
-
 ```{r}
 varianza <- (n*k*(N-k)*(N-n))/(N*N*(N-1))
 varianza
@@ -1425,7 +1710,37 @@ phyper(5600, k, N-k , n) - phyper(5400 , k , N-k , n)
 
 ### Variable Salario 
 
+Escogimos la variable salario por cantidad de problemas mentales proporcional a la edad
+Para el analisis de variables continuas escogimos una variación del salario de modo que este sea proporcional al rango de edad dado por los usuarios y se divida entre la cantidad de problemas mentales que tiene cada uno.
 
+```{r}
+encuesta$ModifiedAge <- encuesta$Age
+encuesta$ModifiedAge <- ifelse(encuesta$ModifiedAge == "Under 18 years old", 1, encuesta$ModifiedAge)
+encuesta$ModifiedAge <- ifelse(encuesta$ModifiedAge == "18-24 years old", 2, encuesta$ModifiedAge)
+encuesta$ModifiedAge <- ifelse(encuesta$ModifiedAge == "25-34 years old", 3, encuesta$ModifiedAge)
+encuesta$ModifiedAge <- ifelse(encuesta$ModifiedAge == "35-44 years old", 4, encuesta$ModifiedAge)
+encuesta$ModifiedAge <- ifelse(encuesta$ModifiedAge == "45-54 years old", 5, encuesta$ModifiedAge)
+encuesta$ModifiedAge <- ifelse(encuesta$ModifiedAge == "55-64 years old", 6, encuesta$ModifiedAge)
+encuesta$ModifiedAge <- ifelse(encuesta$ModifiedAge == "65 years or older",7, encuesta$ModifiedAge)
+encuesta$ModifiedAge <- as.numeric(encuesta$ModifiedAge)
+encuesta$salarioSobrecantLenguajes <- encuesta$Salary*encuesta$ModifiedAge/(1+encuesta$TotalMentalHealth)
+
+plot(density(encuesta$salarioSobrecantLenguajes , na.rm = T), main="Densidad Salario*Edad/TotalProblemasMentales")
+```
+
+Y observaremos que la distribución gamma es la que más se le aproxima.
+```{r}
+descdist(encuesta$salarioSobrecantLenguajes)
+FDG <- fitdist(encuesta$salarioSobrecantLenguajes, "gamma", start = list(shape = 1, scale = 1))
+```
+```{r}
+plot(FDG, pch = ".", col = "blue")
+```
+
+Podemos decir entonces que nuestra variable sigue una distribución gamma. Lo que quiere decir lo siguiente:
+
+- La variable es asimétrica, es decir, no tiene forma de campana.
+- Podemos saber como decae la variable a medida que aumenta. Es decir a travez de la distribución gamma podemos comprender como se comporta la variable para valores grandes.
 
 
 
